@@ -1,69 +1,70 @@
-# Arbeitsregeln für dieses Repository
+# Working rules for this repository
 
 ## Changelog
 
-`CHANGELOG.md` ist **auf Englisch** und richtet sich an **Anwender, nicht an
-Entwickler**. Ein Eintrag beschreibt, was sich für jemanden ändert, der das
-Programm benutzt: was er jetzt tun kann, was anders aussieht, was er beim
-Update beachten muss.
+`CHANGELOG.md` is **written in English for the people who use easy-ocpp, not
+for developers**. An entry describes what changes for someone running the
+program: what they can now do, what looks different, what they need to watch
+out for when updating.
 
-Nicht hinein gehören Dateinamen, Funktionsnamen, Modulstruktur, Refactorings
-ohne sichtbare Wirkung oder Formulierungen wie „refactored", „bumped",
-„implemented". Wer die technische Sicht braucht, liest die Commits.
+Keep file names, function names, module structure and invisible refactorings
+out of it, along with words like "refactored", "bumped" or "implemented".
+Anyone who needs the technical view reads the commits.
 
-    Gut:     Charging sessions now stop on their own once they reach a
-             target amount of energy or a time you set.
-    Schlecht: Added limit_wh and limit_until columns plus a watchdog task.
+    Good: Charging sessions now stop on their own once they reach a
+          target amount of energy or a time you set.
+    Bad:  Added limit_wh and limit_until columns plus a watchdog task.
 
-Jede veröffentlichte Version bekommt einen Abschnitt mit Versionsnummer und
-Datum. Zuerst das, was am meisten Leute betrifft. Hinweise zum Update kommen
-ans Ende des Abschnitts.
+Every released version gets a section with its number and date. Lead with what
+affects the most people. Notes about updating go at the end of the section,
+because they only matter once someone has decided to install it.
 
-## Sprache und Stil
+## Language and style
 
-- **Keine Gedankenstriche (—)** in Code, Kommentaren, Doku, Commit-Nachrichten
-  oder auf der Webseite. Satz umbauen statt Zeichen tauschen.
-- Commit-Nachrichten auf Deutsch, wie im bisherigen Verlauf. Sie erklären das
-  Warum, nicht nur das Was.
-- Der Zustand der Entwicklungsmaschine gehört nicht in die Projekthistorie.
-  Werkzeugprobleme bespricht man im Chat oder im Pull Request.
+- **No em dashes (—)** in code, comments, documentation, commit messages or on
+  the website. Rewrite the sentence instead of swapping the character for
+  another one.
+- Commit messages are written in German, as they have been so far. They explain
+  the why, not just the what.
+- The state of a development machine does not belong in the project history.
+  Discuss tooling problems in the chat or in the pull request.
 
-## Migrationen
+## Migrations
 
-`migrations/*.sql` sind **unveränderlich, sobald sie veröffentlicht wurden**.
-sqlx bildet beim Kompilieren eine SHA-384-Summe über den Dateiinhalt und
-vergleicht sie beim Start mit `_sqlx_migrations`. Jede inhaltliche Änderung,
-auch an einem Kommentar, bricht bestehende Installationen mit
-„migration N was previously applied but has been modified" ab.
+Files in `migrations/` are **immutable once they have been released**. sqlx
+embeds their content at compile time, builds a SHA-384 checksum over it and
+compares that against `_sqlx_migrations` at startup. Any change to the content,
+including a comment, makes existing installations stop with "migration N was
+previously applied but has been modified".
 
-Änderungen kommen immer als neue Migration. `db::repair_line_ending_checksums`
-fängt ausschließlich unterschiedliche Zeilenenden ab, nichts weiter.
+Changes always go into a new migration. `db::repair_line_ending_checksums`
+only covers differing line endings and nothing else.
 
-`.gitattributes` erzwingt `*.sql text eol=lf`. Das muss so bleiben, sonst
-erzeugen Windows- und Linux-Runner verschiedene Prüfsummen.
+`.gitattributes` enforces `*.sql text eol=lf`. It has to stay that way, or
+Windows and Linux runners produce different checksums for the same file.
 
-## Webseite
+## Website
 
-`docs/` ist **erzeugt**. Nie von Hand bearbeiten, sondern
-`python tools/build_pages.py` aufrufen. Der Generator baut zwölf HTML-Dateien,
-das Stylesheet, die Sitemap und robots.txt.
+`docs/` is **generated**. Never edit it by hand, run `python
+tools/build_pages.py` instead. The generator writes twelve HTML files, the
+stylesheet, the sitemap and robots.txt.
 
-Die Seite lädt **nichts von fremden Servern**: keine Schriften, keine Skripte,
-keine Bilder, kein Tracking. Das ist Absicht, hält die Seite schnell und die
-Datenschutzerklärung kurz. Wer eine externe Ressource einbaut, muss die
-Datenschutzerklärung anpassen und braucht je nach Fall ein Einwilligungsbanner.
+The site loads **nothing from third-party servers**: no fonts, no scripts, no
+images, no tracking. That is deliberate. It keeps the site fast and the privacy
+policy short. Anyone adding an external resource has to update the privacy
+policy and may need a consent banner.
 
-## Mehrsprachigkeit
+## Four languages
 
-Deutsch, Englisch, Französisch, Spanisch. Wer einen Text ändert, ändert alle
-vier Fassungen: `README*.md`, `INSTALL*.md` samt `ANLEITUNG.md`, die Tabelle in
-`src/i18n.rs` und die Inhalte in `tools/build_pages.py`.
+German, English, French and Spanish. Changing a text means changing all four:
+`README*.md`, `INSTALL*.md` together with `ANLEITUNG.md`, the table in
+`src/i18n.rs`, and the content in `tools/build_pages.py`.
 
-## Version anheben
+## Raising the version
 
-`Cargo.toml` und `Cargo.lock` immer zusammen, sonst scheitert die CI an
-`cargo build --locked`. Dazu die Kopf- und Fußzeilen der vier
-Installationsanleitungen und ein neuer Abschnitt in `CHANGELOG.md`.
+Always change `Cargo.toml` and `Cargo.lock` together, otherwise CI fails on
+`cargo build --locked`. Then update the title and footer lines of the four
+installation guides and add a section to `CHANGELOG.md`.
 
-Ein Tag `vX.Y.Z` löst den Release-Workflow aus, der die Binaries für Windows
-und Linux baut und veröffentlicht.
+Pushing a tag `vX.Y.Z` triggers the release workflow, which builds and
+publishes the binaries for Windows and Linux.
