@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://hilman2.github.io/easy-ocpp/sitemap.xml
