@@ -5,7 +5,7 @@ use axum::extract::State;
 use axum::response::{IntoResponse, Redirect, Response};
 
 use super::{render, LayoutCtx};
-use crate::auth::{AuthUser, MaybeAuth};
+use crate::auth::{AdminUser, MaybeAuth};
 use crate::domain::transaction::{fmt_kw, fmt_kwh, live_meter};
 use crate::domain::wallbox::Wallbox;
 use crate::i18n::Lang;
@@ -23,7 +23,7 @@ struct DashTpl {
     cards: Vec<WallboxCard>,
     active_sessions: Vec<ActiveSession>,
     top_employees: Vec<TopEmployee>,
-    /// Remote-Stop ist AdminUser-only — der Button wird nur Admins gezeigt.
+    /// Remote-Stop ist AdminUser-only, der Button wird nur Admins gezeigt.
     can_stop: bool,
     lang: Lang,
 }
@@ -74,7 +74,7 @@ impl WallboxCard {
             "offline" => self.lang.t("state.offline"),
             "error" => self.lang.t("state.error"),
             "warn" => self.lang.t("state.warn"),
-            _ => "—",
+            _ => "–",
         }
     }
 }
@@ -87,9 +87,9 @@ pub struct ActiveSession {
     pub id_tag: String,
     pub employee_name: Option<String>,
     pub start_time: String,
-    /// Bisher geladene Energie, formatiert („12,3“) — None, wenn (noch) keine Messung vorliegt.
+    /// Bisher geladene Energie, formatiert („12,3“). None, wenn (noch) keine Messung vorliegt.
     pub energy_kwh: Option<String>,
-    /// Aktuelle Ladeleistung, formatiert („7,4“) — None, wenn (noch) keine frische Messung vorliegt.
+    /// Aktuelle Ladeleistung, formatiert („7,4“). None, wenn (noch) keine frische Messung vorliegt.
     pub power_kw: Option<String>,
     pub soc_percent: Option<i64>,
 }
@@ -98,10 +98,10 @@ pub struct ActiveSession {
 async fn load_active_sessions(state: &AppState) -> AppResult<Vec<ActiveSession>> {
     let rows: Vec<(i64, i64, String, i64, String, Option<String>, String, i64)> = sqlx::query_as(
         "SELECT t.id, t.wallbox_id, w.name, t.connector_id, t.id_tag,
-                e.display_name, t.start_time, t.start_meter_wh
+                u.display_name, t.start_time, t.start_meter_wh
          FROM transactions t
          JOIN wallboxes w ON w.id = t.wallbox_id
-         LEFT JOIN employees e ON e.id = t.employee_id
+         LEFT JOIN users u ON u.id = t.user_id
          WHERE t.stop_time IS NULL
          ORDER BY t.start_time DESC",
     )
@@ -131,7 +131,7 @@ async fn load_active_sessions(state: &AppState) -> AppResult<Vec<ActiveSession>>
 #[template(path = "_active_sessions.html")]
 struct ActiveSessionsTpl {
     active_sessions: Vec<ActiveSession>,
-    /// Remote-Stop ist AdminUser-only — der Button wird nur Admins gezeigt.
+    /// Remote-Stop ist AdminUser-only, der Button wird nur Admins gezeigt.
     can_stop: bool,
     lang: Lang,
 }
@@ -139,13 +139,13 @@ struct ActiveSessionsTpl {
 /// htmx-Fragment: wird vom Cockpit alle paar Sekunden nachgeladen.
 pub async fn active_sessions_fragment(
     State(state): State<AppState>,
-    AuthUser(user): AuthUser,
+    AdminUser(_): AdminUser,
     lang: Lang,
 ) -> AppResult<Response> {
     let active_sessions = load_active_sessions(&state).await?;
     Ok(render(&ActiveSessionsTpl {
         active_sessions,
-        can_stop: user.is_admin(),
+        can_stop: true,
         lang,
     })?
     .into_response())
@@ -165,6 +165,11 @@ pub async fn get(
     let Some(user) = user else {
         return Ok(Redirect::to("/login").into_response());
     };
+    // Das Cockpit zeigt den gesamten Fuhrpark. Ein Mitarbeiter landet
+    // stattdessen auf seiner eigenen Seite.
+    if !user.is_admin() {
+        return Ok(Redirect::to("/me").into_response());
+    }
 
     let wallboxes: Vec<Wallbox> =
         sqlx::query_as::<_, Wallbox>("SELECT * FROM wallboxes ORDER BY name")
@@ -231,14 +236,14 @@ pub async fn get(
 
     // Top-3 Mitarbeiter im laufenden Monat
     let top_rows: Vec<(String, i64, i64)> = sqlx::query_as(
-        "SELECT COALESCE(e.display_name, 'Gast') AS name,
+        "SELECT COALESCE(u.display_name, 'Gast') AS name,
                 COUNT(*) AS sessions,
                 COALESCE(SUM(COALESCE(t.stop_meter_wh,0) - t.start_meter_wh), 0) AS wh
          FROM transactions t
-         LEFT JOIN employees e ON e.id = t.employee_id
+         LEFT JOIN users u ON u.id = t.user_id
          WHERE t.stop_meter_wh IS NOT NULL
            AND strftime('%Y-%m', t.start_time) = strftime('%Y-%m', 'now')
-         GROUP BY e.id
+         GROUP BY u.id
          ORDER BY wh DESC
          LIMIT 3",
     )
@@ -253,7 +258,6 @@ pub async fn get(
         })
         .collect();
 
-    let can_stop = user.is_admin();
     let tpl = DashTpl {
         layout: LayoutCtx::new("dashboard", Some(user), lang),
         wallboxes_total,
@@ -264,7 +268,7 @@ pub async fn get(
         cards,
         active_sessions,
         top_employees,
-        can_stop,
+        can_stop: true,
         lang,
     };
     Ok(render(&tpl)?.into_response())

@@ -10,7 +10,7 @@ use chrono::{DateTime, Datelike, NaiveDate, TimeZone, Utc};
 use printpdf::{BuiltinFont, Mm, PdfDocument};
 use serde::Deserialize;
 
-use crate::auth::AdminUser;
+use crate::auth::AuthUser;
 use crate::i18n::Lang;
 use crate::{AppError, AppResult, AppState};
 
@@ -29,7 +29,8 @@ struct Row {
     duration_min: i64,
 }
 
-struct Employee {
+/// Eine Berichtsseite je Person.
+struct Person {
     id: i64,
     name: String,
     email: Option<String>,
@@ -39,7 +40,7 @@ struct Employee {
 
 pub async fn monthly_pdf(
     State(state): State<AppState>,
-    AdminUser(_): AdminUser,
+    AuthUser(user): AuthUser,
     lang: Lang,
     Query(q): Query<Filter>,
 ) -> AppResult<Response> {
@@ -65,32 +66,40 @@ pub async fn monthly_pdf(
         .from_utc_datetime(&end.and_hms_opt(0, 0, 0).unwrap())
         .to_rfc3339();
 
-    // Alle abgeschlossenen Transaktionen im Monat, die einem Benutzer zugeordnet sind.
-    // Alles in einer Query — Mitarbeiter, Wallbox, Start + Stop, Energie, Dauer.
-    let rows: Vec<(i64, String, Option<String>, String, String, String, Option<String>, i64, i64)> =
-        sqlx::query_as(
-            "SELECT e.id, e.display_name, e.email, w.name, t.id_tag,
-                    t.start_time, t.stop_time,
-                    COALESCE(t.stop_meter_wh - t.start_meter_wh, 0),
-                    strftime('%s', COALESCE(t.stop_time, t.start_time)) - strftime('%s', t.start_time)
-             FROM transactions t
-             JOIN employees e ON e.id = t.employee_id
-             JOIN wallboxes w ON w.id = t.wallbox_id
-             WHERE t.stop_meter_wh IS NOT NULL
-               AND t.start_time >= ?1 AND t.start_time < ?2
-             ORDER BY e.display_name, t.start_time",
-        )
-        .bind(&start_iso)
-        .bind(&end_iso)
-        .fetch_all(&state.db)
-        .await?;
+    // Alle abgeschlossenen Transaktionen im Monat, die einem Benutzer zugeordnet
+    // sind. Ein Mitarbeiter bekommt nur die eigene Seite, der Admin alle.
+    // Alles in einer Query: Person, Wallbox, Start + Stop, Energie, Dauer.
+    let base = "SELECT u.id, u.display_name, u.email, w.name, t.id_tag,
+                       t.start_time, t.stop_time,
+                       COALESCE(t.stop_meter_wh - t.start_meter_wh, 0),
+                       strftime('%s', COALESCE(t.stop_time, t.start_time)) - strftime('%s', t.start_time)
+                  FROM transactions t
+                  JOIN users u ON u.id = t.user_id
+                  JOIN wallboxes w ON w.id = t.wallbox_id
+                 WHERE t.stop_meter_wh IS NOT NULL
+                   AND t.start_time >= ?1 AND t.start_time < ?2";
+    type ReportRow = (i64, String, Option<String>, String, String, String, Option<String>, i64, i64);
+    let rows: Vec<ReportRow> = if user.is_admin() {
+        sqlx::query_as(&format!("{base} ORDER BY u.display_name, t.start_time"))
+            .bind(&start_iso)
+            .bind(&end_iso)
+            .fetch_all(&state.db)
+            .await?
+    } else {
+        sqlx::query_as(&format!("{base} AND t.user_id = ?3 ORDER BY t.start_time"))
+            .bind(&start_iso)
+            .bind(&end_iso)
+            .bind(user.id)
+            .fetch_all(&state.db)
+            .await?
+    };
 
-    // Gruppieren nach Mitarbeiter-ID.
-    let mut groups: Vec<Employee> = Vec::new();
+    // Gruppieren nach Person.
+    let mut groups: Vec<Person> = Vec::new();
     for (emp_id, name, email, wb, tag, start_time, stop_time, energy_wh, dur_sec) in rows {
         let is_same = matches!(groups.last(), Some(e) if e.id == emp_id);
         if !is_same {
-            groups.push(Employee {
+            groups.push(Person {
                 id: emp_id,
                 name,
                 email,
@@ -159,7 +168,7 @@ fn month_name(m: u32, lang: Lang) -> &'static str {
     }
 }
 
-fn render_pdf(year: i32, month: u32, employees: &[Employee], lang: Lang) -> anyhow::Result<Vec<u8>> {
+fn render_pdf(year: i32, month: u32, people: &[Person], lang: Lang) -> anyhow::Result<Vec<u8>> {
     let (doc, page1, layer1) = PdfDocument::new(
         format!("{} {:04}-{:02}", lang.t("pdf.title"), year, month),
         Mm(210.0),
@@ -174,7 +183,7 @@ fn render_pdf(year: i32, month: u32, employees: &[Employee], lang: Lang) -> anyh
     let mut current_page = page1;
     let mut current_layer = layer1;
 
-    for emp in employees {
+    for emp in people {
         if !first {
             let (np, nl) = doc.add_page(Mm(210.0), Mm(297.0), "Layer 1");
             current_page = np;

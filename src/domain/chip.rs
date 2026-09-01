@@ -6,7 +6,7 @@ pub struct Chip {
     pub id: i64,
     pub id_tag: String,
     pub label: Option<String>,
-    pub employee_id: Option<i64>,
+    pub user_id: Option<i64>,
     pub kind: String,
     pub enabled: i64,
     pub expires_at: Option<String>,

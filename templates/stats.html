@@ -55,6 +55,7 @@
     <a href="/stats?g={{ granularity }}&r=all"  class="{% if range == "all"  %}active{% endif %}">{{ layout.t("common.total") }}</a>
 </div>
 
+{% if is_admin %}
 <h3>{{ layout.t("stats.emp_vs_guests") }}</h3>
 <table class="data">
     <thead><tr><th>{{ layout.t("stats.group") }}</th><th>{{ layout.t("common.sessions") }}</th><th>{{ layout.t("common.energy_kwh") }}</th></tr></thead>
@@ -68,12 +69,13 @@
 <table class="data">
     <thead><tr><th>{{ layout.t("common.employee") }}</th><th>{{ layout.t("common.sessions") }}</th><th>{{ layout.t("common.energy_kwh") }}</th></tr></thead>
     <tbody>
-    {% for u in per_employee %}
+    {% for u in per_user %}
         <tr><td>{{ u.label }}</td><td>{{ u.sessions }}</td><td>{{ u.energy_wh / 1000 }}</td></tr>
     {% endfor %}
-    {% if per_employee.is_empty() %}<tr><td colspan="3" class="empty">{{ layout.t("common.no_data") }}</td></tr>{% endif %}
+    {% if per_user.is_empty() %}<tr><td colspan="3" class="empty">{{ layout.t("common.no_data") }}</td></tr>{% endif %}
     </tbody>
 </table>
+{% endif %}
 
 <h3>{{ layout.t("stats.by_wallbox") }}</h3>
 <table class="data">

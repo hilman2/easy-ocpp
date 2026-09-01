@@ -1,0 +1,159 @@
+/* easy-ocpp landing page. Farben aus dem Dark-Cockpit-Design der Anwendung. */
+:root {
+  --bg: #0b1220;
+  --surface: #131c2e;
+  --surface-2: #1a2337;
+  --border: #1f2a41;
+  --border-strong: #2a3650;
+  --fg: #e8edf6;
+  --fg-2: #cbd5e1;
+  --muted: #8894ab;
+  --brand: #22d3ee;
+  --brand-2: #06b6d4;
+  --ok: #34d399;
+  --radius: 12px;
+  --font: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --mono: ui-monospace, "JetBrains Mono", Consolas, monospace;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font);
+  font-size: 16px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+.wrap { max-width: 1020px; margin: 0 auto; padding: 0 1.25rem; }
+section.wrap { margin: 4.5rem auto; }
+
+a { color: var(--brand); text-decoration: none; }
+a:hover { text-decoration: underline; }
+:focus-visible { outline: 2px solid var(--brand); outline-offset: 3px; border-radius: 4px; }
+
+.skip {
+  position: absolute; left: -9999px;
+  background: var(--brand); color: #04222b; padding: .6rem 1rem; border-radius: 0 0 8px 0;
+}
+.skip:focus { left: 0; top: 0; z-index: 10; }
+
+/* ---------- Kopf ---------- */
+header.site {
+  border-bottom: 1px solid var(--border);
+  background: rgba(15, 23, 42, .85);
+  backdrop-filter: blur(8px);
+  position: sticky; top: 0; z-index: 5;
+}
+.bar { display: flex; align-items: center; gap: 1.5rem; height: 60px; }
+.brand {
+  display: flex; align-items: center; gap: .55rem;
+  font-weight: 700; font-size: 1.05rem; color: var(--fg);
+}
+.brand:hover { text-decoration: none; }
+header nav { display: flex; gap: 1.25rem; margin-left: auto; flex-wrap: wrap; }
+header nav a { color: var(--fg-2); font-size: .92rem; }
+@media (max-width: 720px) {
+  .bar { height: auto; padding: .75rem 0; flex-wrap: wrap; gap: .75rem; }
+  header nav { margin-left: 0; width: 100%; gap: 1rem; }
+}
+
+/* ---------- Hero ---------- */
+.hero {
+  padding: 5rem 0 4rem;
+  background:
+    radial-gradient(900px 420px at 15% -10%, rgba(34, 211, 238, .16), transparent 60%),
+    radial-gradient(700px 380px at 90% 0%, rgba(167, 139, 250, .10), transparent 60%);
+  border-bottom: 1px solid var(--border);
+}
+.eyebrow {
+  margin: 0 0 1rem; color: var(--brand);
+  font-family: var(--mono); font-size: .82rem; letter-spacing: .08em; text-transform: uppercase;
+}
+h1 {
+  margin: 0 0 1.1rem;
+  font-size: clamp(2rem, 5vw, 3.1rem);
+  line-height: 1.12; letter-spacing: -.02em; font-weight: 800; max-width: 20ch;
+}
+.lede { font-size: 1.13rem; color: var(--fg-2); max-width: 68ch; margin: 0 0 2rem; }
+.lede-2 { color: var(--fg-2); max-width: 72ch; }
+
+.actions { display: flex; gap: .75rem; flex-wrap: wrap; margin: 0; }
+.btn {
+  display: inline-block; padding: .7rem 1.35rem; border-radius: var(--radius);
+  border: 1px solid var(--border-strong); color: var(--fg); font-weight: 600; font-size: .97rem;
+}
+.btn:hover { text-decoration: none; border-color: var(--brand); }
+.btn.primary { background: var(--brand); border-color: var(--brand); color: #04222b; }
+.btn.primary:hover { background: var(--brand-2); border-color: var(--brand-2); }
+
+/* ---------- Abschnitte ---------- */
+h2 {
+  font-size: clamp(1.5rem, 3vw, 2rem); letter-spacing: -.015em;
+  margin: 0 0 1rem; font-weight: 750;
+}
+h3 { font-size: 1.02rem; margin: 0 0 .4rem; font-weight: 650; }
+p { margin: 0 0 1rem; }
+.note { color: var(--muted); font-size: .94rem; max-width: 72ch; }
+.muted { color: var(--muted); }
+
+.grid-3 { display: grid; gap: 1rem; grid-template-columns: repeat(3, 1fr); margin-top: -2.5rem; }
+.grid-4 { display: grid; gap: 1rem; grid-template-columns: repeat(2, 1fr); }
+@media (max-width: 860px) { .grid-3 { grid-template-columns: 1fr; margin-top: 2rem; } }
+@media (max-width: 640px) { .grid-4 { grid-template-columns: 1fr; } }
+
+.card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 1.25rem;
+}
+.card p { margin: 0; color: var(--fg-2); font-size: .95rem; }
+.card h3 { color: var(--brand); }
+
+.feature { border-left: 2px solid var(--border-strong); padding: .1rem 0 .1rem 1rem; }
+.feature p { margin: 0; color: var(--fg-2); font-size: .95rem; }
+
+/* ---------- Tabellen ---------- */
+.tablewrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius); }
+table { border-collapse: collapse; width: 100%; min-width: 520px; font-size: .95rem; }
+th, td { text-align: left; padding: .7rem .95rem; border-bottom: 1px solid var(--border); }
+thead th { background: var(--surface-2); font-size: .82rem; text-transform: uppercase;
+           letter-spacing: .05em; color: var(--muted); }
+tbody tr:last-child th, tbody tr:last-child td { border-bottom: 0; }
+tbody th { font-weight: 500; color: var(--fg-2); }
+td.yes { color: var(--ok); font-weight: 700; }
+td.no { color: var(--muted); }
+
+/* ---------- Code ---------- */
+pre {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1rem 1.15rem; overflow-x: auto; margin: 0 0 1.25rem;
+}
+code { font-family: var(--mono); font-size: .89rem; color: var(--fg-2); }
+
+/* ---------- FAQ ---------- */
+.faq {
+  border-bottom: 1px solid var(--border); padding: .35rem 0;
+}
+.faq summary {
+  cursor: pointer; list-style: none; padding: .75rem 2rem .75rem 0; position: relative;
+}
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary h3 { display: inline; font-size: 1.05rem; color: var(--fg); }
+.faq summary::after {
+  content: "+"; position: absolute; right: .35rem; top: .6rem;
+  color: var(--brand); font-size: 1.3rem; line-height: 1;
+}
+.faq[open] summary::after { content: "\2212"; }
+.faq p { color: var(--fg-2); max-width: 76ch; padding-bottom: .5rem; }
+
+/* ---------- Fuss ---------- */
+footer.site {
+  border-top: 1px solid var(--border); margin-top: 5rem; padding: 2.5rem 0 3.5rem;
+  font-size: .93rem;
+}
+footer .langs { margin-bottom: .5rem; }
+footer p { margin: 0 0 .4rem; }

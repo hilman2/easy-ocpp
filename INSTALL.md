@@ -1,8 +1,28 @@
-# easy-occp v0.3.1 – Installation & First Start (Windows)
+# easy-ocpp v0.4.0 – Installation & First Start (Windows)
 
 🌐 [English](INSTALL.md) · [Deutsch](ANLEITUNG.md) · [Français](INSTALL.fr.md) · [Español](INSTALL.es.md)
 
-Management tool for wallboxes (OCPP 1.5/1.6/2.0.1) — one binary, one SQLite file.
+Management tool for wallboxes (OCPP 1.5/1.6/2.0.1). One binary, one SQLite file.
+
+## What's new in v0.4.0
+
+- **Employees are users now.** There used to be two separate notions: a login
+  and, next to it, an employee record. These are merged: an employee is a user,
+  and their chips and charging sessions hang off that account directly. Existing
+  employees are carried over; anyone without a login gets an account without a
+  password and can only sign in once an administrator sets one under "Users".
+- **Employees only see their own charging.** After signing in they land on their
+  own page showing the sessions running on their chips. Cockpit, wallboxes, chips
+  and user management stay with the administrator.
+- **Charging limits.** A session stops automatically once it reaches a target
+  kWh or a timer, whichever comes first. Every person has defaults that apply to
+  each new session, set either by the employee or by an administrator. On a
+  running session the values can still be changed, and an employee can stop their
+  own session.
+- **Chips are unambiguous.** A chip either belongs to a person or it is a guest
+  chip. The category that used to be maintained separately now follows the
+  assignment and can no longer contradict it.
+- **The program is now called `easy-ocpp`**, details below.
 
 ## What's new in v0.3.0
 
@@ -11,57 +31,69 @@ Management tool for wallboxes (OCPP 1.5/1.6/2.0.1) — one binary, one SQLite fi
   browser settings and can be changed at any time via the switcher in the
   header.
 - **GitHub repository with CI and automatic releases:** The source code now
-  lives at <https://github.com/hilman2/easy-occp>. Every version is built
+  lives at <https://github.com/hilman2/easy-ocpp>. Every version is built
   automatically by CI and published as a release.
 
 ## What's new in v0.2.0
 
 - **Live values during charging:** The cockpit and the wallbox detail page show
-  the **kWh** charged so far, the current **power (kW)** and — if the wallbox
-  reports it — the vehicle's **SoC** for running charging sessions. The display
+  the **kWh** charged so far, the current **power (kW)** and, if the wallbox
+  reports it, the vehicle's **SoC** for running charging sessions. The display
   refreshes automatically every 10 seconds.
 - **Automatic wallbox configuration:** On connect, the server configures the
   wallbox to report meter values every 30 seconds
-  (`MeterValueSampleInterval`, `MeterValuesSampledData`) — adjustable via the
+  (`MeterValueSampleInterval`, `MeterValuesSampledData`), adjustable via the
   new `[ocpp]` section in `config.toml`.
 - Various robustness fixes in meter-value processing (phase values, invalid
   values, stale displays).
 
-**Updating from v0.1.0:** Simply copy `easy-occp.exe` over the existing file
-and restart the service. The database (`data\easy-occp.db`) remains unchanged;
+**Updating from v0.1.0:** Simply copy `easy-ocpp.exe` over the existing file
+and restart the service. The database (`data\easy-ocpp.db`) remains unchanged;
 there are no new migrations. Live values appear from the next charging session
 onward, once the wallbox has reconnected.
+
+**Renamed: `easy-occp` is now `easy-ocpp`.** The old name had the protocol
+letters swapped, it is spelled OCPP. When updating:
+
+- The program is now called `easy-ocpp.exe`. Delete the old `easy-occp.exe`,
+  otherwise you end up with two programs in the folder.
+- **Your database is kept.** If only the old `data\easy-occp.db` is present, the
+  program keeps using it and logs a note at startup. To switch over: stop the
+  program, rename the file to `easy-ocpp.db`, start again.
+- An installed service (nssm, Task Scheduler) must point at the new program name.
+- Everyone is signed out once, because the session cookie was renamed too. Just
+  sign in again.
 
 ## Contents of this folder
 
 ```
-easy-occp.exe          Main program (Windows x64, all-in-one)
+easy-ocpp.exe          Main program (Windows x64, all-in-one)
 config.example.toml    Configuration template
 README.md              Project overview
 INSTALL.md             This file
 ANLEITUNG.md           German version of this guide
 ```
 
-The `.exe` contains the database schema, the web UI and all static assets — **nothing else needs to be shipped**.
+The `.exe` contains the database schema, the web UI and all static assets. **Nothing else needs to be shipped.**
 
 ## 1. Installation
 
-1. Copy this folder to a permanent location, e.g. `C:\easy-occp\`.
+1. Copy this folder to a permanent location, e.g. `C:\easy-ocpp\`.
 2. Optional: copy `config.example.toml` to `config.toml` and adjust it (see below). Without a `config.toml` the defaults apply (port 8080, data directory `./data`).
-3. Make sure port **8080** is free on the host and allowed inbound in the Windows Firewall — otherwise the wallboxes cannot reach the server.
+3. Make sure port **8080** is free on the host and allowed inbound in the Windows Firewall. Otherwise the wallboxes cannot reach the server.
 
 ## 2. First start
 
 Open a **PowerShell** in the folder and start:
 
 ```powershell
-.\easy-occp.exe
+.\easy-ocpp.exe
 ```
 
 On first start the application takes care of everything itself:
 
 - creates the `data\` directory,
-- creates the SQLite file `data\easy-occp.db`,
+- creates the SQLite file `data\easy-ocpp.db`,
 - applies the complete schema (migrations are embedded in the binary),
 - creates the admin user.
 
@@ -69,7 +101,7 @@ Then open in your browser:
 
 <http://localhost:8080>
 
-**Default login:** `admin` / `admin` — please change the password immediately under "Users".
+**Default login:** `admin` / `admin`. Please change the password immediately under "Users".
 
 Stop with `Ctrl+C` in the PowerShell window.
 
@@ -84,7 +116,7 @@ public_base_url = "http://<server-ip-or-hostname>:8080"
 
 [storage]
 data_dir = "data"
-db_file  = "easy-occp.db"
+db_file  = "easy-ocpp.db"
 
 [ocpp]
 # Interval in seconds at which wallboxes report meter reading and power during
@@ -93,11 +125,11 @@ db_file  = "easy-occp.db"
 meter_interval_s = 30
 ```
 
-- `bind = "0.0.0.0:8080"` — listens on all network adapters (required so the wallboxes can connect).
-- `public_base_url` — public address at which the server is reachable from the wallboxes' point of view.
-- `meter_interval_s` — reporting interval for the live meter values (default 30 s).
+- `bind = "0.0.0.0:8080"`: listens on all network adapters (required so the wallboxes can connect).
+- `public_base_url`: public address at which the server is reachable from the wallboxes' point of view.
+- `meter_interval_s`: reporting interval for the live meter values (default 30 s).
 
-The LDAP / Entra ID sections are commented out in the example — currently field stubs, not active.
+The LDAP / Entra ID sections are commented out in the example, currently field stubs and not active.
 
 ## 4. Setting up a wallbox
 
@@ -125,19 +157,19 @@ As soon as the wallbox connects, it appears under **Wallboxes** with status *onl
 
 ## 6. Running permanently as a Windows service (optional)
 
-`easy-occp.exe` is an ordinary console program. For autostart/service:
+`easy-ocpp.exe` is an ordinary console program. For autostart/service:
 
 **Option A: Task Scheduler**
 
-- Task Scheduler → *Create Task* → Trigger *At system startup* → Action *Start a program* → `C:\easy-occp\easy-occp.exe` → *Start in:* `C:\easy-occp\`.
+- Task Scheduler → *Create Task* → Trigger *At system startup* → Action *Start a program* → `C:\easy-ocpp\easy-ocpp.exe` → *Start in:* `C:\easy-ocpp\`.
 - Enable *"Run whether user is logged on or not"*.
 
 **Option B: NSSM (Non-Sucking Service Manager)**
 
 ```powershell
-nssm install easy-occp "C:\easy-occp\easy-occp.exe"
-nssm set easy-occp AppDirectory "C:\easy-occp"
-nssm start easy-occp
+nssm install easy-ocpp "C:\easy-ocpp\easy-ocpp.exe"
+nssm set easy-ocpp AppDirectory "C:\easy-ocpp"
+nssm start easy-ocpp
 ```
 
 ## 7. Resetting the admin password
@@ -145,16 +177,16 @@ nssm start easy-occp
 If the admin password is lost:
 
 ```powershell
-.\easy-occp.exe --reset-admin "newPassword123"
+.\easy-ocpp.exe --reset-admin "newPassword123"
 ```
 
 Resets the password of the `admin` account and exits.
 
 ## 8. Backup
 
-Everything relevant lives in **a single file**: `data\easy-occp.db`.
+Everything relevant lives in **a single file**: `data\easy-ocpp.db`.
 
-For a consistent backup, briefly stop the service and copy the file (incl. any `-wal` / `-shm`) somewhere safe — done.
+For a consistent backup, briefly stop the service and copy the file (incl. any `-wal` / `-shm`) somewhere safe, done.
 
 ## 9. Troubleshooting
 
@@ -162,14 +194,14 @@ For a consistent backup, briefly stop the service and copy the file (incl. any `
 |---------|------------------|
 | Browser shows "page unreachable" | Port 8080 in use or blocked by the firewall. Check with `netstat -ano \| findstr :8080`. |
 | Wallbox does not connect | Check `public_base_url` / firewall / `ChargePointId` URL. The console logs show incoming WS connections. |
-| No live values during charging | Let the wallbox reconnect (the configuration is applied on connect). Check the console log: `MeterValueSampleInterval` should appear as "set". Some boxes need a restart, others do not support power measurement — in that case the power is derived from the meter readings. |
-| "database is locked" | Do not start a second `easy-occp.exe` on the same DB at the same time. |
+| No live values during charging | Let the wallbox reconnect (the configuration is applied on connect). Check the console log: `MeterValueSampleInterval` should appear as "set". Some boxes need a restart, others do not support power measurement, in which case the power is derived from the meter readings. |
+| "database is locked" | Do not start a second `easy-ocpp.exe` on the same DB at the same time. |
 | More logs wanted | Before starting: set `$env:RUST_LOG="debug"`. |
 
 ## 10. Uninstallation
 
-Remove the service/task, delete the folder — there are no registry entries and no external dependencies.
+Remove the service/task, delete the folder. There are no registry entries and no external dependencies.
 
 ---
 
-Version 0.3.1 · License: MIT
+Version 0.4.0 · License: MIT

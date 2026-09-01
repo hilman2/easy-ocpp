@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CSMS OCPP auto-hébergé pour PME | easy-ocpp</title>
+    <meta name="description" content="CSMS open source pour OCPP 1.6J / 2.0.1 et 1 à 10 bornes : badges RFID, limites de recharge, mesures en direct, rapports. Un binaire Rust, un fichier SQLite.">
+    <link rel="canonical" href="https://hilman2.github.io/easy-ocpp/fr/">
+    <link rel="alternate" hreflang="en" href="https://hilman2.github.io/easy-ocpp/">
+    <link rel="alternate" hreflang="de" href="https://hilman2.github.io/easy-ocpp/de/">
+    <link rel="alternate" hreflang="fr" href="https://hilman2.github.io/easy-ocpp/fr/">
+    <link rel="alternate" hreflang="es" href="https://hilman2.github.io/easy-ocpp/es/">
+    <link rel="alternate" hreflang="x-default" href="https://hilman2.github.io/easy-ocpp/">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="easy-ocpp">
+    <meta property="og:title" content="CSMS OCPP auto-hébergé pour PME | easy-ocpp">
+    <meta property="og:description" content="CSMS open source pour OCPP 1.6J / 2.0.1 et 1 à 10 bornes : badges RFID, limites de recharge, mesures en direct, rapports. Un binaire Rust, un fichier SQLite.">
+    <meta property="og:url" content="https://hilman2.github.io/easy-ocpp/fr/">
+    <meta property="og:locale" content="fr_FR">
+    <meta property="og:image" content="https://opengraph.githubassets.com/1/hilman2/easy-ocpp">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="CSMS OCPP auto-hébergé pour PME | easy-ocpp">
+    <meta name="twitter:description" content="CSMS open source pour OCPP 1.6J / 2.0.1 et 1 à 10 bornes : badges RFID, limites de recharge, mesures en direct, rapports. Un binaire Rust, un fichier SQLite.">
+    <meta name="twitter:image" content="https://opengraph.githubassets.com/1/hilman2/easy-ocpp">
+    <meta name="theme-color" content="#0b1220">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b1220'/%3E%3Cpath d='M18 5 L9 18 h6 l-2 9 9-13 h-6 z' fill='%2322d3ee'/%3E%3C/svg%3E">
+    <link rel="stylesheet" href="../assets/style.css">
+    <script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "easy-ocpp", "applicationCategory": "BusinessApplication", "applicationSubCategory": "Charging Station Management System (CSMS)", "operatingSystem": "Windows, Linux", "description": "CSMS open source pour OCPP 1.6J / 2.0.1 et 1 à 10 bornes : badges RFID, limites de recharge, mesures en direct, rapports. Un binaire Rust, un fichier SQLite.", "url": "https://hilman2.github.io/easy-ocpp/fr/", "codeRepository": "https://github.com/hilman2/easy-ocpp", "programmingLanguage": "Rust", "license": "https://opensource.org/licenses/MIT", "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "EUR"}, "inLanguage": ["de", "en", "fr", "es"]}</script>
+    <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Qu'est-ce qu'un CSMS ?", "acceptedAnswer": {"@type": "Answer", "text": "Un Charging Station Management System est le backend avec lequel une borne de recharge dialogue. Il autorise les cartes RFID, enregistre les recharges et les index de compteur, et peut démarrer ou arrêter une recharge à distance. OCPP est le protocole qu'ils utilisent pour se parler."}}, {"@type": "Question", "name": "Est-ce compatible avec ma borne ?", "acceptedAnswer": {"@type": "Answer", "text": "Tout point de charge parlant OCPP 1.6J en WebSocket devrait fonctionner, ce qui couvre la grande majorité des appareils vendus ces dernières années. Le matériel plus ancien limité à OCPP 1.5 SOAP peut se connecter pour le boot et le heartbeat."}}, {"@type": "Question", "name": "Ai-je besoin d'une connexion internet ?", "acceptedAnswer": {"@type": "Answer", "text": "Non. Les bornes se connectent à votre serveur par le réseau local. Internet n'est nécessaire que si vous souhaitez atteindre l'interface depuis l'extérieur."}}, {"@type": "Question", "name": "Comment voir qui a rechargé combien ?", "acceptedAnswer": {"@type": "Answer", "text": "Chaque recharge est rattachée au badge RFID qui l'a démarrée, et chaque badge appartient à une personne. La liste, les statistiques et le PDF mensuel sont regroupés en conséquence. Les recharges sur badge non attribué comptent comme recharges invités."}}, {"@type": "Question", "name": "Les employés voient-ils les recharges des autres ?", "acceptedAnswer": {"@type": "Answer", "text": "Non. Un employé ne voit que les recharges démarrées avec ses propres badges. Seul un administrateur voit tout."}}, {"@type": "Question", "name": "Combien ça coûte ?", "acceptedAnswer": {"@type": "Answer", "text": "Rien. easy-ocpp est open source sous licence MIT. Il n'y a ni version payante ni redevance par point de charge."}}]}</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="site">
+  <div class="wrap bar">
+    <a class="brand" href="https://hilman2.github.io/easy-ocpp/fr/">
+      <svg viewBox="0 0 32 32" width="26" height="26" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#0f172a"/><path d="M18 5 L9 18 h6 l-2 9 9-13 h-6 z" fill="#22d3ee"/></svg>
+      easy-ocpp
+    </a>
+    <nav aria-label="Sections">
+      <a href="#features">Fonctionnalités</a>
+      <a href="#roles">Rôles</a>
+      <a href="#limits">Limites</a>
+      <a href="#start">Démarrer</a>
+      <a href="#faq">Questions</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+  <section class="hero">
+    <div class="wrap">
+      <p class="eyebrow">OCPP 1.6J &middot; 2.0.1 &middot; 1.5 SOAP</p>
+      <h1>Votre propre serveur OCPP pour dix bornes au plus</h1>
+      <p class="lede">easy-ocpp est un système de gestion de points de charge (CSMS) auto-hébergé pour les petites et moyennes entreprises. Il parle OCPP 1.6J, 2.0.1 et 1.5 SOAP. Un seul binaire, un seul fichier SQLite, sans abonnement cloud ni connexion internet permanente.</p>
+      <p class="actions">
+        <a class="btn primary" href="https://github.com/hilman2/easy-ocpp/releases/latest">Télécharger une version</a>
+        <a class="btn" href="https://github.com/hilman2/easy-ocpp">Code source sur GitHub</a>
+      </p>
+    </div>
+  </section>
+
+  <section class="wrap grid-3">
+        <article class="card">
+          <h3>Pas de cloud, pas d'abonnement</h3>
+          <p>Tout tourne sur une machine qui vous appartient. Un petit serveur suffit, un NUC, au besoin un PC de bureau inutilisé. Les données de recharge ne quittent pas votre réseau.</p>
+        </article>
+        <article class="card">
+          <h3>Un binaire, un fichier</h3>
+          <p>Pas de serveur de base de données, pas de courtier de messages, pas de pile de conteneurs. Décompressez, lancez, c'est fait. Toutes vos données tiennent dans un fichier SQLite qu'il suffit de copier pour la sauvegarde.</p>
+        </article>
+        <article class="card">
+          <h3>Conçu pour 1 à 10 bornes</h3>
+          <p>Volontairement pas une plateforme d'entreprise. Ce dont une société avec quelques points de charge a réellement besoin, sans la charge d'exploitation qui va avec.</p>
+        </article>
+  </section>
+
+  <section id="features" class="wrap">
+    <h2>Ce qu'il fait</h2>
+    <div class="grid-4">
+        <article class="feature">
+          <h3>Inventaire des bornes</h3>
+          <p>État en ligne, connecteurs, micrologiciel et numéro de série par point de charge, directement depuis la liaison OCPP.</p>
+        </article>
+        <article class="feature">
+          <h3>Gestion des badges</h3>
+          <p>Les nouveaux badges sont enregistrés via une fenêtre d'apprentissage de deux minutes : présentez le badge, le serveur intercepte le tag.</p>
+        </article>
+        <article class="feature">
+          <h3>Badges et personnes</h3>
+          <p>Un badge appartient à une personne, sinon c'est un badge invité. La catégorie découle de l'attribution et ne peut pas la contredire.</p>
+        </article>
+        <article class="feature">
+          <h3>Mesures en direct</h3>
+          <p>kWh chargés, puissance actuelle et état de charge pendant la recharge, actualisés toutes les dix secondes.</p>
+        </article>
+        <article class="feature">
+          <h3>Limites de recharge</h3>
+          <p>Arrêt automatique à l'énergie cible ou au bout d'une durée définie, selon ce qui arrive en premier.</p>
+        </article>
+        <article class="feature">
+          <h3>Recharges invités</h3>
+          <p>Déverrouillez à distance pour un visiteur et imputez la recharge à un label invité.</p>
+        </article>
+        <article class="feature">
+          <h3>Rapports</h3>
+          <p>Liste des recharges avec export CSV, statistiques par mois, trimestre et année, et un PDF mensuel par personne.</p>
+        </article>
+        <article class="feature">
+          <h3>Quatre langues</h3>
+          <p>Toute l'interface en allemand, anglais, français et espagnol, au choix de chaque utilisateur.</p>
+        </article>
+    </div>
+  </section>
+
+  <section id="roles" class="wrap">
+    <h2>Deux rôles, nettement séparés</h2>
+    <p class="lede-2">Il n'existe qu'une seule sorte de personne dans le système : l'utilisateur. Un employé est un utilisateur, et ses badges, ses recharges et ses limites sont rattachés directement à ce compte. Ce qu'un employé peut faire est volontairement restreint.</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th scope="col"></th><th scope="col">Admin</th><th scope="col">Employé</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Bornes, badges, gestion des utilisateurs</th><td class="yes" aria-label="yes">&#10003;</td><td class="no" aria-label="no">&ndash;</td></tr>
+          <tr><th scope="row">Recharges de toutes les personnes</th><td class="yes" aria-label="yes">&#10003;</td><td class="no" aria-label="no">&ndash;</td></tr>
+          <tr><th scope="row">Ses propres recharges, CSV, statistiques, PDF mensuel</th><td class="yes" aria-label="yes">&#10003;</td><td class="yes" aria-label="yes">&#10003;</td></tr>
+          <tr><th scope="row">Voir sa recharge en cours et l'arrêter</th><td class="yes" aria-label="yes">&#10003;</td><td class="yes" aria-label="yes">&#10003;</td></tr>
+          <tr><th scope="row">Objectif kWh et minuteur sur sa recharge</th><td class="yes" aria-label="yes">&#10003;</td><td class="yes" aria-label="yes">&#10003;</td></tr>
+          <tr><th scope="row">Valeurs par défaut de n'importe quel employé</th><td class="yes" aria-label="yes">&#10003;</td><td class="no" aria-label="no">&ndash;</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">Le serveur applique ces restrictions. Les masquer dans l'interface ne suffirait pas. Après connexion, un employé arrive sur sa propre page et la navigation ne lui montre que ce qu'il peut réellement ouvrir.</p>
+  </section>
+
+  <section id="limits" class="wrap">
+    <h2>Des limites qui arrêtent vraiment la recharge</h2>
+    <p>Une recharge se termine d'elle-même dès qu'elle atteint une énergie cible ou un minuteur, selon ce qui survient en premier. Les deux sont facultatifs. Chaque personne dispose de valeurs par défaut appliquées à chaque nouvelle recharge, définies par l'employé lui-même ou par un administrateur ; sur une recharge en cours, les valeurs restent modifiables.</p>
+    <p class="note">Un chien de garde vérifie toutes les 15 secondes et envoie RemoteStopTransaction. La limite d'énergie est en outre contrôlée dès l'arrivée de nouvelles mesures, afin de ne pas dépasser l'objectif en attendant le cycle suivant. Si une borne refuse l'arrêt, une nouvelle tentative est faite.</p>
+  </section>
+
+  <section id="start" class="wrap">
+    <h2>Démarrer</h2>
+    <p>Récupérez une version pour Windows ou Linux, décompressez, lancez. L'interface se trouve alors sur le port 8080 ; la première connexion est admin / admin.</p>
+    <p>Ou compilez depuis les sources :</p>
+    <pre><code>git clone https://github.com/hilman2/easy-ocpp.git
+cd easy-ocpp
+cargo run --release</code></pre>
+
+    <h3>Connecter une borne</h3>
+    <p>Faites pointer le point de charge vers votre serveur. Les sous-protocoles sont négociés automatiquement, et un point de charge inconnu s'enregistre de lui-même à la première connexion.</p>
+    <pre><code>ws://&lt;host&gt;:8080/ocpp/&lt;ChargePointId&gt;</code></pre>
+    <p>Pour les anciens appareils OCPP 1.5 en SOAP :</p>
+    <pre><code>POST http://&lt;host&gt;:8080/ocpp15</code></pre>
+  </section>
+
+  <section id="compat" class="wrap">
+    <h2>Protocoles pris en charge</h2>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th scope="col">Version</th><th scope="col">Transport</th><th scope="col">État</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">OCPP 1.6J</th><td>WebSocket</td><td>Complet (boot, heartbeat, statut, autorisation, transactions, mesures, démarrage/arrêt à distance, configuration)</td></tr>
+          <tr><th scope="row">OCPP 2.0.1</th><td>WebSocket</td><td>Ébauche (BootNotification et TransactionEvent)</td></tr>
+          <tr><th scope="row">OCPP 1.5</th><td>SOAP</td><td>Ébauche (boot et heartbeat)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="faq" class="wrap">
+    <h2>Questions fréquentes</h2>
+        <details class="faq">
+          <summary><h3>Qu'est-ce qu'un CSMS ?</h3></summary>
+          <p>Un Charging Station Management System est le backend avec lequel une borne de recharge dialogue. Il autorise les cartes RFID, enregistre les recharges et les index de compteur, et peut démarrer ou arrêter une recharge à distance. OCPP est le protocole qu'ils utilisent pour se parler.</p>
+        </details>
+        <details class="faq">
+          <summary><h3>Est-ce compatible avec ma borne ?</h3></summary>
+          <p>Tout point de charge parlant OCPP 1.6J en WebSocket devrait fonctionner, ce qui couvre la grande majorité des appareils vendus ces dernières années. Le matériel plus ancien limité à OCPP 1.5 SOAP peut se connecter pour le boot et le heartbeat.</p>
+        </details>
+        <details class="faq">
+          <summary><h3>Ai-je besoin d'une connexion internet ?</h3></summary>
+          <p>Non. Les bornes se connectent à votre serveur par le réseau local. Internet n'est nécessaire que si vous souhaitez atteindre l'interface depuis l'extérieur.</p>
+        </details>
+        <details class="faq">
+          <summary><h3>Comment voir qui a rechargé combien ?</h3></summary>
+          <p>Chaque recharge est rattachée au badge RFID qui l'a démarrée, et chaque badge appartient à une personne. La liste, les statistiques et le PDF mensuel sont regroupés en conséquence. Les recharges sur badge non attribué comptent comme recharges invités.</p>
+        </details>
+        <details class="faq">
+          <summary><h3>Les employés voient-ils les recharges des autres ?</h3></summary>
+          <p>Non. Un employé ne voit que les recharges démarrées avec ses propres badges. Seul un administrateur voit tout.</p>
+        </details>
+        <details class="faq">
+          <summary><h3>Combien ça coûte ?</h3></summary>
+          <p>Rien. easy-ocpp est open source sous licence MIT. Il n'y a ni version payante ni redevance par point de charge.</p>
+        </details>
+  </section>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p class="langs"><span class="muted">Langue:</span> <a href="https://hilman2.github.io/easy-ocpp/" hreflang="en">English</a> · <a href="https://hilman2.github.io/easy-ocpp/de/" hreflang="de">Deutsch</a> · <strong>Français</strong> · <a href="https://hilman2.github.io/easy-ocpp/es/" hreflang="es">Español</a></p>
+    <p class="muted">Sous licence MIT. Sans lien avec l'Open Charge Alliance. &middot; <a href="https://github.com/hilman2/easy-ocpp">GitHub</a></p>
+  </div>
+</footer>
+</body>
+</html>

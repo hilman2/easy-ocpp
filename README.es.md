@@ -1,12 +1,12 @@
-# easy-occp
+# easy-ocpp
 
 🌐 [English](README.md) · [Deutsch](README.de.md) · [Français](README.fr.md) · [Español](README.es.md)
 
-[![CI](https://github.com/hilman2/easy-occp/actions/workflows/ci.yml/badge.svg)](https://github.com/hilman2/easy-occp/actions/workflows/ci.yml)
-[![Release](https://img.shields.io/github/v/release/hilman2/easy-occp)](https://github.com/hilman2/easy-occp/releases/latest)
+[![CI](https://github.com/hilman2/easy-ocpp/actions/workflows/ci.yml/badge.svg)](https://github.com/hilman2/easy-ocpp/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/hilman2/easy-ocpp)](https://github.com/hilman2/easy-ocpp/releases/latest)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-Herramienta sencilla de gestión de estaciones de carga (cargadores) para **pymes con 1–10 cargadores**.
+Servidor **OCPP autoalojado (CSMS)** para estaciones de carga, pensado para **pymes con 1–10 cargadores**. Gestión de puntos de carga, tarjetas RFID, límites de carga e informes, sin suscripción en la nube.
 
 - **Un solo binario, un solo archivo SQLite** – sin base de datos externa, sin message broker.
 - **OCPP 1.6J** (completo) + **OCPP 2.0.1** (esqueleto WebSocket, BootNotification / TransactionEvent) + **OCPP 1.5 SOAP** (esqueleto para Boot/Heartbeat).
@@ -20,12 +20,15 @@ Herramienta sencilla de gestión de estaciones de carga (cargadores) para **pyme
 |-----------------|--------|
 | Inventario de cargadores + estado (online/offline, conectores, firmware) | ✅ |
 | Gestión de tarjetas RFID, alta mediante «ventana de aprendizaje» (2 min, intercepción de Authorize) | ✅ |
-| Asignación tarjeta → empleado, tarjetas de invitado, caducidad de validez | ✅ |
+| Asignación tarjeta → usuario; una tarjeta sin usuario es una tarjeta de invitado | ✅ |
 | Desbloqueo remoto para invitados, imputación a una etiqueta de invitado | ✅ |
 | Valores en vivo durante la carga (kWh cargados, potencia actual, SoC) | ✅ |
 | Lista de transacciones, filtro por usuario | ✅ |
 | Estadísticas por mes / trimestre / año | ✅ |
-| Gestión de usuarios (admin/user), contraseña local | ✅ |
+| Los usuarios **son** los empleados: tarjetas, cargas y límites cuelgan de la cuenta | ✅ |
+| Límites por carga: kWh objetivo o temporizador, parada automática | ✅ |
+| Valores predeterminados por persona, fijados por el empleado o por el admin | ✅ |
+| Autoservicio del empleado: su carga en vivo, sus límites, parada por él mismo | ✅ |
 | Interfaz multilingüe (Deutsch, English, Français, Español) | ✅ |
 | Active Directory (LDAP) | 🟡 Config preparada |
 | Entra ID (OIDC)        | 🟡 Config preparada |
@@ -33,8 +36,8 @@ Herramienta sencilla de gestión de estaciones de carga (cargadores) para **pyme
 ## Puesta en marcha
 
 **Binarios listos para usar** (Windows x64, Linux x64) disponibles en
-[Releases](https://github.com/hilman2/easy-occp/releases/latest) — descomprimir,
-ejecutar `easy-occp.exe` o `easy-occp`, y listo (ver `INSTALL.es.md` en el paquete).
+[Releases](https://github.com/hilman2/easy-ocpp/releases/latest). Descomprimir,
+ejecutar `easy-ocpp.exe` o `easy-ocpp`, y listo (ver `INSTALL.es.md` en el paquete).
 
 O compilarlo uno mismo:
 
@@ -87,9 +90,52 @@ El panel y la página de detalle del cargador actualizan automáticamente las
 cargas en curso cada 10 segundos (polling con htmx). Si un cargador no informa
 la potencia, esta se deriva de las dos últimas lecturas del contador.
 
+## Roles y permisos
+
+Solo existe un tipo de persona: el **usuario**. Un empleado es un usuario con
+`role = user`; sus tarjetas, sus cargas y sus límites cuelgan directamente de esa
+cuenta. Ya no hay una ficha de empleado aparte.
+
+| | Admin | Empleado |
+|---|---|---|
+| Panel, cargadores, tarjetas, gestión de usuarios | ✅ | – |
+| Cargas de todas las personas | ✅ | – |
+| Sus propias cargas (lista, CSV, estadísticas, PDF mensual) | ✅ | ✅ |
+| Ver su carga en curso y detenerla | ✅ | ✅ |
+| kWh objetivo / temporizador en su carga en curso | ✅ | ✅ |
+| Valores predeterminados, los suyos | ✅ | ✅ |
+| Valores predeterminados de cualquier empleado | ✅ | – |
+
+Tras iniciar sesión, un empleado llega a **`/me`**, no al panel; la navegación
+solo le muestra lo que realmente puede abrir. Las restricciones se aplican en el
+servidor, no solo se ocultan en la interfaz.
+
+Los empleados creados antes de este modelo de cuentas se importan **sin
+contraseña**: sus cargas se registran, pero no pueden iniciar sesión hasta que un
+administrador les asigne una en «Usuarios».
+
+## Límites de carga
+
+Una carga se detiene automáticamente en cuanto alcanza una **energía objetivo** o
+un **temporizador**, lo que ocurra primero. Ambos son opcionales y se pueden
+desactivar por separado.
+
+- **Valores predeterminados por persona**: el empleado los fija en su propia
+  página y el administrador en la ficha del usuario. Se aplican al iniciar cada
+  carga, y el temporizador cuenta desde el comienzo de la carga.
+- **En la carga en curso**: los valores se pueden cambiar mientras se carga. Allí
+  el temporizador significa «detener dentro de N minutos», que es lo que uno
+  quiere decir estando delante del cargador.
+
+Un vigilante comprueba cada 15 segundos y envía `RemoteStopTransaction`. El
+límite de energía se comprueba además en cuanto llegan nuevas mediciones, para no
+seguir cargando hasta el siguiente ciclo. Si el cargador rechaza la parada, se
+reintenta en el ciclo siguiente: la carga solo se da por resuelta cuando el
+cargador la ha aceptado.
+
 ## Almacenamiento de datos
 
-Todo se guarda en **un solo archivo SQLite** en `data/easy-occp.db` (modificable mediante `config.toml`). Las migraciones se encuentran en `migrations/` y se aplican automáticamente al iniciar.
+Todo se guarda en **un solo archivo SQLite** en `data/easy-ocpp.db` (modificable mediante `config.toml`). Las migraciones se encuentran en `migrations/` y se aplican automáticamente al iniciar.
 
 ### Comprobaciones de coherencia al recibir datos
 
@@ -115,6 +161,7 @@ src/
     ocpp16.rs       – OCPP 1.6J (completo)
     ocpp20.rs       – OCPP 2.0.1 (bootstrap)
     soap15.rs       – endpoint OCPP 1.5 SOAP
+    limits.rs       – vigilante de kWh objetivo / temporizador
   web/              – router axum, vistas Askama
 templates/          – plantillas HTML (Askama)
 static/             – CSS + shim de htmx (embebido vía rust-embed)

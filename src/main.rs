@@ -27,7 +27,7 @@ pub struct AppState {
 }
 
 #[derive(Parser, Debug)]
-#[command(name = "easy-occp", about = "Wallbox-Management-Tool (OCPP)")]
+#[command(name = "easy-ocpp", about = "Wallbox-Management-Tool (OCPP)")]
 struct Cli {
     /// Pfad zur Konfigurationsdatei (TOML).
     #[arg(long, default_value = "config.toml")]
@@ -49,6 +49,14 @@ async fn main() -> Result<()> {
     std::fs::create_dir_all(cfg.data_dir())
         .with_context(|| format!("Konnte Datenverzeichnis {:?} nicht anlegen", cfg.data_dir()))?;
 
+    if cfg.using_legacy_db() {
+        tracing::warn!(
+            "Datenbank {} aus der Zeit vor der Umbenennung wird weiterverwendet. \
+             Zum Umstellen das Programm stoppen und die Datei in {} umbenennen.",
+            config::LEGACY_DB_FILE,
+            cfg.storage.db_file
+        );
+    }
     let db_url = format!("sqlite://{}", cfg.db_path().to_string_lossy().replace('\\', "/"));
     tracing::info!("Datenbank: {}", db_url);
 
@@ -79,6 +87,9 @@ async fn main() -> Result<()> {
         ocpp_hub: Arc::new(ocpp::hub::Hub::default()),
         config: Arc::new(cfg.clone()),
     };
+
+    // Wacht ueber Timer und Ziel-kWh der laufenden Ladungen.
+    ocpp::limits::spawn_watchdog(state.clone());
 
     let http_addr: SocketAddr = cfg.http.bind.parse().context("http.bind ungültig")?;
     let app = web::router(state.clone());

@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CSMS OCPP autoalojado para pymes | easy-ocpp</title>
+    <meta name="description" content="CSMS de código abierto para OCPP 1.6J / 2.0.1 y 1–10 cargadores: tarjetas RFID, límites de carga, mediciones en vivo, informes. Un binario Rust, un archivo SQLite.">
+    <link rel="canonical" href="https://hilman2.github.io/easy-ocpp/es/">
+    <link rel="alternate" hreflang="en" href="https://hilman2.github.io/easy-ocpp/">
+    <link rel="alternate" hreflang="de" href="https://hilman2.github.io/easy-ocpp/de/">
+    <link rel="alternate" hreflang="fr" href="https://hilman2.github.io/easy-ocpp/fr/">
+    <link rel="alternate" hreflang="es" href="https://hilman2.github.io/easy-ocpp/es/">
+    <link rel="alternate" hreflang="x-default" href="https://hilman2.github.io/easy-ocpp/">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="easy-ocpp">
+    <meta property="og:title" content="CSMS OCPP autoalojado para pymes | easy-ocpp">
+    <meta property="og:description" content="CSMS de código abierto para OCPP 1.6J / 2.0.1 y 1–10 cargadores: tarjetas RFID, límites de carga, mediciones en vivo, informes. Un binario Rust, un archivo SQLite.">
+    <meta property="og:url" content="https://hilman2.github.io/easy-ocpp/es/">
+    <meta property="og:locale" content="es_ES">
+    <meta property="og:image" content="https://opengraph.githubassets.com/1/hilman2/easy-ocpp">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="CSMS OCPP autoalojado para pymes | easy-ocpp">
+    <meta name="twitter:description" content="CSMS de código abierto para OCPP 1.6J / 2.0.1 y 1–10 cargadores: tarjetas RFID, límites de carga, mediciones en vivo, informes. Un binario Rust, un archivo SQLite.">
+    <meta name="twitter:image" content="https://opengraph.githubassets.com/1/hilman2/easy-ocpp">
+    <meta name="theme-color" content="#0b1220">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b1220'/%3E%3Cpath d='M18 5 L9 18 h6 l-2 9 9-13 h-6 z' fill='%2322d3ee'/%3E%3C/svg%3E">
+    <link rel="stylesheet" href="../assets/style.css">
+    <script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "easy-ocpp", "applicationCategory": "BusinessApplication", "applicationSubCategory": "Charging Station Management System (CSMS)", "operatingSystem": "Windows, Linux", "description": "CSMS de código abierto para OCPP 1.6J / 2.0.1 y 1–10 cargadores: tarjetas RFID, límites de carga, mediciones en vivo, informes. Un binario Rust, un archivo SQLite.", "url": "https://hilman2.github.io/easy-ocpp/es/", "codeRepository": "https://github.com/hilman2/easy-ocpp", "programmingLanguage": "Rust", "license": "https://opensource.org/licenses/MIT", "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "EUR"}, "inLanguage": ["de", "en", "fr", "es"]}</script>
+    <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "¿Qué es un CSMS?", "acceptedAnswer": {"@type": "Answer", "text": "Un Charging Station Management System es el backend con el que habla un punto de recarga. Autoriza tarjetas RFID, registra las cargas y las lecturas del contador y puede iniciar o detener una carga de forma remota. OCPP es el protocolo con el que ambos se comunican."}}, {"@type": "Question", "name": "¿Funciona con mi cargador?", "acceptedAnswer": {"@type": "Answer", "text": "Cualquier punto de carga que hable OCPP 1.6J sobre WebSocket debería funcionar, lo que cubre la gran mayoría de equipos vendidos en los últimos años. El hardware más antiguo limitado a OCPP 1.5 SOAP puede conectarse para boot y heartbeat."}}, {"@type": "Question", "name": "¿Necesito conexión a internet?", "acceptedAnswer": {"@type": "Answer", "text": "No. Los cargadores se conectan a su servidor por la red local. Internet solo hace falta si quiere acceder a la interfaz desde fuera."}}, {"@type": "Question", "name": "¿Cómo veo quién ha cargado cuánto?", "acceptedAnswer": {"@type": "Answer", "text": "Cada carga va ligada a la tarjeta RFID con la que se inició, y cada tarjeta pertenece a una persona. La lista, las estadísticas y el PDF mensual se agrupan en consecuencia. Las cargas con tarjetas sin asignar se contabilizan como cargas de invitado."}}, {"@type": "Question", "name": "¿Ven los empleados las cargas de los demás?", "acceptedAnswer": {"@type": "Answer", "text": "No. Un empleado solo ve las cargas iniciadas con sus propias tarjetas. Únicamente un administrador lo ve todo."}}, {"@type": "Question", "name": "¿Cuánto cuesta?", "acceptedAnswer": {"@type": "Answer", "text": "Nada. easy-ocpp es código abierto bajo licencia MIT. No hay versión de pago ni tarifa por punto de carga."}}]}</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="site">
+  <div class="wrap bar">
+    <a class="brand" href="https://hilman2.github.io/easy-ocpp/es/">
+      <svg viewBox="0 0 32 32" width="26" height="26" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#0f172a"/><path d="M18 5 L9 18 h6 l-2 9 9-13 h-6 z" fill="#22d3ee"/></svg>
+      easy-ocpp
+    </a>
+    <nav aria-label="Sections">
+      <a href="#features">Funciones</a>
+      <a href="#roles">Roles</a>
+      <a href="#limits">Límites</a>
+      <a href="#start">Empezar</a>
+      <a href="#faq">Preguntas</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+  <section class="hero">
+    <div class="wrap">
+      <p class="eyebrow">OCPP 1.6J &middot; 2.0.1 &middot; 1.5 SOAP</p>
+      <h1>Su propio servidor OCPP para hasta diez cargadores</h1>
+      <p class="lede">easy-ocpp es un sistema de gestión de puntos de carga (CSMS) autoalojado para pequeñas y medianas empresas. Habla OCPP 1.6J, 2.0.1 y 1.5 SOAP. Un solo binario, un solo archivo SQLite, sin suscripción en la nube ni conexión permanente a internet.</p>
+      <p class="actions">
+        <a class="btn primary" href="https://github.com/hilman2/easy-ocpp/releases/latest">Descargar versión</a>
+        <a class="btn" href="https://github.com/hilman2/easy-ocpp">Código fuente en GitHub</a>
+      </p>
+    </div>
+  </section>
+
+  <section class="wrap grid-3">
+        <article class="card">
+          <h3>Sin nube, sin suscripción</h3>
+          <p>Todo funciona en una máquina suya. Basta un servidor pequeño, un NUC o incluso un PC de oficina que le sobre. Los datos de carga no salen de su red.</p>
+        </article>
+        <article class="card">
+          <h3>Un binario, un archivo</h3>
+          <p>Sin servidor de base de datos, sin broker de mensajes, sin pila de contenedores. Descomprima, ejecute y listo. Todos sus datos caben en un archivo SQLite que basta copiar para hacer una copia de seguridad.</p>
+        </article>
+        <article class="card">
+          <h3>Pensado para 1–10 cargadores</h3>
+          <p>Deliberadamente no es una plataforma corporativa. Lo que una empresa con unos pocos puntos de carga necesita de verdad, sin la carga operativa que suele acompañarla.</p>
+        </article>
+  </section>
+
+  <section id="features" class="wrap">
+    <h2>Qué hace</h2>
+    <div class="grid-4">
+        <article class="feature">
+          <h3>Inventario de cargadores</h3>
+          <p>Estado en línea, conectores, firmware y número de serie por punto de carga, directamente desde la conexión OCPP.</p>
+        </article>
+        <article class="feature">
+          <h3>Gestión de tarjetas</h3>
+          <p>Las tarjetas nuevas se dan de alta mediante una ventana de aprendizaje de dos minutos: acerque la tarjeta y el servidor captura el tag.</p>
+        </article>
+        <article class="feature">
+          <h3>Tarjetas y personas</h3>
+          <p>Una tarjeta pertenece a una persona o es de invitado. La categoría se deriva de la asignación y no puede contradecirla.</p>
+        </article>
+        <article class="feature">
+          <h3>Mediciones en vivo</h3>
+          <p>kWh cargados, potencia actual y estado de carga durante la sesión, actualizados cada diez segundos.</p>
+        </article>
+        <article class="feature">
+          <h3>Límites de carga</h3>
+          <p>Parada automática al alcanzar la energía objetivo o cumplirse el tiempo, lo que ocurra primero.</p>
+        </article>
+        <article class="feature">
+          <h3>Cargas de invitados</h3>
+          <p>Desbloquee de forma remota para una visita e impute la carga a una etiqueta de invitado.</p>
+        </article>
+        <article class="feature">
+          <h3>Informes</h3>
+          <p>Lista de cargas con exportación CSV, estadísticas por mes, trimestre y año, y un PDF mensual por persona.</p>
+        </article>
+        <article class="feature">
+          <h3>Cuatro idiomas</h3>
+          <p>Toda la interfaz en alemán, inglés, francés y español, conmutable por usuario.</p>
+        </article>
+    </div>
+  </section>
+
+  <section id="roles" class="wrap">
+    <h2>Dos roles, claramente separados</h2>
+    <p class="lede-2">Solo existe un tipo de persona en el sistema: el usuario. Un empleado es un usuario, y sus tarjetas, sus cargas y sus límites cuelgan directamente de esa cuenta. Lo que puede hacer un empleado está deliberadamente acotado.</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th scope="col"></th><th scope="col">Admin</th><th scope="col">Empleado</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Cargadores, tarjetas, gestión de usuarios</th><td class="yes" aria-label="yes">&#10003;</td><td class="no" aria-label="no">&ndash;</td></tr>
+          <tr><th scope="row">Cargas de todas las personas</th><td class="yes" aria-label="yes">&#10003;</td><td class="no" aria-label="no">&ndash;</td></tr>
+          <tr><th scope="row">Sus propias cargas, CSV, estadísticas, PDF mensual</th><td class="yes" aria-label="yes">&#10003;</td><td class="yes" aria-label="yes">&#10003;</td></tr>
+          <tr><th scope="row">Ver su carga en curso y detenerla</th><td class="yes" aria-label="yes">&#10003;</td><td class="yes" aria-label="yes">&#10003;</td></tr>
+          <tr><th scope="row">kWh objetivo y temporizador en su carga</th><td class="yes" aria-label="yes">&#10003;</td><td class="yes" aria-label="yes">&#10003;</td></tr>
+          <tr><th scope="row">Valores predeterminados de cualquier empleado</th><td class="yes" aria-label="yes">&#10003;</td><td class="no" aria-label="no">&ndash;</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">El servidor aplica estas restricciones. Ocultarlas en la interfaz no bastaría. Tras iniciar sesión, un empleado llega a su propia página y la navegación solo le muestra lo que realmente puede abrir.</p>
+  </section>
+
+  <section id="limits" class="wrap">
+    <h2>Límites que detienen la carga de verdad</h2>
+    <p>Una carga termina sola en cuanto alcanza una energía objetivo o un temporizador, lo que ocurra primero. Ambos son opcionales. Cada persona tiene valores predeterminados que se aplican a cada carga nueva y que fija el propio empleado o un administrador; en una carga en curso los valores siguen siendo modificables.</p>
+    <p class="note">Un vigilante comprueba cada 15 segundos y envía RemoteStopTransaction. El límite de energía se comprueba además en cuanto llegan nuevas mediciones, para no sobrepasar el objetivo esperando al siguiente ciclo. Si un cargador rechaza la parada, se vuelve a intentar.</p>
+  </section>
+
+  <section id="start" class="wrap">
+    <h2>Empezar</h2>
+    <p>Descargue una versión para Windows o Linux, descomprima y ejecute. La interfaz queda entonces en el puerto 8080; el primer acceso es admin / admin.</p>
+    <p>O compile desde el código fuente:</p>
+    <pre><code>git clone https://github.com/hilman2/easy-ocpp.git
+cd easy-ocpp
+cargo run --release</code></pre>
+
+    <h3>Conectar un cargador</h3>
+    <p>Apunte el punto de carga a su servidor. Los subprotocolos se negocian automáticamente, y un punto de carga desconocido se registra solo en la primera conexión.</p>
+    <pre><code>ws://&lt;host&gt;:8080/ocpp/&lt;ChargePointId&gt;</code></pre>
+    <p>Para equipos OCPP 1.5 antiguos por SOAP:</p>
+    <pre><code>POST http://&lt;host&gt;:8080/ocpp15</code></pre>
+  </section>
+
+  <section id="compat" class="wrap">
+    <h2>Protocolos admitidos</h2>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th scope="col">Versión</th><th scope="col">Transporte</th><th scope="col">Estado</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">OCPP 1.6J</th><td>WebSocket</td><td>Completo (boot, heartbeat, estado, autorización, transacciones, mediciones, arranque/parada remotos, configuración)</td></tr>
+          <tr><th scope="row">OCPP 2.0.1</th><td>WebSocket</td><td>Esqueleto (BootNotification y TransactionEvent)</td></tr>
+          <tr><th scope="row">OCPP 1.5</th><td>SOAP</td><td>Esqueleto (boot y heartbeat)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="faq" class="wrap">
+    <h2>Preguntas frecuentes</h2>
+        <details class="faq">
+          <summary><h3>¿Qué es un CSMS?</h3></summary>
+          <p>Un Charging Station Management System es el backend con el que habla un punto de recarga. Autoriza tarjetas RFID, registra las cargas y las lecturas del contador y puede iniciar o detener una carga de forma remota. OCPP es el protocolo con el que ambos se comunican.</p>
+        </details>
+        <details class="faq">
+          <summary><h3>¿Funciona con mi cargador?</h3></summary>
+          <p>Cualquier punto de carga que hable OCPP 1.6J sobre WebSocket debería funcionar, lo que cubre la gran mayoría de equipos vendidos en los últimos años. El hardware más antiguo limitado a OCPP 1.5 SOAP puede conectarse para boot y heartbeat.</p>
+        </details>
+        <details class="faq">
+          <summary><h3>¿Necesito conexión a internet?</h3></summary>
+          <p>No. Los cargadores se conectan a su servidor por la red local. Internet solo hace falta si quiere acceder a la interfaz desde fuera.</p>
+        </details>
+        <details class="faq">
+          <summary><h3>¿Cómo veo quién ha cargado cuánto?</h3></summary>
+          <p>Cada carga va ligada a la tarjeta RFID con la que se inició, y cada tarjeta pertenece a una persona. La lista, las estadísticas y el PDF mensual se agrupan en consecuencia. Las cargas con tarjetas sin asignar se contabilizan como cargas de invitado.</p>
+        </details>
+        <details class="faq">
+          <summary><h3>¿Ven los empleados las cargas de los demás?</h3></summary>
+          <p>No. Un empleado solo ve las cargas iniciadas con sus propias tarjetas. Únicamente un administrador lo ve todo.</p>
+        </details>
+        <details class="faq">
+          <summary><h3>¿Cuánto cuesta?</h3></summary>
+          <p>Nada. easy-ocpp es código abierto bajo licencia MIT. No hay versión de pago ni tarifa por punto de carga.</p>
+        </details>
+  </section>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p class="langs"><span class="muted">Idioma:</span> <a href="https://hilman2.github.io/easy-ocpp/" hreflang="en">English</a> · <a href="https://hilman2.github.io/easy-ocpp/de/" hreflang="de">Deutsch</a> · <a href="https://hilman2.github.io/easy-ocpp/fr/" hreflang="fr">Français</a> · <strong>Español</strong></p>
+    <p class="muted">Licencia MIT. Sin relación con la Open Charge Alliance. &middot; <a href="https://github.com/hilman2/easy-ocpp">GitHub</a></p>
+  </div>
+</footer>
+</body>
+</html>

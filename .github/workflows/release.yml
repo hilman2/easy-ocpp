@@ -33,22 +33,22 @@ jobs:
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          New-Item -ItemType Directory dist\easy-occp | Out-Null
-          Copy-Item target\release\easy-occp.exe, config.example.toml, LICENSE dist\easy-occp\
-          Copy-Item README*.md, ANLEITUNG.md, INSTALL*.md dist\easy-occp\
-          Compress-Archive -Path dist\easy-occp -DestinationPath "dist\easy-occp-${{ github.ref_name }}-${{ matrix.suffix }}.zip"
+          New-Item -ItemType Directory dist\easy-ocpp | Out-Null
+          Copy-Item target\release\easy-ocpp.exe, config.example.toml, LICENSE dist\easy-ocpp\
+          Copy-Item README*.md, ANLEITUNG.md, INSTALL*.md dist\easy-ocpp\
+          Compress-Archive -Path dist\easy-ocpp -DestinationPath "dist\easy-ocpp-${{ github.ref_name }}-${{ matrix.suffix }}.zip"
 
       - name: Paketieren (Linux)
         if: runner.os == 'Linux'
         run: |
-          mkdir -p dist/easy-occp
-          cp target/release/easy-occp config.example.toml LICENSE dist/easy-occp/
-          cp README*.md ANLEITUNG.md INSTALL*.md dist/easy-occp/
-          tar -C dist -czf "dist/easy-occp-${{ github.ref_name }}-${{ matrix.suffix }}.tar.gz" easy-occp
+          mkdir -p dist/easy-ocpp
+          cp target/release/easy-ocpp config.example.toml LICENSE dist/easy-ocpp/
+          cp README*.md ANLEITUNG.md INSTALL*.md dist/easy-ocpp/
+          tar -C dist -czf "dist/easy-ocpp-${{ github.ref_name }}-${{ matrix.suffix }}.tar.gz" easy-ocpp
 
       - uses: actions/upload-artifact@v4
         with:
-          name: easy-occp-${{ matrix.suffix }}
+          name: easy-ocpp-${{ matrix.suffix }}
           path: |
             dist/*.zip
             dist/*.tar.gz

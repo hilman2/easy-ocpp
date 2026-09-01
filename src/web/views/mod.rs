@@ -1,7 +1,7 @@
 pub mod auth;
 pub mod chips;
 pub mod dashboard;
-pub mod employees;
+pub mod me;
 pub mod reports;
 pub mod stats;
 pub mod transactions;
@@ -45,7 +45,12 @@ impl LayoutCtx {
         self.lang.t(key)
     }
 
-    /// Alle verfügbaren Sprachen — für den Umschalter in der Topbar.
+    /// Steuert die Navigation: ein Mitarbeiter sieht nur seine eigenen Seiten.
+    pub fn is_admin(&self) -> bool {
+        self.user.as_ref().map(|u| u.is_admin()).unwrap_or(false)
+    }
+
+    /// Alle verfügbaren Sprachen für den Umschalter in der Topbar.
     pub fn langs(&self) -> [Lang; 4] {
         Lang::ALL
     }

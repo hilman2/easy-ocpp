@@ -1,12 +1,12 @@
-# easy-occp
+# easy-ocpp
 
 🌐 [English](README.md) · [Deutsch](README.de.md) · [Français](README.fr.md) · [Español](README.es.md)
 
-[![CI](https://github.com/hilman2/easy-occp/actions/workflows/ci.yml/badge.svg)](https://github.com/hilman2/easy-occp/actions/workflows/ci.yml)
-[![Release](https://img.shields.io/github/v/release/hilman2/easy-occp)](https://github.com/hilman2/easy-occp/releases/latest)
+[![CI](https://github.com/hilman2/easy-ocpp/actions/workflows/ci.yml/badge.svg)](https://github.com/hilman2/easy-ocpp/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/hilman2/easy-ocpp)](https://github.com/hilman2/easy-ocpp/releases/latest)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-Outil de gestion simple pour bornes de recharge (wallbox), conçu pour les **PME disposant de 1 à 10 wallbox**.
+Serveur **OCPP auto-hébergé (CSMS)** pour bornes de recharge, conçu pour les **PME disposant de 1 à 10 bornes**. Gestion des points de charge, badges RFID, limites de recharge et rapports, sans abonnement cloud.
 
 - **Un seul binaire, un seul fichier SQLite** – pas de base de données externe, pas de message broker.
 - **OCPP 1.6J** (complet) + **OCPP 2.0.1** (ossature WebSocket, BootNotification / TransactionEvent) + **OCPP 1.5 SOAP** (ossature pour Boot/Heartbeat).
@@ -20,12 +20,15 @@ Outil de gestion simple pour bornes de recharge (wallbox), conçu pour les **PME
 |-----------------|--------|
 | Inventaire des wallbox + statut (en ligne/hors ligne, connecteurs, firmware) | ✅ |
 | Gestion des badges RFID, apprentissage via « fenêtre d'apprentissage » (2 min, interception Authorize) | ✅ |
-| Attribution badge → employé, badges invités, expiration de validité | ✅ |
+| Attribution badge → utilisateur ; un badge sans utilisateur est un badge invité | ✅ |
 | Déverrouillage à distance pour les invités, imputation sur un label invité | ✅ |
 | Valeurs en direct pendant la charge (kWh chargés, puissance actuelle, SoC) | ✅ |
 | Liste des transactions, filtre par utilisateur | ✅ |
 | Statistiques par mois / trimestre / année | ✅ |
-| Gestion des utilisateurs (admin/user), mot de passe local | ✅ |
+| Les utilisateurs **sont** les employés : badges, recharges et limites tiennent au compte | ✅ |
+| Limites par recharge : objectif en kWh et/ou minuteur, arrêt automatique | ✅ |
+| Valeurs par défaut par personne, définies par l'employé ou par l'admin | ✅ |
+| Libre-service employé : sa recharge en direct, ses limites, arrêt par lui-même | ✅ |
 | Interface multilingue (Deutsch, English, Français, Español) | ✅ |
 | Active Directory (LDAP) | 🟡 Config préparée |
 | Entra ID (OIDC)        | 🟡 Config préparée |
@@ -33,8 +36,8 @@ Outil de gestion simple pour bornes de recharge (wallbox), conçu pour les **PME
 ## Démarrage
 
 **Des binaires prêts à l'emploi** (Windows x64, Linux x64) sont disponibles sous
-[Releases](https://github.com/hilman2/easy-occp/releases/latest) — décompresser,
-lancer `easy-occp.exe` ou `easy-occp`, c'est tout (voir `INSTALL.fr.md` dans le paquet).
+[Releases](https://github.com/hilman2/easy-ocpp/releases/latest). Décompresser,
+lancer `easy-ocpp.exe` ou `easy-ocpp`, c'est tout (voir `INSTALL.fr.md` dans le paquet).
 
 Ou compiler soi-même :
 
@@ -89,9 +92,52 @@ charges en cours toutes les 10 secondes (polling htmx). Si une wallbox ne
 transmet pas la puissance, celle-ci est dérivée des deux derniers relevés de
 compteur.
 
+## Rôles et droits
+
+Il n'existe qu'une seule sorte de personne : l'**utilisateur**. Un employé est un
+utilisateur avec `role = user` ; ses badges, ses recharges et ses limites sont
+rattachés directement à ce compte. Il n'y a plus de fiche employé distincte.
+
+| | Admin | Employé |
+|---|---|---|
+| Tableau de bord, bornes, badges, gestion des utilisateurs | ✅ | – |
+| Recharges de toutes les personnes | ✅ | – |
+| Ses propres recharges (liste, CSV, statistiques, PDF mensuel) | ✅ | ✅ |
+| Voir sa recharge en cours et l'arrêter | ✅ | ✅ |
+| Objectif kWh / minuteur sur sa recharge en cours | ✅ | ✅ |
+| Valeurs par défaut, les siennes | ✅ | ✅ |
+| Valeurs par défaut de n'importe quel employé | ✅ | – |
+
+Après connexion, un employé arrive sur **`/me`** et non sur le tableau de bord ;
+la navigation ne lui montre que ce qu'il peut réellement ouvrir. Les restrictions
+sont appliquées côté serveur, pas seulement masquées dans l'interface.
+
+Les employés créés avant ce modèle de comptes sont repris **sans mot de passe** :
+leurs recharges sont enregistrées, mais ils ne peuvent pas se connecter tant
+qu'un administrateur ne leur en attribue pas un sous « Utilisateurs ».
+
+## Limites de recharge
+
+Une recharge s'arrête automatiquement dès qu'elle atteint une **énergie cible**
+ou un **minuteur**, le premier des deux. Les deux sont facultatifs et peuvent
+être désactivés séparément.
+
+- **Valeurs par défaut par personne** : l'employé les définit sur sa propre page,
+  l'administrateur sur la fiche utilisateur. Elles sont reprises au démarrage de
+  chaque recharge, le minuteur comptant alors depuis le début de la charge.
+- **Sur la recharge en cours** : les valeurs restent modifiables pendant la
+  charge. Le minuteur y signifie « arrêter dans N minutes », ce que l'on veut
+  dire quand on se tient devant la borne.
+
+Un chien de garde vérifie toutes les 15 secondes et envoie
+`RemoteStopTransaction`. La limite d'énergie est en outre vérifiée dès l'arrivée
+de nouvelles mesures, afin de ne pas continuer à charger jusqu'au cycle suivant.
+Si la borne refuse l'arrêt, une nouvelle tentative a lieu au cycle suivant. La
+recharge n'est considérée comme traitée qu'une fois la borne d'accord.
+
 ## Stockage des données
 
-Tout est stocké dans **un seul fichier SQLite** sous `data/easy-occp.db` (modifiable via `config.toml`). Les migrations se trouvent dans `migrations/` et sont appliquées automatiquement au démarrage.
+Tout est stocké dans **un seul fichier SQLite** sous `data/easy-ocpp.db` (modifiable via `config.toml`). Les migrations se trouvent dans `migrations/` et sont appliquées automatiquement au démarrage.
 
 ### Contrôles de cohérence à la réception des données
 
@@ -117,6 +163,7 @@ src/
     ocpp16.rs       – OCPP 1.6J (complet)
     ocpp20.rs       – OCPP 2.0.1 (bootstrap)
     soap15.rs       – endpoint OCPP 1.5 SOAP
+    limits.rs       – chien de garde objectif kWh / minuteur
   web/              – routeur axum, vues Askama
 templates/          – templates HTML (Askama)
 static/             – CSS + shim htmx (embarqué via rust-embed)

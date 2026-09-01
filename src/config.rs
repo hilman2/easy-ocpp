@@ -82,8 +82,13 @@ fn default_data_dir() -> PathBuf {
     PathBuf::from("data")
 }
 fn default_db_file() -> String {
-    "easy-occp.db".to_string()
+    "easy-ocpp.db".to_string()
 }
+
+/// Dateiname der Datenbank bis einschliesslich v0.3.1. Damals hiess das
+/// Produkt noch "easy-occp" (Dreher im Protokollnamen). Bestehende
+/// Installationen behalten ihre Datei, siehe [`Config::db_path`].
+pub const LEGACY_DB_FILE: &str = "easy-occp.db";
 
 #[derive(Clone, Debug, Default, Deserialize, Serialize)]
 pub struct AuthConfig {
@@ -130,8 +135,26 @@ impl Config {
         &self.storage.data_dir
     }
 
+    /// Pfad zur SQLite-Datei.
+    ///
+    /// Beim Umbenennen von `easy-occp` auf `easy-ocpp` hat sich der Default-Name
+    /// der Datenbank geaendert. Liegt im Datenverzeichnis nur noch die alte
+    /// Datei, wird weiter mit ihr gearbeitet. Sonst wuerde ein Update still
+    /// eine leere Datenbank anlegen und wie ein Datenverlust aussehen.
     pub fn db_path(&self) -> PathBuf {
-        self.storage.data_dir.join(&self.storage.db_file)
+        let configured = self.storage.data_dir.join(&self.storage.db_file);
+        if configured.exists() || !self.using_legacy_db() {
+            return configured;
+        }
+        self.storage.data_dir.join(LEGACY_DB_FILE)
+    }
+
+    /// True, wenn die Datenbank aus der Zeit vor der Umbenennung stammt und
+    /// mangels neuer Datei weiterverwendet wird. Nur fuer den Hinweis beim Start.
+    pub fn using_legacy_db(&self) -> bool {
+        self.storage.db_file != LEGACY_DB_FILE
+            && !self.storage.data_dir.join(&self.storage.db_file).exists()
+            && self.storage.data_dir.join(LEGACY_DB_FILE).exists()
     }
 }
 

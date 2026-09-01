@@ -1,46 +1,64 @@
 {% extends "base.html" %}
-{% block title %}{{ layout.t("nav.users") }}{% endblock %}
+{% block title %}{{ layout.t("users.title") }}{% endblock %}
+{% block crumb %}{{ layout.t("users.title") }}{% endblock %}
 {% block content %}
-<h1>{{ layout.t("nav.users") }}</h1>
+<div class="page-title-row">
+    <div>
+        <h1>{{ layout.t("users.title") }}</h1>
+        <div class="sub">{{ layout.t("users.sub") }}</div>
+    </div>
+</div>
+
 <details class="card">
     <summary>{{ layout.t("users.new") }}</summary>
     <form method="post" action="/users/new" class="row">
         <label>{{ layout.t("common.username") }} <input name="username" required></label>
         <label>{{ layout.t("common.name") }} <input name="display_name" required></label>
         <label>{{ layout.t("common.email") }} <input name="email" type="email"></label>
+        <label>{{ layout.t("emp.department") }} <input name="department"></label>
         <label>{{ layout.t("common.role") }}
             <select name="role">
                 <option value="user">{{ layout.t("users.user_role") }}</option>
                 <option value="admin">{{ layout.t("users.admin_role") }}</option>
             </select>
         </label>
-        <label>{{ layout.t("common.password") }} <input name="password" type="password" minlength="6" required></label>
+        <label>{{ layout.t("users.pw_optional") }} <input name="password" type="password" minlength="6"></label>
         <button class="primary">{{ layout.t("common.create") }}</button>
     </form>
+    <p class="hint">{{ layout.t("users.no_login_hint") }}</p>
 </details>
 
 <table class="data">
-    <thead><tr><th>{{ layout.t("common.username") }}</th><th>{{ layout.t("common.name") }}</th><th>{{ layout.t("common.email") }}</th><th>{{ layout.t("common.role") }}</th><th>{{ layout.t("users.source") }}</th><th>{{ layout.t("common.active") }}</th><th>{{ layout.t("common.password") }}</th><th></th></tr></thead>
+    <thead><tr>
+        <th>{{ layout.t("common.name") }}</th>
+        <th>{{ layout.t("common.username") }}</th>
+        <th>{{ layout.t("emp.department") }}</th>
+        <th>{{ layout.t("common.role") }}</th>
+        <th>{{ layout.t("common.active") }}</th>
+        <th>{{ layout.t("nav.chips") }}</th>
+        <th>{{ layout.t("common.sessions") }}</th>
+        <th>{{ layout.t("common.energy_kwh") }}</th>
+        <th></th>
+    </tr></thead>
     <tbody>
-    {% for u in users %}
+    {% for r in users %}
         <tr>
-            <td><code>{{ u.username }}</code></td>
-            <td>{{ u.display_name }}</td>
-            <td>{{ u.email.as_deref().unwrap_or("") }}</td>
-            <td>{{ u.role }}</td>
-            <td>{{ u.auth_source }}</td>
-            <td>{% if u.disabled == 0 %}{{ layout.t("common.yes") }}{% else %}{{ layout.t("common.no") }}{% endif %}</td>
+            <td><a href="/users/{{ r.user.id }}">{{ r.user.display_name }}</a></td>
             <td>
-                {% if u.auth_source == "local" %}
-                <form method="post" action="/users/{{ u.id }}/password" class="inline">
-                    <input type="password" name="password" placeholder="{{ layout.t("users.new_pw_ph") }}" minlength="6">
-                    <button class="linkbtn">{{ layout.t("users.set") }}</button>
-                </form>
-                {% else %}–{% endif %}
+                <code>{{ r.user.username }}</code>
+                {% if !r.user.has_login() %} <small class="muted">· {{ layout.t("users.no_login") }}</small>{% endif %}
             </td>
-            <td>
-                <form method="post" action="/users/{{ u.id }}/delete" onsubmit="return confirm('{{ layout.t("users.delete_confirm") }}')">
-                    <button class="linkbtn danger">{{ layout.t("common.delete") }}</button>
+            <td>{{ r.user.department.as_deref().unwrap_or("–") }}</td>
+            <td>{% if r.user.is_admin() %}{{ layout.t("users.admin_role") }}{% else %}{{ layout.t("users.user_role") }}{% endif %}</td>
+            <td>{% if r.user.disabled == 0 %}{{ layout.t("common.yes") }}{% else %}{{ layout.t("common.no") }}{% endif %}</td>
+            <td>{{ r.chip_count }}</td>
+            <td>{{ r.tx_count }}</td>
+            <td>{{ r.total_wh / 1000 }}</td>
+            <td class="nowrap">
+                <a class="linkbtn sm" href="/users/{{ r.user.id }}">{{ layout.t("dash.details") }}</a>
+                <form method="post" action="/users/{{ r.user.id }}/delete" style="display:inline;"
+                      onsubmit="return confirm('{{ layout.t("users.delete_confirm") }}')">
+                    <button class="linkbtn danger sm">{{ layout.t("common.delete") }}</button>
                 </form>
             </td>
         </tr>

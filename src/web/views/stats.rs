@@ -5,10 +5,10 @@ use chrono::{Duration, Utc};
 use serde::Deserialize;
 
 use super::{render, LayoutCtx};
-use crate::auth::AdminUser;
+use crate::auth::AuthUser;
 use crate::domain::stats::{
-    by_employee, by_wallbox, employee_vs_guest, overview, GuestSplit, Granularity, NamedStat,
-    PeriodStat,
+    by_user, by_wallbox, employee_vs_guest, overview, Granularity, GuestSplit, NamedStat,
+    PeriodStat, Scope,
 };
 use crate::{AppResult, AppState};
 
@@ -19,9 +19,12 @@ struct StatsTpl {
     granularity: String,
     range: String,
     rows: Vec<PeriodStat>,
-    per_employee: Vec<NamedStat>,
+    per_user: Vec<NamedStat>,
     per_wallbox: Vec<NamedStat>,
     split: GuestSplit,
+    /// Ein Mitarbeiter sieht nur seine eigenen Zahlen. Die Aufstellung nach
+    /// Person und der Gast-Anteil ergeben dort keinen Sinn.
+    is_admin: bool,
 }
 
 #[derive(Deserialize)]
@@ -33,7 +36,7 @@ pub struct Filter {
 
 pub async fn show(
     State(state): State<AppState>,
-    AdminUser(user): AdminUser,
+    AuthUser(user): AuthUser,
     lang: crate::i18n::Lang,
     Query(filter): Query<Filter>,
 ) -> AppResult<Response> {
@@ -52,25 +55,40 @@ pub async fn show(
     };
     let since_ref = since.as_deref();
 
-    let rows = overview(&state.db, gran).await.map_err(crate::AppError::Other)?;
-    let per_employee = by_employee(&state.db, since_ref)
+    // Nicht-Admins bekommen ausschliesslich ihre eigenen Ladungen zu sehen.
+    let is_admin = user.is_admin();
+    let scope = if is_admin {
+        Scope::all()
+    } else {
+        Scope::only(user.id)
+    };
+
+    let rows = overview(&state.db, gran, since_ref, scope)
         .await
         .map_err(crate::AppError::Other)?;
-    let per_wallbox = by_wallbox(&state.db, since_ref)
+    let per_user = by_user(&state.db, since_ref, scope)
         .await
         .map_err(crate::AppError::Other)?;
-    let split = employee_vs_guest(&state.db, since_ref)
+    let per_wallbox = by_wallbox(&state.db, since_ref, scope)
         .await
         .map_err(crate::AppError::Other)?;
+    let split = if is_admin {
+        employee_vs_guest(&state.db, since_ref, scope)
+            .await
+            .map_err(crate::AppError::Other)?
+    } else {
+        GuestSplit::default()
+    };
 
     let tpl = StatsTpl {
         layout: LayoutCtx::new("stats", Some(user), lang),
         granularity: g.to_string(),
         range: range.to_string(),
         rows,
-        per_employee,
+        per_user,
         per_wallbox,
         split,
+        is_admin,
     };
     Ok(render(&tpl)?.into_response())
 }

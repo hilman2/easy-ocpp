@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Self-hosted OCPP CSMS for small businesses | easy-ocpp</title>
+    <meta name="description" content="Open-source OCPP 1.6J / 2.0.1 CSMS for 1–10 wallboxes: RFID chips, charging limits, live meter values, reports. One Rust binary, one SQLite file.">
+    <link rel="canonical" href="https://hilman2.github.io/easy-ocpp/">
+    <link rel="alternate" hreflang="en" href="https://hilman2.github.io/easy-ocpp/">
+    <link rel="alternate" hreflang="de" href="https://hilman2.github.io/easy-ocpp/de/">
+    <link rel="alternate" hreflang="fr" href="https://hilman2.github.io/easy-ocpp/fr/">
+    <link rel="alternate" hreflang="es" href="https://hilman2.github.io/easy-ocpp/es/">
+    <link rel="alternate" hreflang="x-default" href="https://hilman2.github.io/easy-ocpp/">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="easy-ocpp">
+    <meta property="og:title" content="Self-hosted OCPP CSMS for small businesses | easy-ocpp">
+    <meta property="og:description" content="Open-source OCPP 1.6J / 2.0.1 CSMS for 1–10 wallboxes: RFID chips, charging limits, live meter values, reports. One Rust binary, one SQLite file.">
+    <meta property="og:url" content="https://hilman2.github.io/easy-ocpp/">
+    <meta property="og:locale" content="en_GB">
+    <meta property="og:image" content="https://opengraph.githubassets.com/1/hilman2/easy-ocpp">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Self-hosted OCPP CSMS for small businesses | easy-ocpp">
+    <meta name="twitter:description" content="Open-source OCPP 1.6J / 2.0.1 CSMS for 1–10 wallboxes: RFID chips, charging limits, live meter values, reports. One Rust binary, one SQLite file.">
+    <meta name="twitter:image" content="https://opengraph.githubassets.com/1/hilman2/easy-ocpp">
+    <meta name="theme-color" content="#0b1220">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b1220'/%3E%3Cpath d='M18 5 L9 18 h6 l-2 9 9-13 h-6 z' fill='%2322d3ee'/%3E%3C/svg%3E">
+    <link rel="stylesheet" href="assets/style.css">
+    <script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "easy-ocpp", "applicationCategory": "BusinessApplication", "applicationSubCategory": "Charging Station Management System (CSMS)", "operatingSystem": "Windows, Linux", "description": "Open-source OCPP 1.6J / 2.0.1 CSMS for 1–10 wallboxes: RFID chips, charging limits, live meter values, reports. One Rust binary, one SQLite file.", "url": "https://hilman2.github.io/easy-ocpp/", "codeRepository": "https://github.com/hilman2/easy-ocpp", "programmingLanguage": "Rust", "license": "https://opensource.org/licenses/MIT", "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "EUR"}, "inLanguage": ["de", "en", "fr", "es"]}</script>
+    <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What is a CSMS?", "acceptedAnswer": {"@type": "Answer", "text": "A Charging Station Management System is the backend an EV charge point talks to. It authorises RFID cards, records charging sessions and meter readings, and can start or stop a session remotely. OCPP is the protocol they use to talk."}}, {"@type": "Question", "name": "Will it work with my wallbox?", "acceptedAnswer": {"@type": "Answer", "text": "Any charge point that speaks OCPP 1.6J over WebSocket should work, which covers the large majority of devices sold in the last several years. Older hardware limited to OCPP 1.5 SOAP can connect for boot and heartbeat."}}, {"@type": "Question", "name": "Do I need an internet connection?", "acceptedAnswer": {"@type": "Answer", "text": "No. The wallboxes connect to your server over the local network. An internet connection is only needed if you want to reach the interface from outside."}}, {"@type": "Question", "name": "How do I see who charged how much?", "acceptedAnswer": {"@type": "Answer", "text": "Every session is tied to the RFID chip that started it, and every chip belongs to a person. The session list, the statistics and the monthly PDF are grouped accordingly. Sessions on unassigned chips are booked as guest charging."}}, {"@type": "Question", "name": "Can employees see each other's charging?", "acceptedAnswer": {"@type": "Answer", "text": "No. An employee only ever sees the sessions started with their own chips. Only an administrator sees everything."}}, {"@type": "Question", "name": "What does it cost?", "acceptedAnswer": {"@type": "Answer", "text": "Nothing. easy-ocpp is open source under the MIT licence. There is no paid tier and no per-charge-point fee."}}]}</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="site">
+  <div class="wrap bar">
+    <a class="brand" href="https://hilman2.github.io/easy-ocpp/">
+      <svg viewBox="0 0 32 32" width="26" height="26" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#0f172a"/><path d="M18 5 L9 18 h6 l-2 9 9-13 h-6 z" fill="#22d3ee"/></svg>
+      easy-ocpp
+    </a>
+    <nav aria-label="Sections">
+      <a href="#features">Features</a>
+      <a href="#roles">Roles</a>
+      <a href="#limits">Charging limits</a>
+      <a href="#start">Getting started</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+  <section class="hero">
+    <div class="wrap">
+      <p class="eyebrow">OCPP 1.6J &middot; 2.0.1 &middot; 1.5 SOAP</p>
+      <h1>Your own OCPP server for up to ten wallboxes</h1>
+      <p class="lede">easy-ocpp is a self-hosted charging station management system (CSMS) for small and medium businesses. It speaks OCPP 1.6J, 2.0.1 and 1.5 SOAP. One binary, one SQLite file, no cloud subscription and no permanent internet connection.</p>
+      <p class="actions">
+        <a class="btn primary" href="https://github.com/hilman2/easy-ocpp/releases/latest">Download release</a>
+        <a class="btn" href="https://github.com/hilman2/easy-ocpp">Source on GitHub</a>
+      </p>
+    </div>
+  </section>
+
+  <section class="wrap grid-3">
+        <article class="card">
+          <h3>No cloud, no subscription</h3>
+          <p>Everything runs on a machine you control. A small server is enough, or a NUC, or a spare office PC. Charging data never leaves your network.</p>
+        </article>
+        <article class="card">
+          <h3>One binary, one file</h3>
+          <p>No database server, no message broker, no container stack. Unpack, start, done. Your entire dataset is one SQLite file you can copy for a backup.</p>
+        </article>
+        <article class="card">
+          <h3>Built for 1–10 wallboxes</h3>
+          <p>Deliberately not an enterprise platform. The features a company with a handful of charge points actually needs, without the operational overhead.</p>
+        </article>
+  </section>
+
+  <section id="features" class="wrap">
+    <h2>What it does</h2>
+    <div class="grid-4">
+        <article class="feature">
+          <h3>Wallbox inventory</h3>
+          <p>Online status, connectors, firmware and serial per charge point, live from the OCPP connection.</p>
+        </article>
+        <article class="feature">
+          <h3>RFID chip management</h3>
+          <p>New chips are enrolled through a two-minute learning window: hold the chip to a wallbox, the server captures the tag.</p>
+        </article>
+        <article class="feature">
+          <h3>Chips and people</h3>
+          <p>A chip either belongs to a person or it is a guest chip. The category follows the assignment, so the two cannot contradict each other.</p>
+        </article>
+        <article class="feature">
+          <h3>Live meter values</h3>
+          <p>Charged kWh, current power and state of charge while a session runs, refreshed every ten seconds.</p>
+        </article>
+        <article class="feature">
+          <h3>Charging limits</h3>
+          <p>Stop automatically at a target energy or after a set time, whichever comes first.</p>
+        </article>
+        <article class="feature">
+          <h3>Guest charging</h3>
+          <p>Unlock a session remotely for a visitor and book it against a guest label.</p>
+        </article>
+        <article class="feature">
+          <h3>Reports</h3>
+          <p>Session list with CSV export, statistics by month, quarter and year, and a monthly PDF per person.</p>
+        </article>
+        <article class="feature">
+          <h3>Four languages</h3>
+          <p>The whole interface in German, English, French and Spanish, switchable per user.</p>
+        </article>
+    </div>
+  </section>
+
+  <section id="roles" class="wrap">
+    <h2>Two roles, clearly separated</h2>
+    <p class="lede-2">There is exactly one kind of person in the system: a user. An employee is a user, and their chips, charging sessions and limits hang off that account directly. What an employee may do is deliberately narrow.</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th scope="col"></th><th scope="col">Admin</th><th scope="col">Employee</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Wallboxes, chips, user management</th><td class="yes" aria-label="yes">&#10003;</td><td class="no" aria-label="no">&ndash;</td></tr>
+          <tr><th scope="row">Charging sessions of everyone</th><td class="yes" aria-label="yes">&#10003;</td><td class="no" aria-label="no">&ndash;</td></tr>
+          <tr><th scope="row">Own charging sessions, CSV, statistics, monthly PDF</th><td class="yes" aria-label="yes">&#10003;</td><td class="yes" aria-label="yes">&#10003;</td></tr>
+          <tr><th scope="row">Watch own running session and stop it</th><td class="yes" aria-label="yes">&#10003;</td><td class="yes" aria-label="yes">&#10003;</td></tr>
+          <tr><th scope="row">Target kWh and timer on own session</th><td class="yes" aria-label="yes">&#10003;</td><td class="yes" aria-label="yes">&#10003;</td></tr>
+          <tr><th scope="row">Default limits for any employee</th><td class="yes" aria-label="yes">&#10003;</td><td class="no" aria-label="no">&ndash;</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">The server enforces these restrictions. Hiding things in the interface would not be enough. After signing in, an employee lands on their own page, and the navigation shows only what they can actually open.</p>
+  </section>
+
+  <section id="limits" class="wrap">
+    <h2>Charging limits that actually stop the session</h2>
+    <p>A session ends by itself once it reaches a target energy or a timer, whichever comes first. Both are optional. Every person has defaults that apply to each new session, set either by the employee or by an administrator; on a running session the values can still be changed.</p>
+    <p class="note">A watchdog checks every 15 seconds and sends RemoteStopTransaction. The energy limit is additionally checked the moment new meter values arrive, so charging does not run past the target until the next tick. If a wallbox rejects the stop, it is retried.</p>
+  </section>
+
+  <section id="start" class="wrap">
+    <h2>Getting started</h2>
+    <p>Grab a release for Windows or Linux, unpack it, run it. The interface is then at localhost port 8080; the first login is admin / admin.</p>
+    <p>Or build from source:</p>
+    <pre><code>git clone https://github.com/hilman2/easy-ocpp.git
+cd easy-ocpp
+cargo run --release</code></pre>
+
+    <h3>Connecting a wallbox</h3>
+    <p>Point the charge point at your server. Subprotocols are negotiated automatically, and an unknown charge point registers itself on first connection.</p>
+    <pre><code>ws://&lt;host&gt;:8080/ocpp/&lt;ChargePointId&gt;</code></pre>
+    <p>For older OCPP 1.5 devices over SOAP:</p>
+    <pre><code>POST http://&lt;host&gt;:8080/ocpp15</code></pre>
+  </section>
+
+  <section id="compat" class="wrap">
+    <h2>Protocol support</h2>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th scope="col">Version</th><th scope="col">Transport</th><th scope="col">Status</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">OCPP 1.6J</th><td>WebSocket</td><td>Complete (boot, heartbeat, status, authorize, transactions, meter values, remote start/stop, configuration)</td></tr>
+          <tr><th scope="row">OCPP 2.0.1</th><td>WebSocket</td><td>Scaffold (BootNotification and TransactionEvent)</td></tr>
+          <tr><th scope="row">OCPP 1.5</th><td>SOAP</td><td>Scaffold (boot and heartbeat)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="faq" class="wrap">
+    <h2>Frequently asked questions</h2>
+        <details class="faq">
+          <summary><h3>What is a CSMS?</h3></summary>
+          <p>A Charging Station Management System is the backend an EV charge point talks to. It authorises RFID cards, records charging sessions and meter readings, and can start or stop a session remotely. OCPP is the protocol they use to talk.</p>
+        </details>
+        <details class="faq">
+          <summary><h3>Will it work with my wallbox?</h3></summary>
+          <p>Any charge point that speaks OCPP 1.6J over WebSocket should work, which covers the large majority of devices sold in the last several years. Older hardware limited to OCPP 1.5 SOAP can connect for boot and heartbeat.</p>
+        </details>
+        <details class="faq">
+          <summary><h3>Do I need an internet connection?</h3></summary>
+          <p>No. The wallboxes connect to your server over the local network. An internet connection is only needed if you want to reach the interface from outside.</p>
+        </details>
+        <details class="faq">
+          <summary><h3>How do I see who charged how much?</h3></summary>
+          <p>Every session is tied to the RFID chip that started it, and every chip belongs to a person. The session list, the statistics and the monthly PDF are grouped accordingly. Sessions on unassigned chips are booked as guest charging.</p>
+        </details>
+        <details class="faq">
+          <summary><h3>Can employees see each other's charging?</h3></summary>
+          <p>No. An employee only ever sees the sessions started with their own chips. Only an administrator sees everything.</p>
+        </details>
+        <details class="faq">
+          <summary><h3>What does it cost?</h3></summary>
+          <p>Nothing. easy-ocpp is open source under the MIT licence. There is no paid tier and no per-charge-point fee.</p>
+        </details>
+  </section>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p class="langs"><span class="muted">Language:</span> <strong>English</strong> · <a href="https://hilman2.github.io/easy-ocpp/de/" hreflang="de">Deutsch</a> · <a href="https://hilman2.github.io/easy-ocpp/fr/" hreflang="fr">Français</a> · <a href="https://hilman2.github.io/easy-ocpp/es/" hreflang="es">Español</a></p>
+    <p class="muted">MIT licensed. Not affiliated with the Open Charge Alliance. &middot; <a href="https://github.com/hilman2/easy-ocpp">GitHub</a></p>
+  </div>
+</footer>
+</body>
+</html>

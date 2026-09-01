@@ -4,10 +4,10 @@
 <h1>{{ wb.name }} <small class="mono">({{ wb.charge_point_id }})</small></h1>
 <p>
     {{ layout.t("common.status") }}: {% if online %}<span class="ok">{{ layout.t("common.online") }}</span>{% else %}<span class="off">{{ layout.t("common.offline") }}</span>{% endif %}
-    · OCPP {{ wb.ocpp_version.as_deref().unwrap_or("—") }}
-    · {{ layout.t("wbd.manufacturer") }} {{ wb.vendor.as_deref().unwrap_or("—") }} {{ wb.model.as_deref().unwrap_or("") }}
-    · Firmware {{ wb.firmware.as_deref().unwrap_or("—") }}
-    · {{ layout.t("wb.last_heartbeat") }} {{ wb.last_heartbeat.as_deref().unwrap_or("—") }}
+    · OCPP {{ wb.ocpp_version.as_deref().unwrap_or("–") }}
+    · {{ layout.t("wbd.manufacturer") }} {{ wb.vendor.as_deref().unwrap_or("–") }} {{ wb.model.as_deref().unwrap_or("") }}
+    · Firmware {{ wb.firmware.as_deref().unwrap_or("–") }}
+    · {{ layout.t("wb.last_heartbeat") }} {{ wb.last_heartbeat.as_deref().unwrap_or("–") }}
 </p>
 
 <h2>{{ layout.t("wbd.connectors") }}</h2>
@@ -17,8 +17,8 @@
     {% for c in connectors %}
         <tr>
             <td>{{ c.connector_id }}</td>
-            <td>{{ c.status.as_deref().unwrap_or("—") }}</td>
-            <td>{{ c.error_code.as_deref().unwrap_or("—") }}</td>
+            <td>{{ c.status.as_deref().unwrap_or("–") }}</td>
+            <td>{{ c.error_code.as_deref().unwrap_or("–") }}</td>
             <td>{{ c.info.as_deref().unwrap_or("") }}</td>
             <td>{{ c.updated_at }}</td>
         </tr>
@@ -45,7 +45,7 @@
             {{ layout.t("wbd.user") }}: <code>{{ wb.auth_basic_user.as_deref().unwrap_or(wb.charge_point_id.as_str()) }}</code>.
             {{ layout.t("wbd.auth_reject") }}</p>
     {% else %}
-        <p>{{ layout.t("wbd.basic_auth_is") }} <strong class="off">{{ layout.t("wbd.disabled_word") }}</strong> — {{ layout.t("wbd.auth_open") }}</p>
+        <p>{{ layout.t("wbd.basic_auth_is") }} <strong class="off">{{ layout.t("wbd.disabled_word") }}</strong>. {{ layout.t("wbd.auth_open") }}</p>
     {% endif %}
 
     <form method="post" action="/wallboxes/{{ wb.id }}/auth" class="row">
