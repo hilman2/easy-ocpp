@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>CSMS OCPP autoalojado para pymes — easy-ocpp</title>
+    <title>CSMS OCPP autoalojado para pymes | easy-ocpp</title>
     <meta name="description" content="CSMS de código abierto para OCPP 1.6J / 2.0.1 y 1–10 cargadores: tarjetas RFID, límites de carga, mediciones en vivo, informes. Un binario Rust, un archivo SQLite.">
     <link rel="canonical" href="https://hilman2.github.io/easy-ocpp/es/">
     <link rel="alternate" hreflang="en" href="https://hilman2.github.io/easy-ocpp/">
@@ -13,13 +13,13 @@
     <link rel="alternate" hreflang="x-default" href="https://hilman2.github.io/easy-ocpp/">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="easy-ocpp">
-    <meta property="og:title" content="CSMS OCPP autoalojado para pymes — easy-ocpp">
+    <meta property="og:title" content="CSMS OCPP autoalojado para pymes | easy-ocpp">
     <meta property="og:description" content="CSMS de código abierto para OCPP 1.6J / 2.0.1 y 1–10 cargadores: tarjetas RFID, límites de carga, mediciones en vivo, informes. Un binario Rust, un archivo SQLite.">
     <meta property="og:url" content="https://hilman2.github.io/easy-ocpp/es/">
     <meta property="og:locale" content="es_ES">
     <meta property="og:image" content="https://opengraph.githubassets.com/1/hilman2/easy-ocpp">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="CSMS OCPP autoalojado para pymes — easy-ocpp">
+    <meta name="twitter:title" content="CSMS OCPP autoalojado para pymes | easy-ocpp">
     <meta name="twitter:description" content="CSMS de código abierto para OCPP 1.6J / 2.0.1 y 1–10 cargadores: tarjetas RFID, límites de carga, mediciones en vivo, informes. Un binario Rust, un archivo SQLite.">
     <meta name="twitter:image" content="https://opengraph.githubassets.com/1/hilman2/easy-ocpp">
     <meta name="theme-color" content="#0b1220">
@@ -53,7 +53,7 @@
     <div class="wrap">
       <p class="eyebrow">OCPP 1.6J &middot; 2.0.1 &middot; 1.5 SOAP</p>
       <h1>Su propio servidor OCPP para hasta diez cargadores</h1>
-      <p class="lede">easy-ocpp es un sistema de gestión de puntos de carga (CSMS) autoalojado para pequeñas y medianas empresas. Habla OCPP 1.6J, 2.0.1 y 1.5 SOAP, funciona como un único binario sobre un solo archivo SQLite y no necesita ni suscripción en la nube ni conexión permanente a internet.</p>
+      <p class="lede">easy-ocpp es un sistema de gestión de puntos de carga (CSMS) autoalojado para pequeñas y medianas empresas. Habla OCPP 1.6J, 2.0.1 y 1.5 SOAP. Un solo binario, un solo archivo SQLite, sin suscripción en la nube ni conexión permanente a internet.</p>
       <p class="actions">
         <a class="btn primary" href="https://github.com/hilman2/easy-ocpp/releases/latest">Descargar versión</a>
         <a class="btn" href="https://github.com/hilman2/easy-ocpp">Código fuente en GitHub</a>
@@ -64,7 +64,7 @@
   <section class="wrap grid-3">
         <article class="card">
           <h3>Sin nube, sin suscripción</h3>
-          <p>Todo funciona en una máquina suya — un servidor pequeño, un NUC o incluso un PC de oficina que le sobre. Los datos de carga no salen de su red.</p>
+          <p>Todo funciona en una máquina suya. Basta un servidor pequeño, un NUC o incluso un PC de oficina que le sobre. Los datos de carga no salen de su red.</p>
         </article>
         <article class="card">
           <h3>Un binario, un archivo</h3>
@@ -89,7 +89,7 @@
         </article>
         <article class="feature">
           <h3>Tarjetas y personas</h3>
-          <p>Una tarjeta pertenece a una persona o es de invitado — la categoría se deriva de la asignación y no puede contradecirla.</p>
+          <p>Una tarjeta pertenece a una persona o es de invitado. La categoría se deriva de la asignación y no puede contradecirla.</p>
         </article>
         <article class="feature">
           <h3>Mediciones en vivo</h3>
@@ -130,7 +130,7 @@
         </tbody>
       </table>
     </div>
-    <p class="note">Las restricciones se aplican en el servidor, no solo se ocultan en la interfaz. Tras iniciar sesión, un empleado llega a su propia página y la navegación solo le muestra lo que realmente puede abrir.</p>
+    <p class="note">El servidor aplica estas restricciones. Ocultarlas en la interfaz no bastaría. Tras iniciar sesión, un empleado llega a su propia página y la navegación solo le muestra lo que realmente puede abrir.</p>
   </section>
 
   <section id="limits" class="wrap">
@@ -160,9 +160,9 @@ cargo run --release</code></pre>
       <table>
         <thead><tr><th scope="col">Versión</th><th scope="col">Transporte</th><th scope="col">Estado</th></tr></thead>
         <tbody>
-          <tr><th scope="row">OCPP 1.6J</th><td>WebSocket</td><td>Completo — boot, heartbeat, estado, autorización, transacciones, mediciones, arranque/parada remotos, configuración</td></tr>
-          <tr><th scope="row">OCPP 2.0.1</th><td>WebSocket</td><td>Esqueleto — BootNotification y TransactionEvent</td></tr>
-          <tr><th scope="row">OCPP 1.5</th><td>SOAP</td><td>Esqueleto — boot y heartbeat</td></tr>
+          <tr><th scope="row">OCPP 1.6J</th><td>WebSocket</td><td>Completo (boot, heartbeat, estado, autorización, transacciones, mediciones, arranque/parada remotos, configuración)</td></tr>
+          <tr><th scope="row">OCPP 2.0.1</th><td>WebSocket</td><td>Esqueleto (BootNotification y TransactionEvent)</td></tr>
+          <tr><th scope="row">OCPP 1.5</th><td>SOAP</td><td>Esqueleto (boot y heartbeat)</td></tr>
         </tbody>
       </table>
     </div>

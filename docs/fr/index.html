@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>CSMS OCPP auto-hébergé pour PME — easy-ocpp</title>
+    <title>CSMS OCPP auto-hébergé pour PME | easy-ocpp</title>
     <meta name="description" content="CSMS open source pour OCPP 1.6J / 2.0.1 et 1 à 10 bornes : badges RFID, limites de recharge, mesures en direct, rapports. Un binaire Rust, un fichier SQLite.">
     <link rel="canonical" href="https://hilman2.github.io/easy-ocpp/fr/">
     <link rel="alternate" hreflang="en" href="https://hilman2.github.io/easy-ocpp/">
@@ -13,13 +13,13 @@
     <link rel="alternate" hreflang="x-default" href="https://hilman2.github.io/easy-ocpp/">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="easy-ocpp">
-    <meta property="og:title" content="CSMS OCPP auto-hébergé pour PME — easy-ocpp">
+    <meta property="og:title" content="CSMS OCPP auto-hébergé pour PME | easy-ocpp">
     <meta property="og:description" content="CSMS open source pour OCPP 1.6J / 2.0.1 et 1 à 10 bornes : badges RFID, limites de recharge, mesures en direct, rapports. Un binaire Rust, un fichier SQLite.">
     <meta property="og:url" content="https://hilman2.github.io/easy-ocpp/fr/">
     <meta property="og:locale" content="fr_FR">
     <meta property="og:image" content="https://opengraph.githubassets.com/1/hilman2/easy-ocpp">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="CSMS OCPP auto-hébergé pour PME — easy-ocpp">
+    <meta name="twitter:title" content="CSMS OCPP auto-hébergé pour PME | easy-ocpp">
     <meta name="twitter:description" content="CSMS open source pour OCPP 1.6J / 2.0.1 et 1 à 10 bornes : badges RFID, limites de recharge, mesures en direct, rapports. Un binaire Rust, un fichier SQLite.">
     <meta name="twitter:image" content="https://opengraph.githubassets.com/1/hilman2/easy-ocpp">
     <meta name="theme-color" content="#0b1220">
@@ -53,7 +53,7 @@
     <div class="wrap">
       <p class="eyebrow">OCPP 1.6J &middot; 2.0.1 &middot; 1.5 SOAP</p>
       <h1>Votre propre serveur OCPP pour dix bornes au plus</h1>
-      <p class="lede">easy-ocpp est un système de gestion de points de charge (CSMS) auto-hébergé pour les petites et moyennes entreprises. Il parle OCPP 1.6J, 2.0.1 et 1.5 SOAP, s'exécute comme un binaire unique sur un seul fichier SQLite, et ne demande ni abonnement cloud ni connexion internet permanente.</p>
+      <p class="lede">easy-ocpp est un système de gestion de points de charge (CSMS) auto-hébergé pour les petites et moyennes entreprises. Il parle OCPP 1.6J, 2.0.1 et 1.5 SOAP. Un seul binaire, un seul fichier SQLite, sans abonnement cloud ni connexion internet permanente.</p>
       <p class="actions">
         <a class="btn primary" href="https://github.com/hilman2/easy-ocpp/releases/latest">Télécharger une version</a>
         <a class="btn" href="https://github.com/hilman2/easy-ocpp">Code source sur GitHub</a>
@@ -64,7 +64,7 @@
   <section class="wrap grid-3">
         <article class="card">
           <h3>Pas de cloud, pas d'abonnement</h3>
-          <p>Tout tourne sur une machine qui vous appartient — un petit serveur, un NUC, au besoin un PC de bureau inutilisé. Les données de recharge ne quittent pas votre réseau.</p>
+          <p>Tout tourne sur une machine qui vous appartient. Un petit serveur suffit, un NUC, au besoin un PC de bureau inutilisé. Les données de recharge ne quittent pas votre réseau.</p>
         </article>
         <article class="card">
           <h3>Un binaire, un fichier</h3>
@@ -89,7 +89,7 @@
         </article>
         <article class="feature">
           <h3>Badges et personnes</h3>
-          <p>Un badge appartient à une personne, sinon c'est un badge invité — la catégorie découle de l'attribution et ne peut pas la contredire.</p>
+          <p>Un badge appartient à une personne, sinon c'est un badge invité. La catégorie découle de l'attribution et ne peut pas la contredire.</p>
         </article>
         <article class="feature">
           <h3>Mesures en direct</h3>
@@ -130,12 +130,12 @@
         </tbody>
       </table>
     </div>
-    <p class="note">Les restrictions sont appliquées côté serveur, pas seulement masquées dans l'interface. Après connexion, un employé arrive sur sa propre page et la navigation ne lui montre que ce qu'il peut réellement ouvrir.</p>
+    <p class="note">Le serveur applique ces restrictions. Les masquer dans l'interface ne suffirait pas. Après connexion, un employé arrive sur sa propre page et la navigation ne lui montre que ce qu'il peut réellement ouvrir.</p>
   </section>
 
   <section id="limits" class="wrap">
     <h2>Des limites qui arrêtent vraiment la recharge</h2>
-    <p>Une recharge se termine d'elle-même dès qu'elle atteint une énergie cible ou un minuteur — le premier des deux. Les deux sont facultatifs. Chaque personne dispose de valeurs par défaut appliquées à chaque nouvelle recharge, définies par l'employé lui-même ou par un administrateur ; sur une recharge en cours, les valeurs restent modifiables.</p>
+    <p>Une recharge se termine d'elle-même dès qu'elle atteint une énergie cible ou un minuteur, selon ce qui survient en premier. Les deux sont facultatifs. Chaque personne dispose de valeurs par défaut appliquées à chaque nouvelle recharge, définies par l'employé lui-même ou par un administrateur ; sur une recharge en cours, les valeurs restent modifiables.</p>
     <p class="note">Un chien de garde vérifie toutes les 15 secondes et envoie RemoteStopTransaction. La limite d'énergie est en outre contrôlée dès l'arrivée de nouvelles mesures, afin de ne pas dépasser l'objectif en attendant le cycle suivant. Si une borne refuse l'arrêt, une nouvelle tentative est faite.</p>
   </section>
 
@@ -160,9 +160,9 @@ cargo run --release</code></pre>
       <table>
         <thead><tr><th scope="col">Version</th><th scope="col">Transport</th><th scope="col">État</th></tr></thead>
         <tbody>
-          <tr><th scope="row">OCPP 1.6J</th><td>WebSocket</td><td>Complet — boot, heartbeat, statut, autorisation, transactions, mesures, démarrage/arrêt à distance, configuration</td></tr>
-          <tr><th scope="row">OCPP 2.0.1</th><td>WebSocket</td><td>Ébauche — BootNotification et TransactionEvent</td></tr>
-          <tr><th scope="row">OCPP 1.5</th><td>SOAP</td><td>Ébauche — boot et heartbeat</td></tr>
+          <tr><th scope="row">OCPP 1.6J</th><td>WebSocket</td><td>Complet (boot, heartbeat, statut, autorisation, transactions, mesures, démarrage/arrêt à distance, configuration)</td></tr>
+          <tr><th scope="row">OCPP 2.0.1</th><td>WebSocket</td><td>Ébauche (BootNotification et TransactionEvent)</td></tr>
+          <tr><th scope="row">OCPP 1.5</th><td>SOAP</td><td>Ébauche (boot et heartbeat)</td></tr>
         </tbody>
       </table>
     </div>

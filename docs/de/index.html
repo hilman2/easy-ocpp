@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Selbst gehostetes OCPP-CSMS für KMU — easy-ocpp</title>
+    <title>Selbst gehostetes OCPP-CSMS für KMU | easy-ocpp</title>
     <meta name="description" content="Open-Source-CSMS für OCPP 1.6J / 2.0.1 und 1–10 Wallboxen: RFID-Chips, Ladelimits, Live-Messwerte, Auswertungen. Ein Rust-Binary, eine SQLite-Datei.">
     <link rel="canonical" href="https://hilman2.github.io/easy-ocpp/de/">
     <link rel="alternate" hreflang="en" href="https://hilman2.github.io/easy-ocpp/">
@@ -13,20 +13,20 @@
     <link rel="alternate" hreflang="x-default" href="https://hilman2.github.io/easy-ocpp/">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="easy-ocpp">
-    <meta property="og:title" content="Selbst gehostetes OCPP-CSMS für KMU — easy-ocpp">
+    <meta property="og:title" content="Selbst gehostetes OCPP-CSMS für KMU | easy-ocpp">
     <meta property="og:description" content="Open-Source-CSMS für OCPP 1.6J / 2.0.1 und 1–10 Wallboxen: RFID-Chips, Ladelimits, Live-Messwerte, Auswertungen. Ein Rust-Binary, eine SQLite-Datei.">
     <meta property="og:url" content="https://hilman2.github.io/easy-ocpp/de/">
     <meta property="og:locale" content="de_DE">
     <meta property="og:image" content="https://opengraph.githubassets.com/1/hilman2/easy-ocpp">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Selbst gehostetes OCPP-CSMS für KMU — easy-ocpp">
+    <meta name="twitter:title" content="Selbst gehostetes OCPP-CSMS für KMU | easy-ocpp">
     <meta name="twitter:description" content="Open-Source-CSMS für OCPP 1.6J / 2.0.1 und 1–10 Wallboxen: RFID-Chips, Ladelimits, Live-Messwerte, Auswertungen. Ein Rust-Binary, eine SQLite-Datei.">
     <meta name="twitter:image" content="https://opengraph.githubassets.com/1/hilman2/easy-ocpp">
     <meta name="theme-color" content="#0b1220">
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b1220'/%3E%3Cpath d='M18 5 L9 18 h6 l-2 9 9-13 h-6 z' fill='%2322d3ee'/%3E%3C/svg%3E">
     <link rel="stylesheet" href="../assets/style.css">
     <script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "easy-ocpp", "applicationCategory": "BusinessApplication", "applicationSubCategory": "Charging Station Management System (CSMS)", "operatingSystem": "Windows, Linux", "description": "Open-Source-CSMS für OCPP 1.6J / 2.0.1 und 1–10 Wallboxen: RFID-Chips, Ladelimits, Live-Messwerte, Auswertungen. Ein Rust-Binary, eine SQLite-Datei.", "url": "https://hilman2.github.io/easy-ocpp/de/", "codeRepository": "https://github.com/hilman2/easy-ocpp", "programmingLanguage": "Rust", "license": "https://opensource.org/licenses/MIT", "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "EUR"}, "inLanguage": ["de", "en", "fr", "es"]}</script>
-    <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Was ist ein CSMS?", "acceptedAnswer": {"@type": "Answer", "text": "Ein Charging Station Management System ist das Backend, mit dem eine Ladestation spricht. Es autorisiert RFID-Karten, zeichnet Ladevorgänge und Zählerstände auf und kann Ladungen aus der Ferne starten oder beenden. OCPP ist das Protokoll, über das die beiden sich unterhalten."}}, {"@type": "Question", "name": "Funktioniert das mit meiner Wallbox?", "acceptedAnswer": {"@type": "Answer", "text": "Jeder Ladepunkt, der OCPP 1.6J über WebSocket spricht, sollte laufen — das trifft auf die große Mehrheit der in den letzten Jahren verkauften Geräte zu. Ältere Hardware, die nur OCPP 1.5 SOAP kann, verbindet sich für Boot und Heartbeat."}}, {"@type": "Question", "name": "Brauche ich eine Internetverbindung?", "acceptedAnswer": {"@type": "Answer", "text": "Nein. Die Wallboxen verbinden sich über das lokale Netz mit Ihrem Server. Internet brauchen Sie nur, wenn Sie die Oberfläche von außen erreichen wollen."}}, {"@type": "Question", "name": "Wie sehe ich, wer wie viel geladen hat?", "acceptedAnswer": {"@type": "Answer", "text": "Jede Ladung hängt an dem RFID-Chip, mit dem sie gestartet wurde, und jeder Chip gehört zu einer Person. Ladungsliste, Statistik und Monats-PDF sind entsprechend gruppiert. Ladungen auf nicht zugeordneten Chips laufen als Gast-Ladung."}}, {"@type": "Question", "name": "Sehen Mitarbeiter die Ladungen der anderen?", "acceptedAnswer": {"@type": "Answer", "text": "Nein. Ein Mitarbeiter sieht ausschließlich die Ladungen, die mit seinen eigenen Chips gestartet wurden. Nur ein Administrator sieht alles."}}, {"@type": "Question", "name": "Was kostet es?", "acceptedAnswer": {"@type": "Answer", "text": "Nichts. easy-ocpp ist Open Source unter der MIT-Lizenz. Es gibt keine kostenpflichtige Variante und keine Gebühr je Ladepunkt."}}]}</script>
+    <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Was ist ein CSMS?", "acceptedAnswer": {"@type": "Answer", "text": "Ein Charging Station Management System ist das Backend, mit dem eine Ladestation spricht. Es autorisiert RFID-Karten, zeichnet Ladevorgänge und Zählerstände auf und kann Ladungen aus der Ferne starten oder beenden. OCPP ist das Protokoll, über das die beiden sich unterhalten."}}, {"@type": "Question", "name": "Funktioniert das mit meiner Wallbox?", "acceptedAnswer": {"@type": "Answer", "text": "Jeder Ladepunkt, der OCPP 1.6J über WebSocket spricht, sollte laufen. Das trifft auf die große Mehrheit der in den letzten Jahren verkauften Geräte zu. Ältere Hardware, die nur OCPP 1.5 SOAP kann, verbindet sich für Boot und Heartbeat."}}, {"@type": "Question", "name": "Brauche ich eine Internetverbindung?", "acceptedAnswer": {"@type": "Answer", "text": "Nein. Die Wallboxen verbinden sich über das lokale Netz mit Ihrem Server. Internet brauchen Sie nur, wenn Sie die Oberfläche von außen erreichen wollen."}}, {"@type": "Question", "name": "Wie sehe ich, wer wie viel geladen hat?", "acceptedAnswer": {"@type": "Answer", "text": "Jede Ladung hängt an dem RFID-Chip, mit dem sie gestartet wurde, und jeder Chip gehört zu einer Person. Ladungsliste, Statistik und Monats-PDF sind entsprechend gruppiert. Ladungen auf nicht zugeordneten Chips laufen als Gast-Ladung."}}, {"@type": "Question", "name": "Sehen Mitarbeiter die Ladungen der anderen?", "acceptedAnswer": {"@type": "Answer", "text": "Nein. Ein Mitarbeiter sieht ausschließlich die Ladungen, die mit seinen eigenen Chips gestartet wurden. Nur ein Administrator sieht alles."}}, {"@type": "Question", "name": "Was kostet es?", "acceptedAnswer": {"@type": "Answer", "text": "Nichts. easy-ocpp ist Open Source unter der MIT-Lizenz. Es gibt keine kostenpflichtige Variante und keine Gebühr je Ladepunkt."}}]}</script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -53,7 +53,7 @@
     <div class="wrap">
       <p class="eyebrow">OCPP 1.6J &middot; 2.0.1 &middot; 1.5 SOAP</p>
       <h1>Ihr eigener OCPP-Server für bis zu zehn Wallboxen</h1>
-      <p class="lede">easy-ocpp ist ein selbst gehostetes Ladepunkt-Management-System (CSMS) für kleine und mittlere Unternehmen. Es spricht OCPP 1.6J, 2.0.1 und 1.5 SOAP, läuft als einzelnes Programm gegen eine einzige SQLite-Datei und braucht weder ein Cloud-Abo noch eine dauerhafte Internetverbindung.</p>
+      <p class="lede">easy-ocpp ist ein selbst gehostetes Ladepunkt-Management-System (CSMS) für kleine und mittlere Unternehmen. Es spricht OCPP 1.6J, 2.0.1 und 1.5 SOAP. Ein Programm, eine SQLite-Datei, kein Cloud-Abo und keine dauerhafte Internetverbindung.</p>
       <p class="actions">
         <a class="btn primary" href="https://github.com/hilman2/easy-ocpp/releases/latest">Release herunterladen</a>
         <a class="btn" href="https://github.com/hilman2/easy-ocpp">Quellcode auf GitHub</a>
@@ -64,7 +64,7 @@
   <section class="wrap grid-3">
         <article class="card">
           <h3>Keine Cloud, kein Abo</h3>
-          <p>Alles läuft auf einem Rechner, der Ihnen gehört — ein kleiner Server, ein NUC, notfalls ein übriger Büro-PC. Ladedaten verlassen Ihr Netz nicht.</p>
+          <p>Alles läuft auf einem Rechner, der Ihnen gehört. Ein kleiner Server reicht, ein NUC, notfalls ein übriger Büro-PC. Ladedaten verlassen Ihr Netz nicht.</p>
         </article>
         <article class="card">
           <h3>Ein Programm, eine Datei</h3>
@@ -81,7 +81,7 @@
     <div class="grid-4">
         <article class="feature">
           <h3>Wallbox-Inventar</h3>
-          <p>Online-Status, Connectors, Firmware und Seriennummer je Ladepunkt — direkt aus der OCPP-Verbindung.</p>
+          <p>Online-Status, Connectors, Firmware und Seriennummer je Ladepunkt, direkt aus der OCPP-Verbindung.</p>
         </article>
         <article class="feature">
           <h3>Chip-Verwaltung</h3>
@@ -89,7 +89,7 @@
         </article>
         <article class="feature">
           <h3>Chips und Personen</h3>
-          <p>Ein Chip gehört entweder zu einer Person oder er ist ein Gast-Chip — die Kategorie folgt der Zuordnung und kann ihr nicht widersprechen.</p>
+          <p>Ein Chip gehört entweder zu einer Person oder er ist ein Gast-Chip. Die Kategorie folgt der Zuordnung und kann ihr nicht widersprechen.</p>
         </article>
         <article class="feature">
           <h3>Live-Messwerte</h3>
@@ -97,7 +97,7 @@
         </article>
         <article class="feature">
           <h3>Ladelimits</h3>
-          <p>Automatische Abschaltung bei erreichter Ziel-Energie oder abgelaufener Zeit — was zuerst eintritt.</p>
+          <p>Automatische Abschaltung bei erreichter Ziel-Energie oder abgelaufener Zeit, je nachdem was zuerst eintritt.</p>
         </article>
         <article class="feature">
           <h3>Gast-Ladungen</h3>
@@ -130,12 +130,12 @@
         </tbody>
       </table>
     </div>
-    <p class="note">Die Einschränkungen greifen auf dem Server, nicht bloß durch Ausblenden in der Oberfläche. Nach dem Anmelden landet ein Mitarbeiter auf seiner eigenen Seite, und die Navigation zeigt ihm nur, was er auch öffnen darf.</p>
+    <p class="note">Die Einschränkungen greifen auf dem Server. Etwas in der Oberfläche auszublenden würde nicht genügen. Nach dem Anmelden landet ein Mitarbeiter auf seiner eigenen Seite, und die Navigation zeigt ihm nur, was er auch öffnen darf.</p>
   </section>
 
   <section id="limits" class="wrap">
     <h2>Ladelimits, die tatsächlich abschalten</h2>
-    <p>Eine Ladung endet von selbst, sobald sie eine Ziel-Energie oder einen Timer erreicht — was zuerst eintritt. Beides ist optional. Jede Person hat Standardvorgaben, die für jede neue Ladung gelten und die entweder der Mitarbeiter selbst oder ein Administrator setzt; an der laufenden Ladung lassen sich die Werte weiterhin ändern.</p>
+    <p>Eine Ladung endet von selbst, sobald sie eine Ziel-Energie oder einen Timer erreicht, je nachdem was zuerst eintritt. Beides ist optional. Jede Person hat Standardvorgaben, die für jede neue Ladung gelten und die entweder der Mitarbeiter selbst oder ein Administrator setzt; an der laufenden Ladung lassen sich die Werte weiterhin ändern.</p>
     <p class="note">Ein Watchdog prüft alle 15 Sekunden und schickt RemoteStopTransaction. Das Energielimit wird zusätzlich sofort beim Eintreffen neuer Messwerte geprüft, damit nicht bis zum nächsten Takt über das Ziel hinaus geladen wird. Lehnt eine Wallbox den Stop ab, wird es erneut versucht.</p>
   </section>
 
@@ -160,9 +160,9 @@ cargo run --release</code></pre>
       <table>
         <thead><tr><th scope="col">Version</th><th scope="col">Transport</th><th scope="col">Stand</th></tr></thead>
         <tbody>
-          <tr><th scope="row">OCPP 1.6J</th><td>WebSocket</td><td>Vollständig — Boot, Heartbeat, Status, Authorize, Transaktionen, Messwerte, Remote-Start/Stop, Konfiguration</td></tr>
-          <tr><th scope="row">OCPP 2.0.1</th><td>WebSocket</td><td>Gerüst — BootNotification und TransactionEvent</td></tr>
-          <tr><th scope="row">OCPP 1.5</th><td>SOAP</td><td>Gerüst — Boot und Heartbeat</td></tr>
+          <tr><th scope="row">OCPP 1.6J</th><td>WebSocket</td><td>Vollständig (Boot, Heartbeat, Status, Authorize, Transaktionen, Messwerte, Remote-Start/Stop, Konfiguration)</td></tr>
+          <tr><th scope="row">OCPP 2.0.1</th><td>WebSocket</td><td>Gerüst (BootNotification und TransactionEvent)</td></tr>
+          <tr><th scope="row">OCPP 1.5</th><td>SOAP</td><td>Gerüst (Boot und Heartbeat)</td></tr>
         </tbody>
       </table>
     </div>
@@ -176,7 +176,7 @@ cargo run --release</code></pre>
         </details>
         <details class="faq">
           <summary><h3>Funktioniert das mit meiner Wallbox?</h3></summary>
-          <p>Jeder Ladepunkt, der OCPP 1.6J über WebSocket spricht, sollte laufen — das trifft auf die große Mehrheit der in den letzten Jahren verkauften Geräte zu. Ältere Hardware, die nur OCPP 1.5 SOAP kann, verbindet sich für Boot und Heartbeat.</p>
+          <p>Jeder Ladepunkt, der OCPP 1.6J über WebSocket spricht, sollte laufen. Das trifft auf die große Mehrheit der in den letzten Jahren verkauften Geräte zu. Ältere Hardware, die nur OCPP 1.5 SOAP kann, verbindet sich für Boot und Heartbeat.</p>
         </details>
         <details class="faq">
           <summary><h3>Brauche ich eine Internetverbindung?</h3></summary>
