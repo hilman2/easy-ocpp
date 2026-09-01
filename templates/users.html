@@ -23,6 +23,7 @@
             </select>
         </label>
         <label>{{ layout.t("users.pw_optional") }} <input name="password" type="password" minlength="6"></label>
+        <label class="check"><input type="checkbox" name="must_change" value="1"> {{ layout.t("pw.must_change") }}</label>
         <button class="primary">{{ layout.t("common.create") }}</button>
     </form>
     <p class="hint">{{ layout.t("users.no_login_hint") }}</p>

@@ -2,6 +2,7 @@ pub mod auth;
 pub mod chips;
 pub mod dashboard;
 pub mod me;
+pub mod password;
 pub mod reports;
 pub mod stats;
 pub mod transactions;

@@ -80,6 +80,8 @@ pub struct CreateForm {
     pub role: String,
     /// Leer = Konto ohne Login (der Mitarbeiter kann sich noch nicht anmelden).
     pub password: Option<String>,
+    /// Haken "muss Passwort aendern"; fehlt er, ist er nicht gesetzt.
+    pub must_change: Option<String>,
 }
 
 pub async fn create(
@@ -107,10 +109,18 @@ pub async fn create(
         Some(hash_password(password).map_err(AppError::Other)?)
     };
 
+    // Ohne Passwort ergibt der Haken keinen Sinn, dort gibt es noch nichts zu
+    // wechseln.
+    let must_change: i64 = if hash.is_some() && form.must_change.as_deref() == Some("1") {
+        1
+    } else {
+        0
+    };
+
     let res = sqlx::query(
         "INSERT INTO users (username, display_name, email, department, role, auth_source,
-                            password_hash)
-         VALUES (?1, ?2, ?3, ?4, ?5, 'local', ?6)",
+                            password_hash, must_change_password)
+         VALUES (?1, ?2, ?3, ?4, ?5, 'local', ?6, ?7)",
     )
     .bind(username)
     .bind(display)
@@ -118,6 +128,7 @@ pub async fn create(
     .bind(opt(form.department.as_deref()))
     .bind(&form.role)
     .bind(hash)
+    .bind(must_change)
     .execute(&state.db)
     .await;
     if let Err(sqlx::Error::Database(db)) = &res {
@@ -303,6 +314,8 @@ pub async fn delete(
 #[derive(Deserialize)]
 pub struct PwForm {
     pub password: String,
+    /// Haken "Benutzer muss Passwort aendern".
+    pub must_change: Option<String>,
 }
 
 pub async fn set_password(
@@ -316,11 +329,17 @@ pub async fn set_password(
         return Err(AppError::BadRequest(lang.t("err.pw_min6").into()));
     }
     let hash = hash_password(&form.password).map_err(AppError::Other)?;
-    sqlx::query("UPDATE users SET password_hash = ?1 WHERE id = ?2 AND auth_source = 'local'")
-        .bind(hash)
-        .bind(id)
-        .execute(&state.db)
-        .await?;
+    let must_change: i64 = if form.must_change.as_deref() == Some("1") { 1 } else { 0 };
+    sqlx::query(
+        "UPDATE users
+            SET password_hash = ?1, must_change_password = ?2
+          WHERE id = ?3 AND auth_source = 'local'",
+    )
+    .bind(hash)
+    .bind(must_change)
+    .bind(id)
+    .execute(&state.db)
+    .await?;
     Ok(Redirect::to(&format!("/users/{id}")).into_response())
 }
 

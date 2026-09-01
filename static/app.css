@@ -434,3 +434,12 @@ small.mono { color: var(--muted); font-weight: 400; }
 .langbox .langlink { font-size: .72rem; font-weight: 600; letter-spacing: .04em; opacity: .55; text-decoration: none; color: inherit; padding: .15rem .3rem; border-radius: 4px; }
 .langbox .langlink:hover { opacity: .9; }
 .langbox .langlink.active { opacity: 1; background: rgba(127,127,127,.15); }
+
+/* Ankreuzfeld mit Beschriftung daneben statt darunter. */
+label.check {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  white-space: nowrap;
+}
+label.check input { width: auto; margin: 0; }

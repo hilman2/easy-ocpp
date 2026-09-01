@@ -17,6 +17,8 @@ pub struct User {
     pub password_hash: Option<String>,
     pub external_id: Option<String>,
     pub disabled: i64,
+    /// 1 = beim naechsten Aufruf muss ein neues Passwort gesetzt werden.
+    pub must_change_password: i64,
     /// Standard-Energielimit in Wh, das beim Start einer Ladung uebernommen wird.
     pub default_limit_wh: Option<i64>,
     /// Standard-Zeitlimit in Minuten, das beim Start einer Ladung uebernommen wird.

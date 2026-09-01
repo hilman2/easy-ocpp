@@ -30,6 +30,13 @@
     <p class="hint">{{ layout.t("me.defaults_hint") }}</p>
 </div>
 
+{% if me.has_login() %}
+<div class="card">
+    <div class="card-head"><h2>{{ layout.t("common.password") }}</h2></div>
+    <p><a class="linkbtn" href="/password">{{ layout.t("pw.title") }}</a></p>
+</div>
+{% endif %}
+
 <h2>{{ layout.t("me.recent") }}</h2>
 <div class="row">
     <div>{{ layout.t("common.sessions") }}: <b>{{ session_count }}</b></div>

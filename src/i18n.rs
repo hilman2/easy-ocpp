@@ -809,6 +809,81 @@ impl Lang {
                 "Esta carga ya no está en curso."
             ),
 
+
+            // ---- Passwortwechsel -------------------------------------------
+            "pw.title" => tr!(
+                "Passwort ändern",
+                "Change password",
+                "Changer le mot de passe",
+                "Cambiar la contraseña"
+            ),
+            "pw.forced_hint" => tr!(
+                "Bevor es weitergeht, vergib bitte ein eigenes Passwort.",
+                "Please set a password of your own before you continue.",
+                "Veuillez définir votre propre mot de passe avant de continuer.",
+                "Antes de continuar, establece una contraseña propia."
+            ),
+            "pw.voluntary_hint" => tr!(
+                "Du kannst dein Passwort jederzeit ändern.",
+                "You can change your password at any time.",
+                "Vous pouvez changer votre mot de passe à tout moment.",
+                "Puedes cambiar tu contraseña en cualquier momento."
+            ),
+            "pw.current" => tr!(
+                "Aktuelles Passwort",
+                "Current password",
+                "Mot de passe actuel",
+                "Contraseña actual"
+            ),
+            "pw.new" => tr!(
+                "Neues Passwort",
+                "New password",
+                "Nouveau mot de passe",
+                "Nueva contraseña"
+            ),
+            "pw.repeat" => tr!(
+                "Neues Passwort wiederholen",
+                "Repeat new password",
+                "Répéter le nouveau mot de passe",
+                "Repetir la nueva contraseña"
+            ),
+            "pw.rule" => tr!(
+                "Mindestens 6 Zeichen. Das neue Passwort muss sich vom bisherigen unterscheiden.",
+                "At least 6 characters. The new password has to differ from the old one.",
+                "Au moins 6 caractères. Le nouveau mot de passe doit différer de l'ancien.",
+                "Al menos 6 caracteres. La nueva contraseña debe ser distinta de la anterior."
+            ),
+            "pw.must_change" => tr!(
+                "Benutzer muss Passwort ändern",
+                "User must change password",
+                "L'utilisateur doit changer son mot de passe",
+                "El usuario debe cambiar la contraseña"
+            ),
+            "err.pw_current_wrong" => tr!(
+                "Das aktuelle Passwort stimmt nicht.",
+                "The current password is not correct.",
+                "Le mot de passe actuel est incorrect.",
+                "La contraseña actual no es correcta."
+            ),
+            "err.pw_repeat" => tr!(
+                "Die beiden neuen Passwörter stimmen nicht überein.",
+                "The two new passwords do not match.",
+                "Les deux nouveaux mots de passe ne correspondent pas.",
+                "Las dos contraseñas nuevas no coinciden."
+            ),
+            "err.pw_same" => tr!(
+                "Das neue Passwort ist dasselbe wie das bisherige.",
+                "The new password is the same as the old one.",
+                "Le nouveau mot de passe est identique à l'ancien.",
+                "La nueva contraseña es igual que la anterior."
+            ),
+            "err.pw_no_local" => tr!(
+                "Für dieses Konto ist noch kein Passwort hinterlegt. Bitte an einen Administrator wenden.",
+                "This account has no password yet. Please ask an administrator.",
+                "Ce compte n'a pas encore de mot de passe. Adressez-vous à un administrateur.",
+                "Esta cuenta aún no tiene contraseña. Consulta con un administrador."
+            ),
+
             // Unbekannter Key: unverändert zurückgeben, fällt sofort auf.
             other => {
                 tracing::warn!("i18n: unbekannter Key '{other}'");

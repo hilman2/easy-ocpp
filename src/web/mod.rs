@@ -1,5 +1,7 @@
+use axum::extract::{Request, State};
 use axum::http::header;
-use axum::response::{IntoResponse, Response};
+use axum::middleware::Next;
+use axum::response::{IntoResponse, Redirect, Response};
 use axum::routing::{get, post};
 use axum::Router;
 use rust_embed::RustEmbed;
@@ -46,6 +48,10 @@ pub fn router(state: AppState) -> Router {
         .route("/me", get(views::me::get))
         .route("/me/live", get(views::me::live_fragment))
         .route("/me/defaults", post(views::users::set_own_defaults))
+        .route(
+            "/password",
+            get(views::password::form).post(views::password::submit),
+        )
         .route("/transactions", get(views::transactions::list))
         .route("/transactions.csv", get(views::transactions::export_csv))
         .route("/transactions/:id/limit", post(views::transactions::set_limit))
@@ -55,8 +61,41 @@ pub fn router(state: AppState) -> Router {
         .route("/ocpp/:cp_id", get(crate::ocpp::ocpp16::ws_handler))
         .route("/ocpp15", post(crate::ocpp::soap15::soap_handler))
         .route("/static/*path", get(serve_asset))
+        .layer(axum::middleware::from_fn_with_state(
+            state.clone(),
+            force_password_change,
+        ))
         .layer(TraceLayer::new_for_http())
         .with_state(state)
+}
+
+/// Solange ein Passwortwechsel aussteht, fuehrt jeder Weg auf die
+/// Wechselseite. Ausgenommen sind die Seiten, die dafuer erreichbar bleiben
+/// muessen, und die OCPP-Endpunkte, an denen ohnehin keine Sitzung haengt.
+async fn force_password_change(
+    State(state): State<AppState>,
+    req: Request,
+    next: Next,
+) -> Response {
+    let path = req.uri().path();
+    let frei = path == "/password"
+        || path == "/login"
+        || path == "/logout"
+        || path == "/ocpp15"
+        || path.starts_with("/ocpp/")
+        || path.starts_with("/static/")
+        || path.starts_with("/lang/");
+
+    if !frei {
+        let (parts, body) = req.into_parts();
+        if let Ok(Some(user)) = crate::auth::session::resolve(&state, &parts).await {
+            if user.must_change_password != 0 {
+                return Redirect::to("/password").into_response();
+            }
+        }
+        return next.run(Request::from_parts(parts, body)).await;
+    }
+    next.run(req).await
 }
 
 /// Sprach-Umschalter: setzt das `lang`-Cookie und leitet zurück zur

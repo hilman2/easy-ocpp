@@ -66,6 +66,7 @@
     <div class="card-head"><h2>{{ layout.t("common.password") }}</h2></div>
     <form method="post" action="/users/{{ subject.id }}/password" class="row">
         <input type="password" name="password" placeholder="{{ layout.t("users.new_pw_ph") }}" minlength="6" required>
+        <label class="check"><input type="checkbox" name="must_change" value="1" checked> {{ layout.t("pw.must_change") }}</label>
         <button class="primary">{{ layout.t("users.set") }}</button>
     </form>
     {% if !subject.has_login() %}<p class="hint">{{ layout.t("users.no_login_hint") }}</p>{% endif %}
