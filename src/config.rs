@@ -13,6 +13,56 @@ pub struct Config {
     pub auth: AuthConfig,
     #[serde(default)]
     pub ocpp: OcppConfig,
+    /// Fehlt der Abschnitt, findet kein Monatsversand statt.
+    #[serde(default)]
+    pub mail: Option<MailConfig>,
+}
+
+/// Verschluesselung der SMTP-Verbindung.
+#[derive(Clone, Copy, Debug, Deserialize, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
+pub enum MailSecurity {
+    /// Ohne Verschluesselung. Nur fuer einen Relay im eigenen Netz sinnvoll.
+    None,
+    /// Klartext-Verbindung, die per STARTTLS hochgestuft wird. Ueblich auf 587.
+    Starttls,
+    /// Von Anfang an verschluesselt. Ueblich auf 465.
+    Tls,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct MailConfig {
+    pub smtp_host: String,
+    #[serde(default = "default_smtp_port")]
+    pub smtp_port: u16,
+    #[serde(default = "default_mail_security")]
+    pub security: MailSecurity,
+    #[serde(default)]
+    pub username: Option<String>,
+    #[serde(default)]
+    pub password: Option<String>,
+    /// Absender, entweder "adresse@example.com" oder "Name <adresse@example.com>".
+    pub from: String,
+    /// Sprache der Berichtsmails. Die Oberflaechensprache haengt am Browser
+    /// und steht fuer einen Versand ohne Besucher nicht zur Verfuegung.
+    #[serde(default = "default_mail_lang")]
+    pub lang: String,
+    /// Stunde am Monatsersten (lokale Zeit), ab der verschickt wird.
+    #[serde(default = "default_send_hour")]
+    pub send_hour: u32,
+}
+
+fn default_smtp_port() -> u16 {
+    587
+}
+fn default_mail_security() -> MailSecurity {
+    MailSecurity::Starttls
+}
+fn default_mail_lang() -> String {
+    "de".to_string()
+}
+fn default_send_hour() -> u32 {
+    6
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -165,6 +215,7 @@ impl Default for Config {
             storage: StorageConfig::default(),
             auth: AuthConfig::default(),
             ocpp: OcppConfig::default(),
+            mail: None,
         }
     }
 }

@@ -33,6 +33,9 @@ base64 = "0.22"
 sha2 = "0.10"
 dashmap = "6"
 printpdf = "0.7"
+# Nur SMTP mit rustls: kein OpenSSL auf dem Build-Rechner noetig, damit bleibt
+# das Ergebnis ein einzelnes Binary ohne Systemabhaengigkeiten.
+lettre = { version = "0.11", default-features = false, features = ["builder", "hostname", "smtp-transport", "tokio1", "tokio1-rustls-tls"] }
 
 [profile.release]
 opt-level = 3

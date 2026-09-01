@@ -29,3 +29,16 @@ meter_interval_s = 30
 # client_id = "..."
 # client_secret = "..."
 # redirect_uri = "http://localhost:8080/oidc/callback"
+
+# Monatsversand der Ladeberichte. Fehlt dieser Abschnitt, wird nichts
+# verschickt. Am Monatsersten bekommt jeder Benutzer mit E-Mail-Adresse, der im
+# Vormonat geladen hat, seinen eigenen Bericht als PDF.
+# [mail]
+# smtp_host  = "smtp.example.com"
+# smtp_port  = 587
+# security   = "starttls"          # starttls | tls | none
+# username   = "..."
+# password   = "..."
+# from       = "easy-ocpp <noreply@example.com>"
+# lang       = "de"                # Sprache der Mails: de | en | fr | es
+# send_hour  = 6                   # Stunde am Monatsersten (lokale Zeit)

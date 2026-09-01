@@ -884,6 +884,28 @@ impl Lang {
                 "Esta cuenta aún no tiene contraseña. Consulta con un administrador."
             ),
 
+
+            // ---- Berichtsmail ----------------------------------------------
+            "mail.subject" => tr!(
+                "Ladebericht",
+                "Charging report",
+                "Rapport de recharge",
+                "Informe de carga"
+            ),
+            "mail.greeting" => tr!("Hallo", "Hello", "Bonjour", "Hola"),
+            "mail.body" => tr!(
+                "im Anhang findest du deinen Ladebericht für {month}.",
+                "attached you will find your charging report for {month}.",
+                "vous trouverez en pièce jointe votre rapport de recharge pour {month}.",
+                "adjunto encontrarás tu informe de carga de {month}."
+            ),
+            "mail.footer" => tr!(
+                "Diese Nachricht wurde automatisch von easy-ocpp erzeugt.",
+                "This message was generated automatically by easy-ocpp.",
+                "Ce message a été généré automatiquement par easy-ocpp.",
+                "Este mensaje se ha generado automáticamente con easy-ocpp."
+            ),
+
             // Unbekannter Key: unverändert zurückgeben, fällt sofort auf.
             other => {
                 tracing::warn!("i18n: unbekannter Key '{other}'");

@@ -20,7 +20,7 @@ pub struct Filter {
     pub month: Option<u32>,
 }
 
-struct Row {
+pub(crate) struct Row {
     start: String,
     stop: String,
     wallbox: String,
@@ -30,44 +30,48 @@ struct Row {
 }
 
 /// Eine Berichtsseite je Person.
-struct Person {
-    id: i64,
-    name: String,
-    email: Option<String>,
-    rows: Vec<Row>,
-    total_wh: i64,
+pub(crate) struct Person {
+    pub(crate) id: i64,
+    pub(crate) name: String,
+    pub(crate) email: Option<String>,
+    pub(crate) rows: Vec<Row>,
+    pub(crate) total_wh: i64,
 }
 
-pub async fn monthly_pdf(
-    State(state): State<AppState>,
-    AuthUser(user): AuthUser,
-    lang: Lang,
-    Query(q): Query<Filter>,
-) -> AppResult<Response> {
-    let now = Utc::now();
-    let year = q.year.unwrap_or(now.year());
-    let month = q.month.unwrap_or(now.month());
-    if !(1..=12).contains(&month) {
-        return Err(AppError::BadRequest(lang.t("err.month_range").into()));
+impl Person {
+    pub(crate) fn session_count(&self) -> usize {
+        self.rows.len()
     }
+}
 
-    let start = NaiveDate::from_ymd_opt(year, month, 1)
-        .ok_or_else(|| AppError::BadRequest(lang.t("err.invalid_date").into()))?;
+/// Monatsgrenzen als RFC3339 in UTC. Dieselbe Rechnung wie im Bericht auf dem
+/// Bildschirm, damit die Zahlen in Mail und Oberflaeche uebereinstimmen.
+pub(crate) fn month_bounds(year: i32, month: u32) -> Option<(String, String)> {
+    let start = NaiveDate::from_ymd_opt(year, month, 1)?;
     let end = if month == 12 {
         NaiveDate::from_ymd_opt(year + 1, 1, 1)
     } else {
         NaiveDate::from_ymd_opt(year, month + 1, 1)
-    }
-    .unwrap();
-    let start_iso = Utc
-        .from_utc_datetime(&start.and_hms_opt(0, 0, 0).unwrap())
-        .to_rfc3339();
-    let end_iso = Utc
-        .from_utc_datetime(&end.and_hms_opt(0, 0, 0).unwrap())
-        .to_rfc3339();
+    }?;
+    Some((
+        Utc.from_utc_datetime(&start.and_hms_opt(0, 0, 0)?).to_rfc3339(),
+        Utc.from_utc_datetime(&end.and_hms_opt(0, 0, 0)?).to_rfc3339(),
+    ))
+}
 
-    // Alle abgeschlossenen Transaktionen im Monat, die einem Benutzer zugeordnet
-    // sind. Ein Mitarbeiter bekommt nur die eigene Seite, der Admin alle.
+/// Abgeschlossene Ladungen eines Monats, gruppiert nach Person. `only_user`
+/// schraenkt auf eine Person ein; None liefert alle.
+pub(crate) async fn collect(
+    state: &AppState,
+    year: i32,
+    month: u32,
+    only_user: Option<i64>,
+    lang: Lang,
+) -> AppResult<Vec<Person>> {
+    let Some((start_iso, end_iso)) = month_bounds(year, month) else {
+        return Err(AppError::BadRequest(lang.t("err.invalid_date").into()));
+    };
+
     // Alles in einer Query: Person, Wallbox, Start + Stop, Energie, Dauer.
     let base = "SELECT u.id, u.display_name, u.email, w.name, t.id_tag,
                        t.start_time, t.stop_time,
@@ -79,22 +83,20 @@ pub async fn monthly_pdf(
                  WHERE t.stop_meter_wh IS NOT NULL
                    AND t.start_time >= ?1 AND t.start_time < ?2";
     type ReportRow = (i64, String, Option<String>, String, String, String, Option<String>, i64, i64);
-    let rows: Vec<ReportRow> = if user.is_admin() {
-        sqlx::query_as(&format!("{base} ORDER BY u.display_name, t.start_time"))
+    let rows: Vec<ReportRow> = match only_user {
+        None => sqlx::query_as(&format!("{base} ORDER BY u.display_name, t.start_time"))
             .bind(&start_iso)
             .bind(&end_iso)
             .fetch_all(&state.db)
-            .await?
-    } else {
-        sqlx::query_as(&format!("{base} AND t.user_id = ?3 ORDER BY t.start_time"))
+            .await?,
+        Some(uid) => sqlx::query_as(&format!("{base} AND t.user_id = ?3 ORDER BY t.start_time"))
             .bind(&start_iso)
             .bind(&end_iso)
-            .bind(user.id)
+            .bind(uid)
             .fetch_all(&state.db)
-            .await?
+            .await?,
     };
 
-    // Gruppieren nach Person.
     let mut groups: Vec<Person> = Vec::new();
     for (emp_id, name, email, wb, tag, start_time, stop_time, energy_wh, dur_sec) in rows {
         let is_same = matches!(groups.last(), Some(e) if e.id == emp_id);
@@ -118,12 +120,41 @@ pub async fn monthly_pdf(
         });
         emp.total_wh += energy_wh.max(0);
     }
+    Ok(groups)
+}
+
+/// Fertiges PDF fuer eine bereits eingesammelte Personenliste.
+pub(crate) fn build_pdf(
+    year: i32,
+    month: u32,
+    people: &[Person],
+    lang: Lang,
+) -> anyhow::Result<Vec<u8>> {
+    render_pdf(year, month, people, lang)
+}
+
+pub async fn monthly_pdf(
+    State(state): State<AppState>,
+    AuthUser(user): AuthUser,
+    lang: Lang,
+    Query(q): Query<Filter>,
+) -> AppResult<Response> {
+    let now = Utc::now();
+    let year = q.year.unwrap_or(now.year());
+    let month = q.month.unwrap_or(now.month());
+    if !(1..=12).contains(&month) {
+        return Err(AppError::BadRequest(lang.t("err.month_range").into()));
+    }
+
+    // Ein Mitarbeiter bekommt nur die eigene Seite, der Admin alle.
+    let only_user = if user.is_admin() { None } else { Some(user.id) };
+    let groups = collect(&state, year, month, only_user, lang).await?;
 
     if groups.is_empty() {
         return Err(AppError::NotFound);
     }
 
-    let pdf_bytes = render_pdf(year, month, &groups, lang)
+    let pdf_bytes = build_pdf(year, month, &groups, lang)
         .map_err(|e| AppError::Other(anyhow::anyhow!("PDF: {e}")))?;
 
     let filename = format!("{}_{year:04}-{month:02}.pdf", lang.t("pdf.filename"));

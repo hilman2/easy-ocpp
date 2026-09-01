@@ -10,7 +10,7 @@ use tower_http::trace::TraceLayer;
 use crate::AppState;
 
 mod assets;
-mod views;
+pub(crate) mod views;
 
 pub fn router(state: AppState) -> Router {
     Router::new()

@@ -14,6 +14,7 @@ mod db;
 mod domain;
 mod error;
 mod i18n;
+mod mail;
 mod ocpp;
 mod web;
 
@@ -90,6 +91,9 @@ async fn main() -> Result<()> {
 
     // Wacht ueber Timer und Ziel-kWh der laufenden Ladungen.
     ocpp::limits::spawn_watchdog(state.clone());
+
+    // Verschickt die Monatsberichte, sofern [mail] konfiguriert ist.
+    mail::spawn(state.clone());
 
     let http_addr: SocketAddr = cfg.http.bind.parse().context("http.bind ungültig")?;
     let app = web::router(state.clone());
