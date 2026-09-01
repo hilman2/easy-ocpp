@@ -62,7 +62,7 @@
         </div>
         <div class="meta">
             {% if let Some(loc) = c.location %}<span>📍 {{ loc }}</span>{% endif %}
-            <span>OCPP {{ c.ocpp_version.as_deref().unwrap_or("—") }}</span>
+            <span>OCPP {{ c.ocpp_version.as_deref().unwrap_or("–") }}</span>
             {% if c.auth_locked %}<span title="{{ layout.t("dash.secured_tip") }}">🔒 {{ layout.t("dash.secured") }}</span>{% endif %}
         </div>
         {% if c.active_tx > 0 %}

@@ -6,8 +6,8 @@
 //! Watchdog ein `RemoteStopTransaction` an die Wallbox.
 //!
 //! Geprueft wird an zwei Stellen:
-//!  - periodisch (siehe [`spawn_watchdog`]) — deckt vor allem den Timer ab,
-//!  - direkt nach eingehenden MeterValues — damit das Energielimit ohne
+//!  - periodisch (siehe [`spawn_watchdog`]), deckt vor allem den Timer ab,
+//!  - direkt nach eingehenden MeterValues, damit das Energielimit ohne
 //!    Verzoegerung greift.
 
 use std::time::Duration;
@@ -48,7 +48,7 @@ pub async fn enforce_all(state: &AppState) -> anyhow::Result<()> {
     Ok(())
 }
 
-/// Prueft genau eine Ladung — wird nach dem Eintreffen neuer MeterValues
+/// Prueft genau eine Ladung. Wird nach dem Eintreffen neuer MeterValues
 /// aufgerufen, damit das Energielimit sofort greift.
 pub async fn enforce_transaction(state: &AppState, tx_id: i64) {
     match load_candidates(state, Some(tx_id)).await {
@@ -109,7 +109,7 @@ async fn load_candidates(state: &AppState, only: Option<i64>) -> anyhow::Result<
         .collect())
 }
 
-/// Entscheidet, ob ein Limit erreicht ist — und welches zuerst.
+/// Entscheidet, ob ein Limit erreicht ist und welches zuerst.
 fn reached(c: &Candidate, now: DateTime<Utc>) -> Option<i64> {
     if let (Some(limit), Some(last)) = (c.limit_wh, c.last_meter_wh) {
         if (last - c.start_meter_wh).max(0) >= limit {
@@ -134,7 +134,7 @@ async fn enforce_one(state: &AppState, c: &Candidate) {
 
     match crate::ocpp::ocpp16::remote_stop(&state.ocpp_hub, &c.charge_point_id, c.ocpp_tx_id).await {
         Ok(status) if status == "Accepted" => {
-            // Erst nach einer angenommenen Anfrage markieren — sonst wuerde ein
+            // Erst nach einer angenommenen Anfrage markieren. Sonst wuerde ein
             // fehlgeschlagener Stop nie wiederholt.
             if let Err(e) = sqlx::query("UPDATE transactions SET limit_stopped = ?1 WHERE id = ?2")
                 .bind(reason)
@@ -145,18 +145,18 @@ async fn enforce_one(state: &AppState, c: &Candidate) {
                 tracing::warn!("tx {}: limit_stopped konnte nicht gesetzt werden: {e}", c.tx_id);
             }
             tracing::info!(
-                "tx {}: {what} erreicht — RemoteStop an {} gesendet",
+                "tx {}: {what} erreicht, RemoteStop an {} gesendet",
                 c.tx_id,
                 c.charge_point_id
             );
         }
         Ok(status) => tracing::warn!(
-            "tx {}: {what} erreicht, aber {} lehnte RemoteStop ab ({status}) — naechster Versuch folgt",
+            "tx {}: {what} erreicht, aber {} lehnte RemoteStop ab ({status}), naechster Versuch folgt",
             c.tx_id,
             c.charge_point_id
         ),
         Err(e) => tracing::warn!(
-            "tx {}: {what} erreicht, RemoteStop an {} fehlgeschlagen: {e} — naechster Versuch folgt",
+            "tx {}: {what} erreicht, RemoteStop an {} fehlgeschlagen: {e}, naechster Versuch folgt",
             c.tx_id,
             c.charge_point_id
         ),

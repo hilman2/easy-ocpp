@@ -1,5 +1,5 @@
 //! Benutzerverwaltung. Seit Migration 0003 ist ein Benutzer zugleich der
-//! Mitarbeiter — Chips, Ladungen und Ladelimits hängen direkt am `users`-Eintrag.
+//! Mitarbeiter. Chips, Ladungen und Ladelimits hängen direkt am `users`-Eintrag.
 
 use askama::Template;
 use axum::extract::{Path, State};
@@ -144,7 +144,7 @@ pub struct RecentTx {
 #[template(path = "user_detail.html")]
 struct DetailTpl {
     layout: LayoutCtx,
-    /// Der angezeigte Benutzer — nicht zwingend der angemeldete.
+    /// Der angezeigte Benutzer, nicht zwingend der angemeldete.
     subject: User,
     chips: Vec<Chip>,
     recent_tx: Vec<RecentTx>,
@@ -278,7 +278,7 @@ pub async fn delete(
     if is_last_active_admin(&state, id).await? {
         return Err(AppError::BadRequest(lang.t("err.last_admin").into()));
     }
-    // chips.user_id und transactions.user_id sind ON DELETE SET NULL —
+    // chips.user_id und transactions.user_id sind ON DELETE SET NULL,
     // die Ladehistorie bleibt erhalten, verliert aber ihre Zuordnung.
     sqlx::query("DELETE FROM users WHERE id = ?1")
         .bind(id)
@@ -319,7 +319,7 @@ pub struct DefaultsForm {
     pub limit_minutes: Option<String>,
 }
 
-/// Standard-Ladelimits eines Mitarbeiters — gesetzt vom Admin auf der Benutzerseite.
+/// Standard-Ladelimits eines Mitarbeiters, gesetzt vom Admin auf der Benutzerseite.
 pub async fn set_defaults(
     State(state): State<AppState>,
     AdminUser(_): AdminUser,

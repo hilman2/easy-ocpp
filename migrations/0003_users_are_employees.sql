@@ -5,7 +5,7 @@
 -- gepflegt, weshalb ein Nicht-Admin-Login praktisch nie eigene Ladungen sah.
 -- Ab hier gilt: ein Mitarbeiter IST ein users-Eintrag mit role='user'.
 -- Die Semantik "gehoert zu Person" laeuft wieder ueber user_id (chips,
--- transactions) — die Spalten existieren seit 0001 und werden hier neu befuellt.
+-- transactions). Die Spalten existieren seit 0001 und werden hier neu befuellt.
 
 -- 1) users bekommt die Mitarbeiter-Felder und die Ladelimit-Vorgaben.
 ALTER TABLE users ADD COLUMN department TEXT;
@@ -21,7 +21,7 @@ ALTER TABLE users ADD COLUMN default_limit_minutes INTEGER;
 UPDATE users SET username = username || '.old'
  WHERE username IN (SELECT 'emp' || id FROM employees);
 
--- 3) Jeder Mitarbeiter ohne Login bekommt ein Konto — ohne Passwort, damit sich
+-- 3) Jeder Mitarbeiter ohne Login bekommt ein Konto ohne Passwort, damit sich
 --    niemand ungewollt anmelden kann. Der Admin vergibt es unter "Benutzer".
 INSERT INTO users (username, display_name, email, department, role, auth_source,
                    password_hash, disabled, employee_id)

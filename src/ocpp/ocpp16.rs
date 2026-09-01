@@ -64,7 +64,7 @@ pub async fn ws_handler(
         return (StatusCode::BAD_REQUEST, "ChargePointId ungültig").into_response();
     }
 
-    // OCPP Security Profile 1 — Basic Auth, pro Wallbox optional.
+    // OCPP Security Profile 1: Basic Auth, pro Wallbox optional.
     // Wenn ein Passwort-Hash in der DB steht, muss die Wallbox sich mit
     // "Authorization: Basic base64(user:pass)" ausweisen. Username-Default = cp_id.
     let existing: Option<(Option<String>, Option<String>)> = sqlx::query_as(
@@ -232,7 +232,7 @@ async fn handle_socket(socket: WebSocket, cp_id: String, version: String, state:
 /// Prüft per GetConfiguration, ob die Wallbox MeterValues im gewünschten
 /// Intervall mit Energie + Leistung sendet, und setzt andernfalls
 /// `MeterValueSampleInterval` bzw. ergänzt `MeterValuesSampledData`.
-/// Fehler werden nur geloggt — nicht jede Box unterstützt jeden Schlüssel.
+/// Fehler werden nur geloggt, nicht jede Box unterstützt jeden Schlüssel.
 /// Rückgabe: true, wenn die Box auf GetConfiguration geantwortet hat
 /// (dann ist kein weiterer Versuch nötig).
 async fn ensure_meter_config(state: &AppState, cp_id: &str) -> bool {
@@ -266,7 +266,7 @@ async fn ensure_meter_config(state: &AppState, cp_id: &str) -> bool {
             }
         }
         Err(e) => {
-            // Ohne Kenntnis der aktuellen Konfiguration nichts überschreiben —
+            // Ohne Kenntnis der aktuellen Konfiguration nichts überschreiben,
             // die Box antwortet evtl. erst nach der Boot-Sequenz (Retry folgt).
             tracing::warn!("GetConfiguration bei {cp_id} fehlgeschlagen: {e}");
             return false;
@@ -278,7 +278,7 @@ async fn ensure_meter_config(state: &AppState, cp_id: &str) -> bool {
     }
 
     // Fehlende Messgrößen an die bestehende Liste anhängen, statt sie zu
-    // ersetzen — vom Betreiber konfigurierte Messgrößen bleiben erhalten.
+    // ersetzen, vom Betreiber konfigurierte Messgrößen bleiben erhalten.
     // Bei leerer Liste SoC mit anfordern; lehnt die Box ab, Rückfall auf
     // Energie + Leistung.
     let has_power = cur_data
@@ -837,7 +837,7 @@ async fn handle_meter(
         .unwrap_or(&empty);
 
     // Wir ordnen MeterValues der Transaktion zu. Manche Boxen senden während
-    // der Ladung keine transactionId, nur die connectorId — dann nehmen wir
+    // der Ladung keine transactionId, nur die connectorId. Dann nehmen wir
     // die laufende Transaktion dieses Connectors. Ohne Zuordnung keine Speicherung.
     let tx_id = match tx_id {
         Some(id) => id,
@@ -845,7 +845,7 @@ async fn handle_meter(
             let Some(conn_id) = payload.get("connectorId").and_then(|v| v.as_i64()) else {
                 return Ok(json!({}));
             };
-            // Nur Transaktionen der letzten 24 h — schützt davor, Messwerte einer
+            // Nur Transaktionen der letzten 24 h, das schützt davor, Messwerte einer
             // verwaisten offenen Transaktion (verlorene StopTransaction) zuzuordnen.
             let row: Option<(i64,)> = sqlx::query_as(
                 "SELECT t.id FROM transactions t
@@ -887,7 +887,7 @@ async fn handle_meter(
         let mut soc: Option<i64> = None;
         if let Some(sampled) = mv.get("sampledValue").and_then(|v| v.as_array()) {
             for s in sampled {
-                // Einzelphasen-Werte (L1/L2/L3/…) überspringen — nur der
+                // Einzelphasen-Werte (L1/L2/L3/…) überspringen, nur der
                 // Eintrag ohne "phase" repräsentiert laut Spec den Gesamtwert.
                 if s.get("phase").and_then(|v| v.as_str()).is_some() {
                     continue;

@@ -48,7 +48,7 @@
                 <code>{{ r.user.username }}</code>
                 {% if !r.user.has_login() %} <small class="muted">· {{ layout.t("users.no_login") }}</small>{% endif %}
             </td>
-            <td>{{ r.user.department.as_deref().unwrap_or("—") }}</td>
+            <td>{{ r.user.department.as_deref().unwrap_or("–") }}</td>
             <td>{% if r.user.is_admin() %}{{ layout.t("users.admin_role") }}{% else %}{{ layout.t("users.user_role") }}{% endif %}</td>
             <td>{% if r.user.disabled == 0 %}{{ layout.t("common.yes") }}{% else %}{{ layout.t("common.no") }}{% endif %}</td>
             <td>{{ r.chip_count }}</td>

@@ -6,7 +6,7 @@
 [![Release](https://img.shields.io/github/v/release/hilman2/easy-ocpp)](https://github.com/hilman2/easy-ocpp/releases/latest)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-Selbst gehosteter **OCPP-Server (CSMS)** für Ladestationen, gebaut für **KMUs mit 1–10 Wallboxen**. Ladepunkt-Verwaltung, RFID-Chips, Ladelimits und Auswertungen — ohne Cloud-Abo.
+Selbst gehosteter **OCPP-Server (CSMS)** für Ladestationen, gebaut für **KMUs mit 1–10 Wallboxen**. Ladepunkt-Verwaltung, RFID-Chips, Ladelimits und Auswertungen, ohne Cloud-Abo.
 
 - **Ein Binary, eine SQLite-Datei** – keine externe Datenbank, kein Message-Broker.
 - **OCPP 1.6J** (vollständig) + **OCPP 2.0.1** (WebSocket-Gerüst, BootNotification / TransactionEvent) + **OCPP 1.5 SOAP** (Gerüst für Boot/Heartbeat).
@@ -25,7 +25,7 @@ Selbst gehosteter **OCPP-Server (CSMS)** für Ladestationen, gebaut für **KMUs 
 | Live-Werte während der Ladung (geladene kWh, aktuelle Leistung, SoC) | ✅ |
 | Transaktionsliste, Filter nach Benutzer | ✅ |
 | Statistik nach Monat / Quartal / Jahr | ✅ |
-| Benutzer **sind** die Mitarbeiter — Chips, Ladungen und Limits hängen am Konto | ✅ |
+| Benutzer **sind** die Mitarbeiter: Chips, Ladungen und Limits hängen am Konto | ✅ |
 | Ladelimits je Ladung: Ziel-kWh und/oder Timer, automatische Abschaltung | ✅ |
 | Standardvorgaben dafür je Person, gesetzt vom Mitarbeiter oder vom Admin | ✅ |
 | Mitarbeiter-Selbstbedienung: eigene Ladung live, eigene Limits, selbst beenden | ✅ |
@@ -36,7 +36,7 @@ Selbst gehosteter **OCPP-Server (CSMS)** für Ladestationen, gebaut für **KMUs 
 ## Starten
 
 **Fertige Binaries** (Windows x64, Linux x64) gibt es unter
-[Releases](https://github.com/hilman2/easy-ocpp/releases/latest) — entpacken,
+[Releases](https://github.com/hilman2/easy-ocpp/releases/latest). Entpacken,
 `easy-ocpp.exe` bzw. `easy-ocpp` starten, fertig (siehe `ANLEITUNG.md` im Paket).
 
 Oder selbst bauen:
@@ -98,39 +98,39 @@ diesem Konto. Einen separaten Mitarbeiter-Datensatz gibt es nicht mehr.
 
 | | Admin | Mitarbeiter |
 |---|---|---|
-| Cockpit, Wallboxen, Chips, Benutzerverwaltung | ✅ | — |
-| Ladungen aller Personen | ✅ | — |
+| Cockpit, Wallboxen, Chips, Benutzerverwaltung | ✅ | – |
+| Ladungen aller Personen | ✅ | – |
 | Eigene Ladungen (Liste, CSV, Statistik, Monats-PDF) | ✅ | ✅ |
 | Eigene laufende Ladung live sehen und beenden | ✅ | ✅ |
 | Ziel-kWh / Timer an der eigenen laufenden Ladung | ✅ | ✅ |
-| Standardvorgaben — eigene | ✅ | ✅ |
-| Standardvorgaben — die jedes Mitarbeiters | ✅ | — |
+| Standardvorgaben, eigene | ✅ | ✅ |
+| Standardvorgaben jedes Mitarbeiters | ✅ | – |
 
 Ein Mitarbeiter landet nach dem Login auf **`/me`**, nicht im Cockpit; die
 Navigation zeigt ihm nur, was er auch öffnen darf. Die Einschränkungen greifen
 serverseitig, nicht bloß durch Ausblenden in der Oberfläche.
 
 Mitarbeiter aus der Zeit vor diesem Kontomodell werden **ohne Passwort**
-übernommen — ihre Ladungen werden erfasst, anmelden können sie sich erst, wenn
+übernommen. Ihre Ladungen werden erfasst, anmelden können sie sich erst, wenn
 ein Admin unter „Benutzer" eines vergibt.
 
 ## Ladelimits
 
 Eine Ladung wird automatisch beendet, sobald sie eine **Ziel-Energie** oder einen
-**Timer** erreicht — was zuerst eintritt. Beides ist optional und einzeln
+**Timer** erreicht, je nachdem was zuerst eintritt. Beides ist optional und einzeln
 abschaltbar.
 
 - **Standardvorgaben je Person**: der Mitarbeiter setzt sie auf seiner eigenen
   Seite, der Admin auf der Benutzer-Detailseite. Sie werden beim Start jeder
   Ladung übernommen, der Timer zählt dann ab Ladebeginn.
 - **An der laufenden Ladung**: die Werte lassen sich während des Ladens noch
-  ändern. Dort bedeutet der Timer „in N Minuten abschalten" — das, was man
+  ändern. Dort bedeutet der Timer „in N Minuten abschalten". Das meint man,
   meint, wenn man vor der Wallbox steht.
 
 Ein Watchdog prüft alle 15 Sekunden und schickt `RemoteStopTransaction`. Das
 Energielimit wird zusätzlich sofort beim Eintreffen neuer Messwerte geprüft,
 damit nicht bis zum nächsten Takt weitergeladen wird. Lehnt die Wallbox den Stop
-ab, wird beim nächsten Takt erneut versucht — abgehakt wird die Ladung erst,
+ab, wird beim nächsten Takt erneut versucht. Abgehakt wird die Ladung erst,
 wenn die Wallbox angenommen hat.
 
 ## Datenhaltung

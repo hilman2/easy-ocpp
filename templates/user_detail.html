@@ -87,9 +87,9 @@
     {% for c in chips %}
         <tr>
             <td><code>{{ c.id_tag }}</code></td>
-            <td>{{ c.label.as_deref().unwrap_or("—") }}</td>
+            <td>{{ c.label.as_deref().unwrap_or("–") }}</td>
             <td>{% if c.enabled != 0 %}{{ layout.t("common.yes") }}{% else %}{{ layout.t("common.no") }}{% endif %}</td>
-            <td>{{ c.expires_at.as_deref().unwrap_or("—") }}</td>
+            <td>{{ c.expires_at.as_deref().unwrap_or("–") }}</td>
         </tr>
     {% endfor %}
     </tbody>

@@ -62,7 +62,7 @@ impl Scope {
     }
 }
 
-/// Bindet erst den Zeitraum, dann — falls gesetzt — den Benutzer. Die
+/// Bindet erst den Zeitraum, dann (falls gesetzt) den Benutzer. Die
 /// Reihenfolge muss der Reihenfolge der Platzhalter im SQL entsprechen.
 fn bind_filters<'q>(
     mut q: sqlx::query::QueryAs<'q, sqlx::Sqlite, (String, i64, i64), sqlx::sqlite::SqliteArguments<'q>>,
@@ -205,7 +205,7 @@ pub struct GuestSplit {
 
 /// Mitarbeiter- gegen Gast-Ladungen. Gast = keinem Benutzer zugeordnet.
 /// Für die Mitarbeiter-Sicht (`scope` eingeschränkt) ist die Aufteilung ohne
-/// Aussage — dort liefert die Funktion nur den eigenen Anteil.
+/// Aussage. Dort liefert die Funktion nur den eigenen Anteil.
 pub async fn employee_vs_guest(
     db: &SqlitePool,
     since: Option<&str>,

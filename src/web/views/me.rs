@@ -28,7 +28,7 @@ pub struct MySession {
     pub limit_kwh: String,
     /// Verbleibende Minuten bis zur Zeitabschaltung, falls ein Timer laeuft.
     pub limit_minutes_left: Option<i64>,
-    /// 1 = wegen Energielimit gestoppt, 2 = wegen Zeitlimit — die Wallbox
+    /// 1 = wegen Energielimit gestoppt, 2 = wegen Zeitlimit. Die Wallbox
     /// beendet die Ladung gleich, die Zeile bleibt bis dahin sichtbar.
     pub limit_stopped: i64,
 }
@@ -147,7 +147,7 @@ async fn load_my_sessions(state: &AppState, user_id: i64) -> AppResult<Vec<MySes
 }
 
 /// Verbleibende Minuten bis zum Abschaltzeitpunkt, aufgerundet. Ein bereits
-/// verstrichener Zeitpunkt ergibt 0 — nicht None, damit die UI weiter „0 min“
+/// verstrichener Zeitpunkt ergibt 0, nicht None, damit die UI weiter „0 min“
 /// statt „kein Timer“ zeigt, solange die Wallbox noch nicht gestoppt hat.
 fn minutes_left(until: &str, now: DateTime<Utc>) -> Option<i64> {
     let dt = DateTime::parse_from_rfc3339(until).ok()?;

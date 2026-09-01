@@ -23,10 +23,10 @@
             <td>{{ r.wallbox_name }}</td>
             <td>{{ r.connector_id }}</td>
             <td><code>{{ r.id_tag }}</code></td>
-            <td>{{ r.user_name.as_deref().unwrap_or("—") }}</td>
+            <td>{{ r.user_name.as_deref().unwrap_or("–") }}</td>
             <td>{{ r.start_time }}</td>
             <td>{{ r.stop_time.as_deref().unwrap_or(layout.t("common.running")) }}</td>
-            <td>{% if let Some(e) = r.energy_kwh %}{{ e }} kWh{% else %}—{% endif %}{% if let Some(p) = r.power_kw %} <small class="muted">· {{ p }} kW</small>{% endif %}</td>
+            <td>{% if let Some(e) = r.energy_kwh %}{{ e }} kWh{% else %}–{% endif %}{% if let Some(p) = r.power_kw %} <small class="muted">· {{ p }} kW</small>{% endif %}</td>
         </tr>
     {% endfor %}
     {% if rows.is_empty() %}<tr><td colspan="8" class="empty">{{ layout.t("tx.none") }}</td></tr>{% endif %}

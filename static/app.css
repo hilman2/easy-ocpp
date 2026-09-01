@@ -1,5 +1,5 @@
 /* =========================================================================
-   easy-ocpp — Dark Cockpit Design-System
+   easy-ocpp Dark Cockpit Design-System
    Navy-Sidebar + dunkler Content + Cyan-Akzent (EV-Ästhetik).
    ========================================================================= */
 
@@ -30,7 +30,7 @@
   --warn-soft:     #3a2c0b;
   --danger:        #f87171;
   --danger-soft:   #3a1716;
-  --charge:        #a78bfa;   /* violet-400 — "lädt" */
+  --charge:        #a78bfa;   /* violet-400, "lädt" */
   --charge-soft:   #261e3d;
   --off:           #64748b;
   --off-soft:      #1a2337;

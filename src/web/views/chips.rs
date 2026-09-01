@@ -20,7 +20,7 @@ impl ChipRow {
     }
 }
 
-/// Auswahleintrag "Chip gehoert zu ..." — seit 0003 ist das ein Benutzer.
+/// Auswahleintrag "Chip gehoert zu ...". Seit 0003 ist das ein Benutzer.
 pub struct UserOpt {
     pub id: i64,
     pub name: String,
@@ -123,7 +123,7 @@ pub async fn update(
         .filter(|s| !s.is_empty())
         .map(str::to_string);
 
-    // Die Kategorie ergibt sich aus der Zuordnung — ein Chip ohne Benutzer ist
+    // Die Kategorie ergibt sich aus der Zuordnung. Ein Chip ohne Benutzer ist
     // ein Gast-Chip. Beides getrennt pflegen zu lassen, erzeugte nur
     // widersprüchliche Kombinationen.
     let kind = chip_kind(user_id);
@@ -294,7 +294,7 @@ pub async fn delete(
     Ok(Redirect::to("/chips").into_response())
 }
 
-/// Kategorie eines Chips — abgeleitet aus der Zuordnung, nicht separat gepflegt.
+/// Kategorie eines Chips, abgeleitet aus der Zuordnung und nicht separat gepflegt.
 fn chip_kind(user_id: Option<i64>) -> &'static str {
     if user_id.is_some() {
         "employee"

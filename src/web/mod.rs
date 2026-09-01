@@ -71,7 +71,7 @@ async fn set_lang(
     let back = headers
         .get(header::REFERER)
         .and_then(|v| v.to_str().ok())
-        // Nur lokale Pfade akzeptieren — kein Open-Redirect über fremde Referer.
+        // Nur lokale Pfade akzeptieren, kein Open-Redirect über fremde Referer.
         .and_then(|r| {
             let path = r.strip_prefix("http://").or_else(|| r.strip_prefix("https://"))
                 .and_then(|rest| rest.find('/').map(|i| &rest[i..]))

@@ -12,8 +12,8 @@
         </div>
 
         <div class="row">
-            <div><b>{% if let Some(e) = s.energy_kwh %}{{ e }}{% else %}—{% endif %}</b> kWh {{ lang.t("common.charged") }}</div>
-            <div><b>{% if let Some(p) = s.power_kw %}{{ p }}{% else %}—{% endif %}</b> kW</div>
+            <div><b>{% if let Some(e) = s.energy_kwh %}{{ e }}{% else %}–{% endif %}</b> kWh {{ lang.t("common.charged") }}</div>
+            <div><b>{% if let Some(p) = s.power_kw %}{{ p }}{% else %}–{% endif %}</b> kW</div>
             {% if let Some(soc) = s.soc_percent %}<div><b>{{ soc }} %</b> SoC</div>{% endif %}
             <div class="muted">{{ lang.t("dash.since") }} {{ s.start_time }}</div>
         </div>

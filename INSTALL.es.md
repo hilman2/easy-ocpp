@@ -2,7 +2,7 @@
 
 🌐 [English](INSTALL.md) · [Deutsch](ANLEITUNG.md) · [Français](INSTALL.fr.md) · [Español](INSTALL.es.md)
 
-Herramienta de gestión para cargadores (OCPP 1.5/1.6/2.0.1) — un solo binario, un solo archivo SQLite.
+Herramienta de gestión para cargadores (OCPP 1.5/1.6/2.0.1). Un solo binario, un solo archivo SQLite.
 
 ## Novedades de la v0.4.0
 
@@ -23,7 +23,7 @@ Herramienta de gestión para cargadores (OCPP 1.5/1.6/2.0.1) — un solo binario
 - **Las tarjetas son inequívocas.** Una tarjeta pertenece a una persona o es de
   invitado. La categoría que antes se mantenía por separado se deriva ahora de la
   asignación y ya no puede contradecirla.
-- **El programa se llama ahora `easy-ocpp`** — detalles más abajo.
+- **El programa se llama ahora `easy-ocpp`**, detalles más abajo.
 
 ## Novedades de la v0.3.0
 
@@ -39,12 +39,12 @@ Herramienta de gestión para cargadores (OCPP 1.5/1.6/2.0.1) — un solo binario
 
 - **Valores en vivo durante la carga:** el panel y la página de detalle del
   cargador muestran, para las cargas en curso, los **kWh** cargados hasta
-  el momento, la **potencia (kW)** actual y — si el cargador lo comunica — el
+  el momento, la **potencia (kW)** actual y, si el cargador lo comunica, el
   **SoC** del vehículo. La pantalla se actualiza automáticamente cada 10
   segundos.
 - **Configuración automática del cargador:** al conectarse, el servidor
   configura el cargador para que envíe lecturas del contador cada 30 segundos
-  (`MeterValueSampleInterval`, `MeterValuesSampledData`) — ajustable mediante
+  (`MeterValueSampleInterval`, `MeterValuesSampledData`), ajustable mediante
   la nueva sección `[ocpp]` del `config.toml`.
 - Diversas correcciones de robustez en el procesamiento de las lecturas
   (valores por fase, valores erróneos, indicaciones obsoletas).
@@ -79,13 +79,13 @@ INSTALL.es.md          Esta guía
 ANLEITUNG.md           Versión alemana de esta guía
 ```
 
-El `.exe` contiene el esquema de la base de datos, la interfaz web y los recursos estáticos — **no hace falta distribuir nada más**.
+El `.exe` contiene el esquema de la base de datos, la interfaz web y los recursos estáticos. **No hace falta distribuir nada más**.
 
 ## 1. Instalación
 
 1. Copie esta carpeta a una ubicación fija, p. ej. `C:\easy-ocpp\`.
 2. Opcional: copie `config.example.toml` como `config.toml` y ajústelo (véase más abajo). Sin `config.toml` se aplican los valores por defecto (puerto 8080, directorio de datos `./data`).
-3. Asegúrese de que el puerto **8080** esté libre en el host y permitido en entrada en el Firewall de Windows — de lo contrario, los cargadores no podrán alcanzar el servidor.
+3. Asegúrese de que el puerto **8080** esté libre en el host y permitido en entrada en el Firewall de Windows. De lo contrario, los cargadores no podrán alcanzar el servidor.
 
 ## 2. Primer arranque
 
@@ -106,7 +106,7 @@ Después, abra en el navegador:
 
 <http://localhost:8080>
 
-**Credenciales por defecto:** `admin` / `admin` — cambie la contraseña de inmediato en «Usuarios».
+**Credenciales por defecto:** `admin` / `admin`. Cambie la contraseña de inmediato en «Usuarios».
 
 Detenga con `Ctrl+C` en la ventana de PowerShell.
 
@@ -131,11 +131,11 @@ db_file  = "easy-ocpp.db"
 meter_interval_s = 30
 ```
 
-- `bind = "0.0.0.0:8080"` — escucha en todos los adaptadores de red (necesario para que los cargadores puedan conectarse).
-- `public_base_url` — dirección pública en la que el servidor es accesible desde el punto de vista de los cargadores.
-- `meter_interval_s` — intervalo de envío de las lecturas en vivo (30 s por defecto).
+- `bind = "0.0.0.0:8080"`: escucha en todos los adaptadores de red (necesario para que los cargadores puedan conectarse).
+- `public_base_url`: dirección pública en la que el servidor es accesible desde el punto de vista de los cargadores.
+- `meter_interval_s`: intervalo de envío de las lecturas en vivo (30 s por defecto).
 
-Las secciones LDAP / Entra ID están comentadas en el ejemplo — por ahora son esbozos, no están activas.
+Las secciones LDAP / Entra ID están comentadas en el ejemplo, por ahora son esbozos y no están activas.
 
 ## 4. Configurar un cargador
 
@@ -192,7 +192,7 @@ Restablece la contraseña de la cuenta `admin` y finaliza.
 
 Todo lo relevante está en **un único archivo**: `data\easy-ocpp.db`.
 
-Para una copia de seguridad consistente, detenga brevemente el servicio y guarde el archivo (incluidos los posibles `-wal` / `-shm`) — listo.
+Para una copia de seguridad consistente, detenga brevemente el servicio y guarde el archivo (incluidos los posibles `-wal` / `-shm`). Listo.
 
 ## 9. Solución de problemas
 
@@ -200,13 +200,13 @@ Para una copia de seguridad consistente, detenga brevemente el servicio y guarde
 |---------|------------------|
 | El navegador muestra «página no accesible» | Puerto 8080 ocupado o bloqueado por el firewall. Compruebe con `netstat -ano \| findstr :8080`. |
 | El cargador no se conecta | Compruebe `public_base_url` / el firewall / la URL con el `ChargePointId`. Los logs de la consola muestran las conexiones WS entrantes. |
-| Sin valores en vivo durante la carga | Deje que el cargador se vuelva a conectar (la configuración se aplica al conectar). Compruebe el log de la consola: `MeterValueSampleInterval` debería aparecer como «establecido». Algunos cargadores necesitan un reinicio, otros no admiten medición de potencia — en ese caso la potencia se deriva de las lecturas del contador. |
+| Sin valores en vivo durante la carga | Deje que el cargador se vuelva a conectar (la configuración se aplica al conectar). Compruebe el log de la consola: `MeterValueSampleInterval` debería aparecer como «establecido». Algunos cargadores necesitan un reinicio, otros no admiten medición de potencia, en cuyo caso la potencia se deriva de las lecturas del contador. |
 | «database is locked» | No inicie un segundo `easy-ocpp.exe` a la vez sobre la misma base de datos. |
 | ¿Más logs? | Antes de iniciar: establezca `$env:RUST_LOG="debug"`. |
 
 ## 10. Desinstalación
 
-Elimine el servicio/la tarea y borre la carpeta — no hay entradas en el registro ni dependencias externas.
+Elimine el servicio/la tarea y borre la carpeta. No hay entradas en el registro ni dependencias externas.
 
 ---
 

@@ -2,7 +2,7 @@
 //!
 //! Sprachwahl: Cookie `lang` (über den Umschalter in der Topbar gesetzt),
 //! sonst `Accept-Language` des Browsers, sonst Englisch.
-//! Alle Texte liegen als statische Tabelle in `Lang::t` — ein unbekannter
+//! Alle Texte liegen als statische Tabelle in `Lang::t`. Ein unbekannter
 //! Key wird unverändert zurückgegeben (fällt beim Entwickeln sofort auf).
 
 use axum::async_trait;
@@ -262,10 +262,10 @@ impl Lang {
             ),
             "wbd.pw_set" => tr!("Neues Passwort gesetzt.", "New password set.", "Nouveau mot de passe défini.", "Nueva contraseña establecida."),
             "wbd.pw_show_once" => tr!(
-                "Trage in der Wallbox folgenden Zugang ein — wird nur genau jetzt angezeigt:",
-                "Enter these credentials in the wallbox — shown only this once:",
-                "Saisissez ces identifiants dans la borne — affichés une seule fois :",
-                "Introduce estas credenciales en el cargador — se muestran solo esta vez:"
+                "Trage in der Wallbox folgenden Zugang ein. Wird nur genau jetzt angezeigt:",
+                "Enter these credentials in the wallbox. Shown only this once:",
+                "Saisissez ces identifiants dans la borne. Affichés une seule fois :",
+                "Introduce estas credenciales en el cargador. Se muestran solo esta vez:"
             ),
             "wbd.user" => tr!("Benutzer", "User", "Utilisateur", "Usuario"),
             "wbd.basic_auth_is" => tr!("Basic Auth ist", "Basic auth is", "L'authentification Basic est", "La autenticación Basic está"),
@@ -287,7 +287,7 @@ impl Lang {
             "wbd.pw_min" => tr!("min. 8 Zeichen", "min. 8 characters", "min. 8 caractères", "mín. 8 caracteres"),
             "wbd.set_password" => tr!("Passwort setzen", "Set password", "Définir le mot de passe", "Establecer contraseña"),
             "wbd.generate" => tr!("Generieren", "Generate", "Générer", "Generar"),
-            // Wird in confirm('…') verwendet — Übersetzungen ohne Apostroph halten!
+            // Wird in confirm('…') verwendet, Übersetzungen ohne Apostroph halten!
             "wbd.disable_auth_confirm" => tr!(
                 "Basic-Auth deaktivieren?",
                 "Disable basic auth?",
@@ -306,10 +306,10 @@ impl Lang {
             "wbd.guest_label_ph" => tr!("z. B. Firma Mustermann", "e.g. Acme Corp", "p. ex. Société Dupont", "p. ej. Empresa Ejemplo"),
             "wbd.unlock_now" => tr!("Jetzt freischalten", "Authorize now", "Autoriser maintenant", "Autorizar ahora"),
             "wbd.offline_hint" => tr!(
-                "Wallbox ist offline — Remote-Start nicht möglich.",
-                "Wallbox is offline — remote start not possible.",
-                "La borne est hors ligne — démarrage à distance impossible.",
-                "El cargador está desconectado — no es posible el inicio remoto."
+                "Wallbox ist offline, Remote-Start nicht möglich.",
+                "Wallbox is offline, remote start not possible.",
+                "La borne est hors ligne, démarrage à distance impossible.",
+                "El cargador está desconectado, no es posible el inicio remoto."
             ),
             "wbd.no_active" => tr!("Keine aktive Ladung.", "No active session.", "Aucune recharge active.", "Ninguna carga activa."),
 
@@ -360,7 +360,7 @@ impl Lang {
                 "Limiter à une borne (optionnel)",
                 "Limitar a un cargador (opcional)"
             ),
-            "chips.any" => tr!("— egal —", "— any —", "— indifférent —", "— cualquiera —"),
+            "chips.any" => tr!("(egal)", "(any)", "(indifférent)", "(cualquiera)"),
             "chips.start_window" => tr!(
                 "Lernfenster starten (2 min)",
                 "Start learning window (2 min)",
@@ -380,7 +380,7 @@ impl Lang {
                 "Démarrez la fenêtre ci-dessus et présentez le badge à une borne.",
                 "Inicia la ventana de arriba y acerca el chip a un cargador."
             ),
-            "chips.unassigned" => tr!("— unzugeordnet —", "— unassigned —", "— non affecté —", "— sin asignar —"),
+            "chips.unassigned" => tr!("(unzugeordnet)", "(unassigned)", "(non affecté)", "(sin asignar)"),
             "chips.delete_confirm" => tr!("Chip löschen?", "Delete chip?", "Supprimer le badge ?", "¿Eliminar chip?"),
             "chips.row_hint" => tr!(
                 "Änderungen pro Zeile mit „Speichern“ übernehmen.",
@@ -394,12 +394,12 @@ impl Lang {
             "enroll.detected" => tr!("Chip erkannt:", "Chip detected:", "Badge détecté :", "Chip detectado:"),
             "enroll.label_ph" => tr!("z. B. Karte Büro-01", "e.g. card office-01", "p. ex. carte bureau-01", "p. ej. tarjeta oficina-01"),
             "enroll.employee_optional" => tr!(
-                "Mitarbeiter (optional — bei Gäste-Chip leer lassen)",
-                "Employee (optional — leave empty for guest chips)",
-                "Employé (optionnel — laisser vide pour un badge invité)",
-                "Empleado (opcional — dejar vacío para chips de invitado)"
+                "Mitarbeiter (optional, bei Gäste-Chip leer lassen)",
+                "Employee (optional, leave empty for guest chips)",
+                "Employé (optionnel, laisser vide pour un badge invité)",
+                "Empleado (opcional, dejar vacío para chips de invitado)"
             ),
-            "enroll.none_opt" => tr!("— kein —", "— none —", "— aucun —", "— ninguno —"),
+            "enroll.none_opt" => tr!("(kein)", "(none)", "(aucun)", "(ninguno)"),
             "enroll.valid_until" => tr!(
                 "Gültig bis (optional, RFC3339)",
                 "Valid until (optional, RFC3339)",
@@ -423,7 +423,7 @@ impl Lang {
             "emp.new" => tr!("Neuen Mitarbeiter anlegen", "Add new employee", "Créer un nouvel employé", "Crear nuevo empleado"),
             "emp.department" => tr!("Abteilung", "Department", "Service", "Departamento"),
             "emp.none" => tr!("Noch keine Mitarbeiter angelegt.", "No employees yet.", "Aucun employé créé.", "Aún no hay empleados."),
-            // Wird in confirm('…') verwendet — Übersetzungen ohne Apostroph halten!
+            // Wird in confirm('…') verwendet, Übersetzungen ohne Apostroph halten!
             "emp.delete_confirm" => tr!(
                 "Mitarbeiter löschen? Chips und Transaktionen bleiben erhalten, verlieren aber die Verknüpfung.",
                 "Delete employee? Chips and transactions are kept but lose their assignment.",
@@ -453,7 +453,7 @@ impl Lang {
             "users.source" => tr!("Quelle", "Source", "Source", "Origen"),
             "users.new_pw_ph" => tr!("neues Passwort", "new password", "nouveau mot de passe", "nueva contraseña"),
             "users.set" => tr!("Setzen", "Set", "Définir", "Establecer"),
-            // Wird in confirm('…') verwendet — Übersetzungen ohne Apostroph halten!
+            // Wird in confirm('…') verwendet, Übersetzungen ohne Apostroph halten!
             "users.delete_confirm" => tr!("Benutzer löschen?", "Delete user?", "Supprimer cet utilisateur ?", "¿Eliminar usuario?"),
 
             // ---- Statistik ------------------------------------------------
@@ -571,9 +571,9 @@ impl Lang {
             "err.invalid_category" => tr!("Ungültige Kategorie.", "Invalid category.", "Catégorie non valide.", "Categoría no válida."),
             "err.no_chip_captured" => tr!(
                 "Bisher wurde kein Chip erkannt – bitte an die Wallbox halten.",
-                "No chip detected yet — please hold it to the wallbox.",
-                "Aucun badge détecté pour l'instant — présentez-le à la borne.",
-                "Aún no se ha detectado ningún chip — acércalo al cargador."
+                "No chip detected yet. Please hold it to the wallbox.",
+                "Aucun badge détecté pour l'instant. Présentez-le à la borne.",
+                "Aún no se ha detectado ningún chip. Acércalo al cargador."
             ),
             "err.enroll_done" => tr!(
                 "Enrollment bereits abgeschlossen.",
@@ -610,10 +610,10 @@ impl Lang {
                 "Mis cargas"
             ),
             "me.sub" => tr!(
-                "Laufende Ladungen über deine Chips — mit Abschaltung bei Ziel-kWh oder Zeit.",
-                "Charging sessions on your chips — with cut-off at a target kWh or time.",
-                "Recharges en cours sur vos badges — avec arrêt à un objectif en kWh ou à une heure.",
-                "Cargas en curso con tus chips — con corte al alcanzar kWh objetivo u hora."
+                "Laufende Ladungen über deine Chips, mit Abschaltung bei Ziel-kWh oder Zeit.",
+                "Charging sessions on your chips, with cut-off at a target kWh or time.",
+                "Recharges en cours sur vos badges, avec arrêt à un objectif en kWh ou à une heure.",
+                "Cargas en curso con tus chips, con corte al alcanzar kWh objetivo u hora."
             ),
             "me.running" => tr!(
                 "Läuft gerade",
@@ -672,16 +672,16 @@ impl Lang {
                 "¿Detener la carga ahora?"
             ),
             "me.stopped_energy" => tr!(
-                "Ziel-kWh erreicht — wird beendet",
-                "Target kWh reached — stopping",
-                "Objectif en kWh atteint — arrêt en cours",
-                "kWh objetivo alcanzados — deteniendo"
+                "Ziel-kWh erreicht, wird beendet",
+                "Target kWh reached, stopping",
+                "Objectif en kWh atteint, arrêt en cours",
+                "kWh objetivo alcanzados, deteniendo"
             ),
             "me.stopped_time" => tr!(
-                "Zeit abgelaufen — wird beendet",
-                "Time is up — stopping",
-                "Temps écoulé — arrêt en cours",
-                "Tiempo agotado — deteniendo"
+                "Zeit abgelaufen, wird beendet",
+                "Time is up, stopping",
+                "Temps écoulé, arrêt en cours",
+                "Tiempo agotado, deteniendo"
             ),
             "me.defaults_title" => tr!(
                 "Meine Standardvorgaben",
@@ -766,10 +766,10 @@ impl Lang {
 
             // ---- Chips ----------------------------------------------------
             "chips.guest_option" => tr!(
-                "— Gast —",
-                "— Guest —",
-                "— Invité —",
-                "— Invitado —"
+                "(Gast)",
+                "(Guest)",
+                "(Invité)",
+                "(Invitado)"
             ),
             "chips.assigned_to" => tr!(
                 "Gehört zu",

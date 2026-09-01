@@ -23,7 +23,7 @@ struct DashTpl {
     cards: Vec<WallboxCard>,
     active_sessions: Vec<ActiveSession>,
     top_employees: Vec<TopEmployee>,
-    /// Remote-Stop ist AdminUser-only — der Button wird nur Admins gezeigt.
+    /// Remote-Stop ist AdminUser-only, der Button wird nur Admins gezeigt.
     can_stop: bool,
     lang: Lang,
 }
@@ -74,7 +74,7 @@ impl WallboxCard {
             "offline" => self.lang.t("state.offline"),
             "error" => self.lang.t("state.error"),
             "warn" => self.lang.t("state.warn"),
-            _ => "—",
+            _ => "–",
         }
     }
 }
@@ -87,9 +87,9 @@ pub struct ActiveSession {
     pub id_tag: String,
     pub employee_name: Option<String>,
     pub start_time: String,
-    /// Bisher geladene Energie, formatiert („12,3“) — None, wenn (noch) keine Messung vorliegt.
+    /// Bisher geladene Energie, formatiert („12,3“). None, wenn (noch) keine Messung vorliegt.
     pub energy_kwh: Option<String>,
-    /// Aktuelle Ladeleistung, formatiert („7,4“) — None, wenn (noch) keine frische Messung vorliegt.
+    /// Aktuelle Ladeleistung, formatiert („7,4“). None, wenn (noch) keine frische Messung vorliegt.
     pub power_kw: Option<String>,
     pub soc_percent: Option<i64>,
 }
@@ -131,7 +131,7 @@ async fn load_active_sessions(state: &AppState) -> AppResult<Vec<ActiveSession>>
 #[template(path = "_active_sessions.html")]
 struct ActiveSessionsTpl {
     active_sessions: Vec<ActiveSession>,
-    /// Remote-Stop ist AdminUser-only — der Button wird nur Admins gezeigt.
+    /// Remote-Stop ist AdminUser-only, der Button wird nur Admins gezeigt.
     can_stop: bool,
     lang: Lang,
 }
@@ -165,7 +165,7 @@ pub async fn get(
     let Some(user) = user else {
         return Ok(Redirect::to("/login").into_response());
     };
-    // Das Cockpit zeigt den gesamten Fuhrpark — ein Mitarbeiter landet
+    // Das Cockpit zeigt den gesamten Fuhrpark. Ein Mitarbeiter landet
     // stattdessen auf seiner eigenen Seite.
     if !user.is_admin() {
         return Ok(Redirect::to("/me").into_response());

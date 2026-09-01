@@ -25,10 +25,10 @@ pub struct TxRow {
     pub start_time: String,
     pub stop_time: Option<String>,
     /// Geladene Energie, formatiert („12,3“). Bei laufenden Transaktionen der
-    /// aktuelle Stand aus den zuletzt gemeldeten MeterValues — None, wenn
+    /// aktuelle Stand aus den zuletzt gemeldeten MeterValues. None, wenn
     /// (noch) keine Messung vorliegt.
     pub energy_kwh: Option<String>,
-    /// Aktuelle Ladeleistung, formatiert — nur bei laufenden Transaktionen gesetzt.
+    /// Aktuelle Ladeleistung, formatiert. Nur bei laufenden Transaktionen gesetzt.
     pub power_kw: Option<String>,
 }
 
@@ -38,7 +38,7 @@ struct ListTpl {
     layout: LayoutCtx,
     rows: Vec<TxRow>,
     filter_user: Option<String>,
-    /// Nicht-Admins sehen ausschliesslich eigene Ladungen — dann entfaellt der
+    /// Nicht-Admins sehen ausschliesslich eigene Ladungen, dann entfaellt der
     /// Filter nach Person.
     can_filter: bool,
 }
@@ -264,7 +264,7 @@ pub async fn set_limit(
         .map_err(|_| AppError::BadRequest(lang.t("err.limit_kwh").into()))?;
     let minutes = parse_minutes(form.limit_minutes.as_deref())
         .map_err(|_| AppError::BadRequest(lang.t("err.limit_minutes").into()))?;
-    // Die Restlaufzeit zaehlt ab jetzt, nicht ab Ladebeginn — das entspricht
+    // Die Restlaufzeit zaehlt ab jetzt, nicht ab Ladebeginn. Das entspricht
     // dem, was an einer laufenden Ladung gemeint ist ("noch 90 Minuten").
     let until = minutes.map(|m| (Utc::now() + chrono::Duration::minutes(m)).to_rfc3339());
 
@@ -322,7 +322,7 @@ pub async fn stop(
     Ok(Redirect::to(back_target(form.back.as_deref())).into_response())
 }
 
-/// Nur die zwei bekannten Ziele zulassen — ein freies Redirect-Feld waere ein
+/// Nur die zwei bekannten Ziele zulassen. Ein freies Redirect-Feld waere ein
 /// offener Redirect.
 fn back_target(back: Option<&str>) -> &'static str {
     match back {

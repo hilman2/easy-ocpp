@@ -22,7 +22,7 @@ struct StatsTpl {
     per_user: Vec<NamedStat>,
     per_wallbox: Vec<NamedStat>,
     split: GuestSplit,
-    /// Ein Mitarbeiter sieht nur seine eigenen Zahlen — die Aufstellung nach
+    /// Ein Mitarbeiter sieht nur seine eigenen Zahlen. Die Aufstellung nach
     /// Person und der Gast-Anteil ergeben dort keinen Sinn.
     is_admin: bool,
 }

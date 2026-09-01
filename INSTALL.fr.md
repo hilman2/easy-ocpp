@@ -2,7 +2,7 @@
 
 🌐 [English](INSTALL.md) · [Deutsch](ANLEITUNG.md) · [Français](INSTALL.fr.md) · [Español](INSTALL.es.md)
 
-Outil de gestion pour bornes de recharge (OCPP 1.5/1.6/2.0.1) — un seul binaire, un seul fichier SQLite.
+Outil de gestion pour bornes de recharge (OCPP 1.5/1.6/2.0.1). Un seul binaire, un seul fichier SQLite.
 
 ## Nouveautés de la v0.4.0
 
@@ -24,7 +24,7 @@ Outil de gestion pour bornes de recharge (OCPP 1.5/1.6/2.0.1) — un seul binair
 - **Les badges sont sans ambiguïté.** Un badge appartient à une personne, sinon
   c'est un badge invité. La catégorie autrefois gérée séparément découle
   maintenant de l'attribution et ne peut plus la contredire.
-- **Le programme s'appelle maintenant `easy-ocpp`** — détails ci-dessous.
+- **Le programme s'appelle maintenant `easy-ocpp`**, détails ci-dessous.
 
 ## Nouveautés de la v0.3.0
 
@@ -40,11 +40,11 @@ Outil de gestion pour bornes de recharge (OCPP 1.5/1.6/2.0.1) — un seul binair
 
 - **Valeurs en direct pendant la charge :** le cockpit et la page de détail de
   la borne affichent, pour les charges en cours, les **kWh** déjà chargés, la
-  **puissance (kW)** actuelle et — si la borne le signale — le **SoC** du
+  **puissance (kW)** actuelle et, si la borne le signale, le **SoC** du
   véhicule. L'affichage se met à jour automatiquement toutes les 10 secondes.
 - **Configuration automatique de la borne :** à la connexion, le serveur
   configure la borne pour qu'elle transmette des relevés toutes les 30 secondes
-  (`MeterValueSampleInterval`, `MeterValuesSampledData`) — réglable via la
+  (`MeterValueSampleInterval`, `MeterValuesSampledData`), réglable via la
   nouvelle section `[ocpp]` du fichier `config.toml`.
 - Divers correctifs de robustesse dans le traitement des relevés (valeurs par
   phase, valeurs erronées, affichages obsolètes).
@@ -79,13 +79,13 @@ INSTALL.fr.md          Ce guide
 ANLEITUNG.md           Version allemande de ce guide
 ```
 
-Le fichier `.exe` contient le schéma de base de données, l'interface web et les ressources statiques — **rien d'autre n'a besoin d'être fourni**.
+Le fichier `.exe` contient le schéma de base de données, l'interface web et les ressources statiques. **Rien d'autre n'a besoin d'être fourni**.
 
 ## 1. Installation
 
 1. Copiez ce dossier à un emplacement fixe, p. ex. `C:\easy-ocpp\`.
 2. Optionnel : copiez `config.example.toml` vers `config.toml` et adaptez-le (voir plus bas). Sans `config.toml`, les valeurs par défaut s'appliquent (port 8080, répertoire de données `./data`).
-3. Assurez-vous que le port **8080** est libre sur l'hôte et autorisé en entrée dans le pare-feu Windows — sinon les bornes ne peuvent pas atteindre le serveur.
+3. Assurez-vous que le port **8080** est libre sur l'hôte et autorisé en entrée dans le pare-feu Windows. Sinon les bornes ne peuvent pas atteindre le serveur.
 
 ## 2. Premier démarrage
 
@@ -106,7 +106,7 @@ Ouvrez ensuite dans le navigateur :
 
 <http://localhost:8080>
 
-**Identifiants par défaut :** `admin` / `admin` — changez le mot de passe immédiatement sous « Utilisateurs ».
+**Identifiants par défaut :** `admin` / `admin`. Changez le mot de passe immédiatement sous « Utilisateurs ».
 
 Arrêtez avec `Ctrl+C` dans la fenêtre PowerShell.
 
@@ -131,11 +131,11 @@ db_file  = "easy-ocpp.db"
 meter_interval_s = 30
 ```
 
-- `bind = "0.0.0.0:8080"` — écoute sur toutes les interfaces réseau (nécessaire pour que les bornes puissent se connecter).
-- `public_base_url` — adresse publique à laquelle le serveur est joignable du point de vue des bornes.
-- `meter_interval_s` — intervalle de transmission des relevés en direct (30 s par défaut).
+- `bind = "0.0.0.0:8080"`: écoute sur toutes les interfaces réseau (nécessaire pour que les bornes puissent se connecter).
+- `public_base_url`: adresse publique à laquelle le serveur est joignable du point de vue des bornes.
+- `meter_interval_s`: intervalle de transmission des relevés en direct (30 s par défaut).
 
-Les sections LDAP / Entra ID sont commentées dans l'exemple — ce sont pour l'instant des ébauches, non actives.
+Les sections LDAP / Entra ID sont commentées dans l'exemple, ce sont pour l'instant des ébauches, non actives.
 
 ## 4. Configurer une borne
 
@@ -192,7 +192,7 @@ Réinitialise le mot de passe du compte `admin` puis se termine.
 
 Tout l'essentiel se trouve dans **un seul fichier** : `data\easy-ocpp.db`.
 
-Pour une sauvegarde cohérente, arrêtez brièvement le service et copiez le fichier (y compris les éventuels `-wal` / `-shm`) — c'est tout.
+Pour une sauvegarde cohérente, arrêtez brièvement le service et copiez le fichier (y compris les éventuels `-wal` / `-shm`). C'est tout.
 
 ## 9. Dépannage
 
@@ -200,13 +200,13 @@ Pour une sauvegarde cohérente, arrêtez brièvement le service et copiez le fic
 |---------|------------------|
 | Le navigateur affiche « page inaccessible » | Port 8080 occupé ou bloqué par le pare-feu. Vérifiez avec `netstat -ano \| findstr :8080`. |
 | La borne ne se connecte pas | Vérifiez `public_base_url` / le pare-feu / l'URL avec le `ChargePointId`. Les logs de la console montrent les connexions WS entrantes. |
-| Pas de valeurs en direct pendant la charge | Laissez la borne se reconnecter (la configuration est appliquée à la connexion). Vérifiez le log console : `MeterValueSampleInterval` doit apparaître comme « défini ». Certaines bornes nécessitent un redémarrage, d'autres ne prennent pas en charge la mesure de puissance — la puissance est alors dérivée des relevés du compteur. |
+| Pas de valeurs en direct pendant la charge | Laissez la borne se reconnecter (la configuration est appliquée à la connexion). Vérifiez le log console : `MeterValueSampleInterval` doit apparaître comme « défini ». Certaines bornes nécessitent un redémarrage, d'autres ne prennent pas en charge la mesure de puissance, auquel cas la puissance est dérivée des relevés du compteur. |
 | « database is locked » | Ne lancez pas un second `easy-ocpp.exe` en même temps sur la même base. |
 | Plus de logs souhaités | Avant le démarrage : définissez `$env:RUST_LOG="debug"`. |
 
 ## 10. Désinstallation
 
-Supprimez le service/la tâche, supprimez le dossier — il n'y a ni entrées de registre ni dépendances externes.
+Supprimez le service/la tâche, supprimez le dossier. Il n'y a ni entrées de registre ni dépendances externes.
 
 ---
 

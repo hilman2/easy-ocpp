@@ -17,7 +17,7 @@ pub struct Transaction {
     pub stop_meter_wh: Option<i64>,
     pub stop_reason: Option<String>,
     pub started_remote: i64,
-    /// Ziel-Energie in Wh — die Ladung wird gestoppt, sobald so viel geladen
+    /// Ziel-Energie in Wh. Die Ladung wird gestoppt, sobald so viel geladen
     /// wurde. None = kein Energielimit.
     pub limit_wh: Option<i64>,
     /// Zeitpunkt (RFC3339), zu dem die Ladung gestoppt wird. None = kein Timer.
@@ -78,7 +78,7 @@ pub struct LiveMeter {
 /// Holt die zuletzt gemeldeten Messwerte einer Transaktion. Meldet die Wallbox
 /// keine Leistung, wird sie aus den letzten beiden Zählerständen abgeleitet
 /// (ΔWh / Δt), sofern die beiden Messungen höchstens eine Stunde auseinanderliegen.
-/// Leistung wird nur zurückgegeben, wenn die Messung frisch ist — sonst würde
+/// Leistung wird nur zurückgegeben, wenn die Messung frisch ist. Sonst würde
 /// nach einem Verbindungsabriss dauerhaft eine veraltete Leistung angezeigt.
 pub async fn live_meter(
     db: &sqlx::SqlitePool,

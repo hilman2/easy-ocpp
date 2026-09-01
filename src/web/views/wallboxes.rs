@@ -106,9 +106,9 @@ pub struct ActiveTx {
     pub id_tag: String,
     pub start_time: String,
     pub connector_id: i64,
-    /// Bisher geladene Energie, formatiert („12,3“) — None, wenn (noch) keine Messung vorliegt.
+    /// Bisher geladene Energie, formatiert („12,3“). None, wenn (noch) keine Messung vorliegt.
     pub energy_kwh: Option<String>,
-    /// Aktuelle Ladeleistung, formatiert („7,4“) — None, wenn (noch) keine frische Messung vorliegt.
+    /// Aktuelle Ladeleistung, formatiert („7,4“). None, wenn (noch) keine frische Messung vorliegt.
     pub power_kw: Option<String>,
     pub soc_percent: Option<i64>,
 }

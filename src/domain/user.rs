@@ -2,7 +2,7 @@ use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
 
-/// Ein Benutzer ist zugleich der Mitarbeiter — es gibt seit Migration 0003
+/// Ein Benutzer ist zugleich der Mitarbeiter. Seit Migration 0003 gibt es
 /// keine getrennte `employees`-Tabelle mehr. `role = 'user'` ist ein normaler
 /// Mitarbeiter, der ausschliesslich seine eigenen Ladungen verwalten darf.
 #[derive(Debug, Clone, Serialize, Deserialize, FromRow)]
@@ -31,7 +31,7 @@ impl User {
     pub fn is_disabled(&self) -> bool {
         self.disabled != 0
     }
-    /// Ohne Passwort-Hash ist kein lokaler Login moeglich — so entstehen die
+    /// Ohne Passwort-Hash ist kein lokaler Login moeglich. So entstehen die
     /// aus `employees` uebernommenen Konten, bis der Admin ein Passwort vergibt.
     pub fn has_login(&self) -> bool {
         self.password_hash.is_some() || self.auth_source != "local"

@@ -6,7 +6,7 @@
 [![Release](https://img.shields.io/github/v/release/hilman2/easy-ocpp)](https://github.com/hilman2/easy-ocpp/releases/latest)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-Servidor **OCPP autoalojado (CSMS)** para estaciones de carga, pensado para **pymes con 1–10 cargadores**. Gestión de puntos de carga, tarjetas RFID, límites de carga e informes — sin suscripción en la nube.
+Servidor **OCPP autoalojado (CSMS)** para estaciones de carga, pensado para **pymes con 1–10 cargadores**. Gestión de puntos de carga, tarjetas RFID, límites de carga e informes, sin suscripción en la nube.
 
 - **Un solo binario, un solo archivo SQLite** – sin base de datos externa, sin message broker.
 - **OCPP 1.6J** (completo) + **OCPP 2.0.1** (esqueleto WebSocket, BootNotification / TransactionEvent) + **OCPP 1.5 SOAP** (esqueleto para Boot/Heartbeat).
@@ -36,7 +36,7 @@ Servidor **OCPP autoalojado (CSMS)** para estaciones de carga, pensado para **py
 ## Puesta en marcha
 
 **Binarios listos para usar** (Windows x64, Linux x64) disponibles en
-[Releases](https://github.com/hilman2/easy-ocpp/releases/latest) — descomprimir,
+[Releases](https://github.com/hilman2/easy-ocpp/releases/latest). Descomprimir,
 ejecutar `easy-ocpp.exe` o `easy-ocpp`, y listo (ver `INSTALL.es.md` en el paquete).
 
 O compilarlo uno mismo:
@@ -98,13 +98,13 @@ cuenta. Ya no hay una ficha de empleado aparte.
 
 | | Admin | Empleado |
 |---|---|---|
-| Panel, cargadores, tarjetas, gestión de usuarios | ✅ | — |
-| Cargas de todas las personas | ✅ | — |
+| Panel, cargadores, tarjetas, gestión de usuarios | ✅ | – |
+| Cargas de todas las personas | ✅ | – |
 | Sus propias cargas (lista, CSV, estadísticas, PDF mensual) | ✅ | ✅ |
 | Ver su carga en curso y detenerla | ✅ | ✅ |
 | kWh objetivo / temporizador en su carga en curso | ✅ | ✅ |
-| Valores predeterminados — los suyos | ✅ | ✅ |
-| Valores predeterminados — de cualquier empleado | ✅ | — |
+| Valores predeterminados, los suyos | ✅ | ✅ |
+| Valores predeterminados de cualquier empleado | ✅ | – |
 
 Tras iniciar sesión, un empleado llega a **`/me`**, no al panel; la navegación
 solo le muestra lo que realmente puede abrir. Las restricciones se aplican en el

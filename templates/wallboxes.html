@@ -23,9 +23,9 @@
             <td><a href="/wallboxes/{{ row.wb.id }}">{{ row.wb.name }}</a></td>
             <td><code>{{ row.wb.charge_point_id }}</code></td>
             <td>{{ row.wb.location.as_deref().unwrap_or("") }}</td>
-            <td>{{ row.wb.ocpp_version.as_deref().unwrap_or("—") }}</td>
+            <td>{{ row.wb.ocpp_version.as_deref().unwrap_or("–") }}</td>
             <td>{% if row.online %}<span class="ok">●</span> {{ layout.t("common.online") }}{% else %}<span class="off">●</span> {{ layout.t("common.offline") }}{% endif %}</td>
-            <td>{{ row.wb.last_heartbeat.as_deref().unwrap_or("—") }}</td>
+            <td>{{ row.wb.last_heartbeat.as_deref().unwrap_or("–") }}</td>
             <td>
                 <form method="post" action="/wallboxes/{{ row.wb.id }}/delete" onsubmit="return confirm('{{ layout.t("wb.delete_confirm") }}')">
                     <button class="linkbtn danger">{{ layout.t("common.delete") }}</button>

@@ -85,7 +85,7 @@ fn default_db_file() -> String {
     "easy-ocpp.db".to_string()
 }
 
-/// Dateiname der Datenbank bis einschliesslich v0.3.1 — damals hiess das
+/// Dateiname der Datenbank bis einschliesslich v0.3.1. Damals hiess das
 /// Produkt noch "easy-occp" (Dreher im Protokollnamen). Bestehende
 /// Installationen behalten ihre Datei, siehe [`Config::db_path`].
 pub const LEGACY_DB_FILE: &str = "easy-occp.db";
@@ -139,7 +139,7 @@ impl Config {
     ///
     /// Beim Umbenennen von `easy-occp` auf `easy-ocpp` hat sich der Default-Name
     /// der Datenbank geaendert. Liegt im Datenverzeichnis nur noch die alte
-    /// Datei, wird weiter mit ihr gearbeitet — sonst wuerde ein Update still
+    /// Datei, wird weiter mit ihr gearbeitet. Sonst wuerde ein Update still
     /// eine leere Datenbank anlegen und wie ein Datenverlust aussehen.
     pub fn db_path(&self) -> PathBuf {
         let configured = self.storage.data_dir.join(&self.storage.db_file);

@@ -68,7 +68,7 @@ pub async fn monthly_pdf(
 
     // Alle abgeschlossenen Transaktionen im Monat, die einem Benutzer zugeordnet
     // sind. Ein Mitarbeiter bekommt nur die eigene Seite, der Admin alle.
-    // Alles in einer Query — Person, Wallbox, Start + Stop, Energie, Dauer.
+    // Alles in einer Query: Person, Wallbox, Start + Stop, Energie, Dauer.
     let base = "SELECT u.id, u.display_name, u.email, w.name, t.id_tag,
                        t.start_time, t.stop_time,
                        COALESCE(t.stop_meter_wh - t.start_meter_wh, 0),

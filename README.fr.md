@@ -6,7 +6,7 @@
 [![Release](https://img.shields.io/github/v/release/hilman2/easy-ocpp)](https://github.com/hilman2/easy-ocpp/releases/latest)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-Serveur **OCPP auto-hébergé (CSMS)** pour bornes de recharge, conçu pour les **PME disposant de 1 à 10 bornes**. Gestion des points de charge, badges RFID, limites de recharge et rapports — sans abonnement cloud.
+Serveur **OCPP auto-hébergé (CSMS)** pour bornes de recharge, conçu pour les **PME disposant de 1 à 10 bornes**. Gestion des points de charge, badges RFID, limites de recharge et rapports, sans abonnement cloud.
 
 - **Un seul binaire, un seul fichier SQLite** – pas de base de données externe, pas de message broker.
 - **OCPP 1.6J** (complet) + **OCPP 2.0.1** (ossature WebSocket, BootNotification / TransactionEvent) + **OCPP 1.5 SOAP** (ossature pour Boot/Heartbeat).
@@ -25,7 +25,7 @@ Serveur **OCPP auto-hébergé (CSMS)** pour bornes de recharge, conçu pour les 
 | Valeurs en direct pendant la charge (kWh chargés, puissance actuelle, SoC) | ✅ |
 | Liste des transactions, filtre par utilisateur | ✅ |
 | Statistiques par mois / trimestre / année | ✅ |
-| Les utilisateurs **sont** les employés — badges, recharges et limites tiennent au compte | ✅ |
+| Les utilisateurs **sont** les employés : badges, recharges et limites tiennent au compte | ✅ |
 | Limites par recharge : objectif en kWh et/ou minuteur, arrêt automatique | ✅ |
 | Valeurs par défaut par personne, définies par l'employé ou par l'admin | ✅ |
 | Libre-service employé : sa recharge en direct, ses limites, arrêt par lui-même | ✅ |
@@ -36,7 +36,7 @@ Serveur **OCPP auto-hébergé (CSMS)** pour bornes de recharge, conçu pour les 
 ## Démarrage
 
 **Des binaires prêts à l'emploi** (Windows x64, Linux x64) sont disponibles sous
-[Releases](https://github.com/hilman2/easy-ocpp/releases/latest) — décompresser,
+[Releases](https://github.com/hilman2/easy-ocpp/releases/latest). Décompresser,
 lancer `easy-ocpp.exe` ou `easy-ocpp`, c'est tout (voir `INSTALL.fr.md` dans le paquet).
 
 Ou compiler soi-même :
@@ -100,13 +100,13 @@ rattachés directement à ce compte. Il n'y a plus de fiche employé distincte.
 
 | | Admin | Employé |
 |---|---|---|
-| Tableau de bord, bornes, badges, gestion des utilisateurs | ✅ | — |
-| Recharges de toutes les personnes | ✅ | — |
+| Tableau de bord, bornes, badges, gestion des utilisateurs | ✅ | – |
+| Recharges de toutes les personnes | ✅ | – |
 | Ses propres recharges (liste, CSV, statistiques, PDF mensuel) | ✅ | ✅ |
 | Voir sa recharge en cours et l'arrêter | ✅ | ✅ |
 | Objectif kWh / minuteur sur sa recharge en cours | ✅ | ✅ |
-| Valeurs par défaut — les siennes | ✅ | ✅ |
-| Valeurs par défaut — de n'importe quel employé | ✅ | — |
+| Valeurs par défaut, les siennes | ✅ | ✅ |
+| Valeurs par défaut de n'importe quel employé | ✅ | – |
 
 Après connexion, un employé arrive sur **`/me`** et non sur le tableau de bord ;
 la navigation ne lui montre que ce qu'il peut réellement ouvrir. Les restrictions
@@ -119,7 +119,7 @@ qu'un administrateur ne leur en attribue pas un sous « Utilisateurs ».
 ## Limites de recharge
 
 Une recharge s'arrête automatiquement dès qu'elle atteint une **énergie cible**
-ou un **minuteur** — le premier des deux. Les deux sont facultatifs et peuvent
+ou un **minuteur**, le premier des deux. Les deux sont facultatifs et peuvent
 être désactivés séparément.
 
 - **Valeurs par défaut par personne** : l'employé les définit sur sa propre page,
@@ -132,7 +132,7 @@ ou un **minuteur** — le premier des deux. Les deux sont facultatifs et peuvent
 Un chien de garde vérifie toutes les 15 secondes et envoie
 `RemoteStopTransaction`. La limite d'énergie est en outre vérifiée dès l'arrivée
 de nouvelles mesures, afin de ne pas continuer à charger jusqu'au cycle suivant.
-Si la borne refuse l'arrêt, une nouvelle tentative a lieu au cycle suivant — la
+Si la borne refuse l'arrêt, une nouvelle tentative a lieu au cycle suivant. La
 recharge n'est considérée comme traitée qu'une fois la borne d'accord.
 
 ## Stockage des données

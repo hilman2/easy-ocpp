@@ -2,11 +2,11 @@
 
 🌐 [English](INSTALL.md) · [Deutsch](ANLEITUNG.md) · [Français](INSTALL.fr.md) · [Español](INSTALL.es.md)
 
-Management tool for wallboxes (OCPP 1.5/1.6/2.0.1) — one binary, one SQLite file.
+Management tool for wallboxes (OCPP 1.5/1.6/2.0.1). One binary, one SQLite file.
 
 ## What's new in v0.4.0
 
-- **Employees are users now.** There used to be two separate notions — a login
+- **Employees are users now.** There used to be two separate notions: a login
   and, next to it, an employee record. These are merged: an employee is a user,
   and their chips and charging sessions hang off that account directly. Existing
   employees are carried over; anyone without a login gets an account without a
@@ -22,7 +22,7 @@ Management tool for wallboxes (OCPP 1.5/1.6/2.0.1) — one binary, one SQLite fi
 - **Chips are unambiguous.** A chip either belongs to a person or it is a guest
   chip. The category that used to be maintained separately now follows the
   assignment and can no longer contradict it.
-- **The program is now called `easy-ocpp`** — details below.
+- **The program is now called `easy-ocpp`**, details below.
 
 ## What's new in v0.3.0
 
@@ -37,12 +37,12 @@ Management tool for wallboxes (OCPP 1.5/1.6/2.0.1) — one binary, one SQLite fi
 ## What's new in v0.2.0
 
 - **Live values during charging:** The cockpit and the wallbox detail page show
-  the **kWh** charged so far, the current **power (kW)** and — if the wallbox
-  reports it — the vehicle's **SoC** for running charging sessions. The display
+  the **kWh** charged so far, the current **power (kW)** and, if the wallbox
+  reports it, the vehicle's **SoC** for running charging sessions. The display
   refreshes automatically every 10 seconds.
 - **Automatic wallbox configuration:** On connect, the server configures the
   wallbox to report meter values every 30 seconds
-  (`MeterValueSampleInterval`, `MeterValuesSampledData`) — adjustable via the
+  (`MeterValueSampleInterval`, `MeterValuesSampledData`), adjustable via the
   new `[ocpp]` section in `config.toml`.
 - Various robustness fixes in meter-value processing (phase values, invalid
   values, stale displays).
@@ -53,7 +53,7 @@ there are no new migrations. Live values appear from the next charging session
 onward, once the wallbox has reconnected.
 
 **Renamed: `easy-occp` is now `easy-ocpp`.** The old name had the protocol
-letters swapped — it is spelled OCPP. When updating:
+letters swapped, it is spelled OCPP. When updating:
 
 - The program is now called `easy-ocpp.exe`. Delete the old `easy-occp.exe`,
   otherwise you end up with two programs in the folder.
@@ -74,13 +74,13 @@ INSTALL.md             This file
 ANLEITUNG.md           German version of this guide
 ```
 
-The `.exe` contains the database schema, the web UI and all static assets — **nothing else needs to be shipped**.
+The `.exe` contains the database schema, the web UI and all static assets. **Nothing else needs to be shipped.**
 
 ## 1. Installation
 
 1. Copy this folder to a permanent location, e.g. `C:\easy-ocpp\`.
 2. Optional: copy `config.example.toml` to `config.toml` and adjust it (see below). Without a `config.toml` the defaults apply (port 8080, data directory `./data`).
-3. Make sure port **8080** is free on the host and allowed inbound in the Windows Firewall — otherwise the wallboxes cannot reach the server.
+3. Make sure port **8080** is free on the host and allowed inbound in the Windows Firewall. Otherwise the wallboxes cannot reach the server.
 
 ## 2. First start
 
@@ -101,7 +101,7 @@ Then open in your browser:
 
 <http://localhost:8080>
 
-**Default login:** `admin` / `admin` — please change the password immediately under "Users".
+**Default login:** `admin` / `admin`. Please change the password immediately under "Users".
 
 Stop with `Ctrl+C` in the PowerShell window.
 
@@ -125,11 +125,11 @@ db_file  = "easy-ocpp.db"
 meter_interval_s = 30
 ```
 
-- `bind = "0.0.0.0:8080"` — listens on all network adapters (required so the wallboxes can connect).
-- `public_base_url` — public address at which the server is reachable from the wallboxes' point of view.
-- `meter_interval_s` — reporting interval for the live meter values (default 30 s).
+- `bind = "0.0.0.0:8080"`: listens on all network adapters (required so the wallboxes can connect).
+- `public_base_url`: public address at which the server is reachable from the wallboxes' point of view.
+- `meter_interval_s`: reporting interval for the live meter values (default 30 s).
 
-The LDAP / Entra ID sections are commented out in the example — currently field stubs, not active.
+The LDAP / Entra ID sections are commented out in the example, currently field stubs and not active.
 
 ## 4. Setting up a wallbox
 
@@ -186,7 +186,7 @@ Resets the password of the `admin` account and exits.
 
 Everything relevant lives in **a single file**: `data\easy-ocpp.db`.
 
-For a consistent backup, briefly stop the service and copy the file (incl. any `-wal` / `-shm`) somewhere safe — done.
+For a consistent backup, briefly stop the service and copy the file (incl. any `-wal` / `-shm`) somewhere safe, done.
 
 ## 9. Troubleshooting
 
@@ -194,13 +194,13 @@ For a consistent backup, briefly stop the service and copy the file (incl. any `
 |---------|------------------|
 | Browser shows "page unreachable" | Port 8080 in use or blocked by the firewall. Check with `netstat -ano \| findstr :8080`. |
 | Wallbox does not connect | Check `public_base_url` / firewall / `ChargePointId` URL. The console logs show incoming WS connections. |
-| No live values during charging | Let the wallbox reconnect (the configuration is applied on connect). Check the console log: `MeterValueSampleInterval` should appear as "set". Some boxes need a restart, others do not support power measurement — in that case the power is derived from the meter readings. |
+| No live values during charging | Let the wallbox reconnect (the configuration is applied on connect). Check the console log: `MeterValueSampleInterval` should appear as "set". Some boxes need a restart, others do not support power measurement, in which case the power is derived from the meter readings. |
 | "database is locked" | Do not start a second `easy-ocpp.exe` on the same DB at the same time. |
 | More logs wanted | Before starting: set `$env:RUST_LOG="debug"`. |
 
 ## 10. Uninstallation
 
-Remove the service/task, delete the folder — there are no registry entries and no external dependencies.
+Remove the service/task, delete the folder. There are no registry entries and no external dependencies.
 
 ---
 

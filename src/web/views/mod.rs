@@ -50,7 +50,7 @@ impl LayoutCtx {
         self.user.as_ref().map(|u| u.is_admin()).unwrap_or(false)
     }
 
-    /// Alle verfügbaren Sprachen — für den Umschalter in der Topbar.
+    /// Alle verfügbaren Sprachen für den Umschalter in der Topbar.
     pub fn langs(&self) -> [Lang; 4] {
         Lang::ALL
     }
