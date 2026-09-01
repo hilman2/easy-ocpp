@@ -746,6 +746,51 @@ def esc(s):
              .replace('"', '&quot;'))
 
 
+
+# ---------------------------------------------------------------------------
+# Sprachumschalter. Eingebettete SVG statt Emoji-Flaggen: Windows stellt die
+# Regional-Indicator-Paare nicht als Flagge dar, sondern als Buchstabenpaar.
+# Eine Flagge bezeichnet ausserdem ein Land und keine Sprache, darum steht das
+# Sprachkuerzel daneben und der Titel nennt die Sprache aus.
+# ---------------------------------------------------------------------------
+
+FLAGS = {
+    'de': '<svg viewBox="0 0 5 3" width="18" height="12" aria-hidden="true">'
+          '<rect width="5" height="3" fill="#000"/>'
+          '<rect y="1" width="5" height="2" fill="#d00"/>'
+          '<rect y="2" width="5" height="1" fill="#ffce00"/></svg>',
+    'fr': '<svg viewBox="0 0 3 2" width="18" height="12" aria-hidden="true">'
+          '<rect width="3" height="2" fill="#fff"/>'
+          '<rect width="1" height="2" fill="#002395"/>'
+          '<rect x="2" width="1" height="2" fill="#ed2939"/></svg>',
+    'es': '<svg viewBox="0 0 6 4" width="18" height="12" aria-hidden="true">'
+          '<rect width="6" height="4" fill="#c60b1e"/>'
+          '<rect y="1" width="6" height="2" fill="#ffc400"/></svg>',
+    'en': '<svg viewBox="0 0 60 30" width="18" height="12" aria-hidden="true">'
+          '<clipPath id="ukclip"><path d="M30,15 h30 v15 z v15 h-30 z h-30 v-15 z v-15 h30 z"/></clipPath>'
+          '<rect width="60" height="30" fill="#00247d"/>'
+          '<path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/>'
+          '<path d="M0,0 L60,30 M60,0 L0,30" clip-path="url(#ukclip)" stroke="#cf142b" stroke-width="4"/>'
+          '<path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/>'
+          '<path d="M30,0 v30 M0,15 h60" stroke="#cf142b" stroke-width="6"/></svg>',
+}
+
+
+def langbar(lang, targets):
+    """targets: Sprachkuerzel -> vollstaendige URL derselben Seite."""
+    teile = []
+    for l in LANGS:
+        aktuell = ' aria-current="true"' if l == lang else ''
+        teile.append(
+            '        <a href="%s" hreflang="%s" lang="%s" title="%s" aria-label="%s"%s>'
+            '%s<span>%s</span></a>'
+            % (targets[l], l, l, esc(LANG_NAMES[l]), esc(LANG_NAMES[l]), aktuell,
+               FLAGS[l], l.upper())
+        )
+    return ('      <nav class="langbar" aria-label="Language">\n'
+            + '\n'.join(teile) + '\n      </nav>')
+
+
 def page(lang):
     c = C[lang]
     prefix = '../' if lang != 'en' else ''
@@ -756,12 +801,6 @@ def page(lang):
         for l in LANGS
     )
     alternates += '\n    <link rel="alternate" hreflang="x-default" href="%s">' % BASE
-
-    langlinks = ' · '.join(
-        ('<strong>%s</strong>' % LANG_NAMES[l]) if l == lang
-        else '<a href="%s" hreflang="%s">%s</a>' % (BASE + PATHS[l], l, LANG_NAMES[l])
-        for l in LANGS
-    )
 
     software = {
         "@context": "https://schema.org",
@@ -854,13 +893,14 @@ def page(lang):
       <svg viewBox="0 0 32 32" width="26" height="26" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#0f172a"/><path d="M18 5 L9 18 h6 l-2 9 9-13 h-6 z" fill="#22d3ee"/></svg>
       easy-ocpp
     </a>
-    <nav aria-label="Sections">
+    <nav class="sections" aria-label="Sections">
       <a href="#features">%(nav_features)s</a>
       <a href="#roles">%(nav_roles)s</a>
       <a href="#limits">%(nav_limits)s</a>
       <a href="#start">%(nav_start)s</a>
       <a href="#faq">%(nav_faq)s</a>
     </nav>
+%(langbar)s
   </div>
 </header>
 
@@ -945,7 +985,6 @@ cargo run --release</code></pre>
 
 <footer class="site">
   <div class="wrap">
-    <p class="langs"><span class="muted">%(footer_lang)s:</span> %(langlinks)s</p>
     <p class="muted">%(footer_license)s &middot; <a href="%(repo)s">GitHub</a></p>
     <p class="muted"><a href="%(imprint_url)s">%(imprint_label)s</a> &middot; <a href="%(privacy_url)s">%(privacy_label)s</a></p>
   </div>
@@ -997,7 +1036,7 @@ cargo run --release</code></pre>
         'faqs': faqs,
         'footer_lang': esc(c['footer_lang']),
         'footer_license': esc(c['footer_license']),
-        'langlinks': langlinks,
+        'langbar': langbar(lang, {l: BASE + PATHS[l] for l in LANGS}),
         'imprint_url': BASE + LEGAL_PATHS[lang]['imprint'],
         'privacy_url': BASE + LEGAL_PATHS[lang]['privacy'],
         'imprint_label': esc(LEGAL_NAV[lang]['imprint']),
@@ -1052,6 +1091,7 @@ def legal_page(lang, kind):
       <svg viewBox="0 0 32 32" width="26" height="26" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#0f172a"/><path d="M18 5 L9 18 h6 l-2 9 9-13 h-6 z" fill="#22d3ee"/></svg>
       easy-ocpp
     </a>
+%(langbar)s
   </div>
 </header>
 
@@ -1071,6 +1111,8 @@ def legal_page(lang, kind):
 </html>
 """ % {
         'lang': lang,
+        'langbar': langbar(lang, {l: BASE + LEGAL_PATHS[l][kind]
+                                  for l in LANGS}),
         'title': esc(c['title']),
         'url': url,
         'prefix': prefix,
@@ -1145,11 +1187,28 @@ header.site {
   font-weight: 700; font-size: 1.05rem; color: var(--fg);
 }
 .brand:hover { text-decoration: none; }
-header nav { display: flex; gap: 1.25rem; margin-left: auto; flex-wrap: wrap; }
-header nav a { color: var(--fg-2); font-size: .92rem; }
+header nav.sections { display: flex; gap: 1.25rem; margin-left: auto; flex-wrap: wrap; }
+header nav.sections a { color: var(--fg-2); font-size: .92rem; }
+
+.langbar { display: flex; gap: .35rem; margin-left: 1.25rem; align-items: center; }
+.langbar a {
+  display: inline-flex; align-items: center; gap: .35rem;
+  padding: .25rem .45rem; border-radius: 6px;
+  border: 1px solid transparent; color: var(--muted);
+  font-size: .76rem; font-weight: 700; letter-spacing: .04em;
+}
+.langbar a:hover { text-decoration: none; color: var(--fg); border-color: var(--border-strong); }
+.langbar a[aria-current="true"] {
+  color: var(--fg); border-color: var(--brand); background: var(--surface-2);
+}
+.langbar svg { display: block; border-radius: 2px; box-shadow: 0 0 0 1px rgba(255, 255, 255, .14); }
+/* Der Umschalter steht auch allein in der Kopfzeile der Rechtsseiten rechts. */
+header .brand + .langbar { margin-left: auto; }
 @media (max-width: 720px) {
-  .bar { height: auto; padding: .75rem 0; flex-wrap: wrap; gap: .75rem; }
-  header nav { margin-left: 0; width: 100%; gap: 1rem; }
+  /* Nur vertikal setzen, sonst faellt der seitliche Rand von .wrap weg. */
+  .bar { height: auto; padding-top: .75rem; padding-bottom: .75rem; flex-wrap: wrap; gap: .75rem; }
+  header nav.sections { margin-left: 0; width: 100%; gap: 1rem; order: 3; }
+  .langbar { margin-left: auto; }
 }
 
 /* ---------- Hero ---------- */
