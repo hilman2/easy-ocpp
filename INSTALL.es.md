@@ -1,8 +1,29 @@
-# easy-ocpp v0.4.0 – Instalación y primer arranque (Windows)
+# easy-ocpp v0.5.0 – Instalación y primer arranque (Windows)
 
 🌐 [English](INSTALL.md) · [Deutsch](ANLEITUNG.md) · [Français](INSTALL.fr.md) · [Español](INSTALL.es.md)
 
 Herramienta de gestión para cargadores (OCPP 1.5/1.6/2.0.1). Un solo binario, un solo archivo SQLite.
+
+## Novedades de la v0.5.0
+
+- **Cambiar la propia contraseña.** Cada usuario puede cambiar su contraseña
+  desde su propia página. Se pide la contraseña anterior.
+- **Exigir un cambio de contraseña.** Al establecer una contraseña en
+  «Usuarios» puede marcar que el usuario deba cambiarla la próxima vez que
+  inicie sesión. La casilla viene marcada, porque una contraseña entregada por
+  un administrador ha pasado por un segundo canal. Hasta que se realice el
+  cambio, todas las páginas llevan al formulario.
+- **Informes mensuales por correo.** El primero de cada mes, quien haya cargado
+  el mes anterior y tenga una dirección de correo recibe su informe en PDF.
+  Quien no haya cargado no recibe nada. El envío está desactivado mientras no
+  exista una sección `[mail]` en `config.toml`; hay un ejemplo en
+  `config.example.toml`.
+- **Corregido:** en «Mis cargas», una carga en curso mostraba 0 kWh en lugar del
+  valor actual. Además se truncaban los decimales y 2,7 kWh aparecía como 2.
+
+**Sobre el envío:** si el servidor no estuvo en marcha el día uno, el envío se
+recupera más adelante en el mes. Por eso, al activarlo se envía una vez el
+informe del mes anterior. Es también la forma más sencilla de probarlo.
 
 ## Novedades de la v0.4.0
 
@@ -210,4 +231,4 @@ Elimine el servicio/la tarea y borre la carpeta. No hay entradas en el registro 
 
 ---
 
-Versión 0.4.0 · Licencia: MIT
+Versión 0.5.0 · Licencia: MIT

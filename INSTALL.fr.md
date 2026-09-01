@@ -1,8 +1,31 @@
-# easy-ocpp v0.4.0 – Installation & premier démarrage (Windows)
+# easy-ocpp v0.5.0 – Installation & premier démarrage (Windows)
 
 🌐 [English](INSTALL.md) · [Deutsch](ANLEITUNG.md) · [Français](INSTALL.fr.md) · [Español](INSTALL.es.md)
 
 Outil de gestion pour bornes de recharge (OCPP 1.5/1.6/2.0.1). Un seul binaire, un seul fichier SQLite.
+
+## Nouveautés de la v0.5.0
+
+- **Changer soi-même son mot de passe.** Chaque utilisateur peut changer son
+  mot de passe depuis sa propre page. L'ancien mot de passe est demandé.
+- **Imposer un changement de mot de passe.** En définissant un mot de passe sous
+  « Utilisateurs », vous pouvez cocher que l'utilisateur devra le changer à sa
+  prochaine connexion. La case est cochée d'avance, car un mot de passe remis
+  par un administrateur a transité par un second canal. Tant que le changement
+  n'a pas eu lieu, toutes les pages mènent au formulaire.
+- **Rapports mensuels par e-mail.** Le premier du mois, toute personne ayant
+  rechargé le mois précédent et disposant d'une adresse reçoit son rapport en
+  PDF. Celles qui n'ont pas rechargé ne reçoivent rien. L'envoi reste désactivé
+  tant qu'aucune section `[mail]` ne figure dans `config.toml` ; un exemple se
+  trouve dans `config.example.toml`.
+- **Corrigé :** sous « Mes recharges », une recharge en cours affichait 0 kWh au
+  lieu de la valeur actuelle. Les décimales étaient également tronquées, 2,7 kWh
+  devenait 2.
+
+**À propos de l'envoi :** si le serveur n'a pas tourné le premier du mois,
+l'envoi est rattrapé plus tard dans le mois. Activer la fonction envoie donc une
+fois le rapport du mois précédent. C'est aussi la façon la plus simple de la
+tester.
 
 ## Nouveautés de la v0.4.0
 
@@ -210,4 +233,4 @@ Supprimez le service/la tâche, supprimez le dossier. Il n'y a ni entrées de re
 
 ---
 
-Version 0.4.0 · Licence : MIT
+Version 0.5.0 · Licence : MIT

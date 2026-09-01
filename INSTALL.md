@@ -1,8 +1,30 @@
-# easy-ocpp v0.4.0 – Installation & First Start (Windows)
+# easy-ocpp v0.5.0 – Installation & First Start (Windows)
 
 🌐 [English](INSTALL.md) · [Deutsch](ANLEITUNG.md) · [Français](INSTALL.fr.md) · [Español](INSTALL.es.md)
 
 Management tool for wallboxes (OCPP 1.5/1.6/2.0.1). One binary, one SQLite file.
+
+## What's new in v0.5.0
+
+- **Change your own password.** Every user can change their password from their
+  own page. The current password is required to do so.
+- **Require a password change.** When you set a password under "Users", you can
+  tick a box requiring the user to change it the next time they sign in. The box
+  is preselected, because a password handed out by an administrator has
+  travelled over a second channel. Until the change is done, every page leads to
+  the change form.
+- **Monthly reports by email.** On the first of the month, everyone who charged
+  during the previous month and has an email address on file receives their
+  report as a PDF. People who did not charge receive nothing. Sending is off
+  until a `[mail]` section exists in `config.toml`; there is an example in
+  `config.example.toml`.
+- **Fixed:** under "My charging", a session that was still running showed 0 kWh
+  instead of the current reading. Decimals were also cut off, turning 2.7 kWh
+  into 2.
+
+**About the email sending:** if the server was not running on the first of the
+month, sending is caught up later that month. Switching it on therefore sends
+last month's report once. That is also the easiest way to test it.
 
 ## What's new in v0.4.0
 
@@ -204,4 +226,4 @@ Remove the service/task, delete the folder. There are no registry entries and no
 
 ---
 
-Version 0.4.0 · License: MIT
+Version 0.5.0 · License: MIT

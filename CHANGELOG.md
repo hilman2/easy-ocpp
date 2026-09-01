@@ -2,6 +2,39 @@
 
 What changed in each release, written for the people who use easy-ocpp.
 
+## 0.5.0 (1 September 2026)
+
+**Your monthly report can come to you by email.** On the first of each month,
+everyone who charged during the previous month gets their own report as a PDF
+attachment. People who did not charge get nothing, so nobody receives an empty
+page. It needs an email address on the person and a mail server in the
+configuration; until you set one up, nothing is sent.
+
+**You can change your own password.** There is now a page for it, reachable from
+your own page, and it asks for your current password before letting you set a
+new one.
+
+**Administrators can require a password change.** When you hand someone a
+password, tick the box and they have to replace it the first time they sign in.
+Until they do, every page takes them to the change form. This matters because a
+password you set for someone has been spoken aloud or written in a message, so
+it should not stay in use.
+
+**Fixed: a charging session in progress showed 0 kWh** in your own list of
+sessions instead of how much had gone into the car so far. The same list also
+cut off decimals, showing a 2.7 kWh session as 2.
+
+### Updating
+
+Copy the new program over the old one and restart. Nothing needs to be done by
+hand.
+
+If you want the monthly emails, add a `[mail]` section to `config.toml`; there
+is a commented example in `config.example.toml`. One thing to know: if the
+server was not running on the first of the month, the send is caught up later
+that month. Switching the feature on therefore sends last month's report once,
+which is also the easiest way to check that your mail server accepts it.
+
 ## 0.4.0 (1 September 2026)
 
 **Your charging sessions can now stop on their own.** Set a target amount of

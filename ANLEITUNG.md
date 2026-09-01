@@ -1,8 +1,30 @@
-# easy-ocpp v0.4.0 – Installation & Erststart (Windows)
+# easy-ocpp v0.5.0 – Installation & Erststart (Windows)
 
 🌐 [English](INSTALL.md) · [Deutsch](ANLEITUNG.md) · [Français](INSTALL.fr.md) · [Español](INSTALL.es.md)
 
 Management-Tool für Wallboxen (OCPP 1.5/1.6/2.0.1). Ein Binary, eine SQLite-Datei.
+
+## Was ist neu in v0.5.0
+
+- **Passwort selbst aendern.** Jeder Benutzer kann sein Passwort ueber seine
+  eigene Seite aendern. Dabei wird das bisherige abgefragt.
+- **Passwortwechsel erzwingen.** Wer im Bereich „Benutzer" ein Passwort
+  vergibt, kann ankreuzen, dass der Benutzer es beim naechsten Anmelden selbst
+  aendern muss. Der Haken ist vorausgewaehlt, weil ein vom Administrator
+  vergebenes Passwort ueber einen zweiten Weg weitergegeben wird. Bis der
+  Wechsel erfolgt ist, fuehrt jede Seite auf das Wechselformular.
+- **Monatsberichte per E-Mail.** Am Monatsersten bekommt jeder Benutzer, der im
+  Vormonat geladen hat und eine E-Mail-Adresse hinterlegt hat, seinen Bericht
+  als PDF zugeschickt. Wer nicht geladen hat, bekommt nichts. Der Versand ist
+  ausgeschaltet, solange kein `[mail]`-Abschnitt in der `config.toml` steht;
+  ein Beispiel liegt in `config.example.toml`.
+- **Fehler behoben:** Unter „Meine Ladungen" stand bei der gerade laufenden
+  Ladung 0 kWh statt des aktuellen Standes. Ausserdem wurden Nachkommastellen
+  abgeschnitten, aus 2,7 kWh wurde 2.
+
+**Zum Mailversand:** Lief der Server am Monatsersten nicht, wird der Versand
+spaeter im Monat nachgeholt. Wer ihn neu einschaltet, bekommt deshalb einmalig
+den Bericht des Vormonats. Das ist zugleich der einfachste Test.
 
 ## Was ist neu in v0.4.0
 
@@ -206,4 +228,4 @@ Dienst/Aufgabe entfernen, Ordner löschen. Es gibt keine Registry-Einträge und 
 
 ---
 
-Version 0.4.0 · Lizenz: MIT
+Version 0.5.0 · Lizenz: MIT
