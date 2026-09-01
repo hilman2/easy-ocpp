@@ -51,7 +51,7 @@
             <td>{{ t.stop_time.as_deref().unwrap_or(layout.t("common.running")) }}</td>
             <td>{{ t.wallbox }}</td>
             <td><code>{{ t.id_tag }}</code></td>
-            <td>{{ t.energy_wh / 1000 }}</td>
+            <td>{% if let Some(e) = t.energy_kwh %}{{ e }}{% else %}–{% endif %}</td>
         </tr>
     {% endfor %}
     {% if recent_tx.is_empty() %}

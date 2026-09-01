@@ -11,7 +11,7 @@ use super::{render, LayoutCtx};
 use crate::auth::{AdminUser, AuthUser};
 use crate::db::hash_password;
 use crate::domain::chip::Chip;
-use crate::domain::transaction::{parse_kwh_to_wh, parse_minutes};
+use crate::domain::transaction::{fmt_kwh, live_meter, parse_kwh_to_wh, parse_minutes};
 use crate::domain::user::User;
 use crate::i18n::Lang;
 use crate::{AppError, AppResult, AppState};
@@ -137,7 +137,9 @@ pub struct RecentTx {
     pub stop_time: Option<String>,
     pub wallbox: String,
     pub id_tag: String,
-    pub energy_wh: i64,
+    /// Geladene Energie, formatiert ("12,3"). Bei einer laufenden Ladung der
+    /// aktuelle Stand aus den MeterValues, None solange keine Messung vorliegt.
+    pub energy_kwh: Option<String>,
 }
 
 #[derive(Template)]
@@ -180,27 +182,38 @@ pub async fn detail(
 }
 
 pub async fn recent_transactions(state: &AppState, user_id: i64) -> AppResult<Vec<RecentTx>> {
-    let rows: Vec<(String, Option<String>, String, String, Option<i64>, i64)> = sqlx::query_as(
-        "SELECT t.start_time, t.stop_time, w.name, t.id_tag, t.stop_meter_wh, t.start_meter_wh
-         FROM transactions t
-         JOIN wallboxes w ON w.id = t.wallbox_id
-         WHERE t.user_id = ?1
-         ORDER BY t.start_time DESC
-         LIMIT 100",
-    )
-    .bind(user_id)
-    .fetch_all(&state.db)
-    .await?;
-    Ok(rows
-        .into_iter()
-        .map(|(st, et, wb, tag, stop_m, start_m)| RecentTx {
+    let rows: Vec<(i64, String, Option<String>, String, String, Option<i64>, i64)> =
+        sqlx::query_as(
+            "SELECT t.id, t.start_time, t.stop_time, w.name, t.id_tag,
+                    t.stop_meter_wh, t.start_meter_wh
+             FROM transactions t
+             JOIN wallboxes w ON w.id = t.wallbox_id
+             WHERE t.user_id = ?1
+             ORDER BY t.start_time DESC
+             LIMIT 100",
+        )
+        .bind(user_id)
+        .fetch_all(&state.db)
+        .await?;
+
+    let mut out = Vec::with_capacity(rows.len());
+    for (id, st, et, wb, tag, stop_m, start_m) in rows {
+        // Eine laufende Ladung hat noch kein stop_meter_wh. Ohne den Griff zu
+        // den MeterValues stuende hier 0, solange sie laeuft.
+        let energy_wh = if et.is_none() {
+            live_meter(&state.db, id, start_m).await?.energy_wh
+        } else {
+            stop_m.map(|s| (s - start_m).max(0))
+        };
+        out.push(RecentTx {
             start_time: st,
             stop_time: et,
             wallbox: wb,
             id_tag: tag,
-            energy_wh: stop_m.map(|s| (s - start_m).max(0)).unwrap_or(0),
-        })
-        .collect())
+            energy_kwh: energy_wh.map(fmt_kwh),
+        });
+    }
+    Ok(out)
 }
 
 #[derive(Deserialize)]
