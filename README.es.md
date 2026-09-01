@@ -6,7 +6,7 @@
 [![Release](https://img.shields.io/github/v/release/hilman2/easy-ocpp)](https://github.com/hilman2/easy-ocpp/releases/latest)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-Herramienta sencilla de gestión de estaciones de carga (cargadores) para **pymes con 1–10 cargadores**.
+Servidor **OCPP autoalojado (CSMS)** para estaciones de carga, pensado para **pymes con 1–10 cargadores**. Gestión de puntos de carga, tarjetas RFID, límites de carga e informes — sin suscripción en la nube.
 
 - **Un solo binario, un solo archivo SQLite** – sin base de datos externa, sin message broker.
 - **OCPP 1.6J** (completo) + **OCPP 2.0.1** (esqueleto WebSocket, BootNotification / TransactionEvent) + **OCPP 1.5 SOAP** (esqueleto para Boot/Heartbeat).

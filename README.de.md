@@ -6,7 +6,7 @@
 [![Release](https://img.shields.io/github/v/release/hilman2/easy-ocpp)](https://github.com/hilman2/easy-ocpp/releases/latest)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-Einfaches Management-Tool für Wallboxen für **KMUs mit 1–10 Wallboxen**.
+Selbst gehosteter **OCPP-Server (CSMS)** für Ladestationen, gebaut für **KMUs mit 1–10 Wallboxen**. Ladepunkt-Verwaltung, RFID-Chips, Ladelimits und Auswertungen — ohne Cloud-Abo.
 
 - **Ein Binary, eine SQLite-Datei** – keine externe Datenbank, kein Message-Broker.
 - **OCPP 1.6J** (vollständig) + **OCPP 2.0.1** (WebSocket-Gerüst, BootNotification / TransactionEvent) + **OCPP 1.5 SOAP** (Gerüst für Boot/Heartbeat).

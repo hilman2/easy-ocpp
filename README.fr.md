@@ -6,7 +6,7 @@
 [![Release](https://img.shields.io/github/v/release/hilman2/easy-ocpp)](https://github.com/hilman2/easy-ocpp/releases/latest)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-Outil de gestion simple pour bornes de recharge (wallbox), conçu pour les **PME disposant de 1 à 10 wallbox**.
+Serveur **OCPP auto-hébergé (CSMS)** pour bornes de recharge, conçu pour les **PME disposant de 1 à 10 bornes**. Gestion des points de charge, badges RFID, limites de recharge et rapports — sans abonnement cloud.
 
 - **Un seul binaire, un seul fichier SQLite** – pas de base de données externe, pas de message broker.
 - **OCPP 1.6J** (complet) + **OCPP 2.0.1** (ossature WebSocket, BootNotification / TransactionEvent) + **OCPP 1.5 SOAP** (ossature pour Boot/Heartbeat).
