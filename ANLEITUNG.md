@@ -1,8 +1,29 @@
-# easy-ocpp v0.3.1 – Installation & Erststart (Windows)
+# easy-ocpp v0.4.0 – Installation & Erststart (Windows)
 
 🌐 [English](INSTALL.md) · [Deutsch](ANLEITUNG.md) · [Français](INSTALL.fr.md) · [Español](INSTALL.es.md)
 
 Management-Tool für Wallboxen (OCPP 1.5/1.6/2.0.1) — ein Binary, eine SQLite-Datei.
+
+## Was ist neu in v0.4.0
+
+- **Mitarbeiter sind jetzt Benutzer.** Bisher gab es zwei getrennte Begriffe —
+  ein Login und daneben eine Mitarbeiter-Karteikarte. Das ist zusammengefuehrt:
+  ein Mitarbeiter ist ein Benutzer, seine Chips und Ladungen haengen direkt an
+  diesem Konto. Bestehende Mitarbeiter werden uebernommen; wer bisher kein Login
+  hatte, bekommt ein Konto ohne Passwort und kann sich erst anmelden, sobald ein
+  Administrator unter „Benutzer" eines vergibt.
+- **Mitarbeiter sehen nur ihre eigenen Ladungen.** Nach dem Anmelden landen sie
+  auf einer eigenen Seite mit den laufenden Ladungen ihrer Chips. Cockpit,
+  Wallboxen, Chips und Benutzerverwaltung bleiben dem Administrator vorbehalten.
+- **Ladelimits.** Eine Ladung schaltet automatisch ab, sobald sie eine Ziel-kWh
+  oder einen Timer erreicht — was zuerst eintritt. Jede Person hat
+  Standardvorgaben, die fuer jede neue Ladung gelten; setzen kann sie der
+  Mitarbeiter selbst oder der Administrator. An der laufenden Ladung sind die
+  Werte weiterhin aenderbar, und der Mitarbeiter kann seine Ladung selbst beenden.
+- **Chips sind eindeutig.** Ein Chip gehoert entweder zu einer Person oder er ist
+  ein Gast-Chip. Die frueher getrennt gepflegte Kategorie ergibt sich jetzt aus
+  der Zuordnung und kann ihr nicht mehr widersprechen.
+- **Das Programm heisst jetzt `easy-ocpp`** — Einzelheiten dazu weiter unten.
 
 ## Was ist neu in v0.3.0
 
@@ -185,4 +206,4 @@ Dienst/Aufgabe entfernen, Ordner löschen — es gibt keine Registry-Einträge u
 
 ---
 
-Version 0.3.1 · Lizenz: MIT
+Version 0.4.0 · Lizenz: MIT

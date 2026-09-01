@@ -1,8 +1,28 @@
-# easy-ocpp v0.3.1 – Installation & First Start (Windows)
+# easy-ocpp v0.4.0 – Installation & First Start (Windows)
 
 🌐 [English](INSTALL.md) · [Deutsch](ANLEITUNG.md) · [Français](INSTALL.fr.md) · [Español](INSTALL.es.md)
 
 Management tool for wallboxes (OCPP 1.5/1.6/2.0.1) — one binary, one SQLite file.
+
+## What's new in v0.4.0
+
+- **Employees are users now.** There used to be two separate notions — a login
+  and, next to it, an employee record. These are merged: an employee is a user,
+  and their chips and charging sessions hang off that account directly. Existing
+  employees are carried over; anyone without a login gets an account without a
+  password and can only sign in once an administrator sets one under "Users".
+- **Employees only see their own charging.** After signing in they land on their
+  own page showing the sessions running on their chips. Cockpit, wallboxes, chips
+  and user management stay with the administrator.
+- **Charging limits.** A session stops automatically once it reaches a target
+  kWh or a timer, whichever comes first. Every person has defaults that apply to
+  each new session, set either by the employee or by an administrator. On a
+  running session the values can still be changed, and an employee can stop their
+  own session.
+- **Chips are unambiguous.** A chip either belongs to a person or it is a guest
+  chip. The category that used to be maintained separately now follows the
+  assignment and can no longer contradict it.
+- **The program is now called `easy-ocpp`** — details below.
 
 ## What's new in v0.3.0
 
@@ -184,4 +204,4 @@ Remove the service/task, delete the folder — there are no registry entries and
 
 ---
 
-Version 0.3.1 · License: MIT
+Version 0.4.0 · License: MIT

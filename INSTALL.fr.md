@@ -1,8 +1,30 @@
-# easy-ocpp v0.3.1 – Installation & premier démarrage (Windows)
+# easy-ocpp v0.4.0 – Installation & premier démarrage (Windows)
 
 🌐 [English](INSTALL.md) · [Deutsch](ANLEITUNG.md) · [Français](INSTALL.fr.md) · [Español](INSTALL.es.md)
 
 Outil de gestion pour bornes de recharge (OCPP 1.5/1.6/2.0.1) — un seul binaire, un seul fichier SQLite.
+
+## Nouveautés de la v0.4.0
+
+- **Les employés sont désormais des utilisateurs.** Il existait jusqu'ici deux
+  notions distinctes : un compte de connexion et, à côté, une fiche employé.
+  Elles sont fusionnées : un employé est un utilisateur, et ses badges comme ses
+  recharges sont rattachés directement à ce compte. Les employés existants sont
+  repris ; ceux qui n'avaient pas de compte en obtiennent un sans mot de passe et
+  ne peuvent se connecter qu'une fois qu'un administrateur leur en attribue un.
+- **Les employés ne voient que leurs propres recharges.** Après connexion, ils
+  arrivent sur leur propre page avec les recharges en cours de leurs badges. Le
+  tableau de bord, les bornes, les badges et la gestion des utilisateurs restent
+  réservés à l'administrateur.
+- **Limites de recharge.** Une recharge s'arrête automatiquement dès qu'elle
+  atteint un objectif en kWh ou un minuteur, selon ce qui survient en premier.
+  Chaque personne dispose de valeurs par défaut appliquées à chaque nouvelle
+  recharge, définies par l'employé ou par un administrateur. Sur une recharge en
+  cours, les valeurs restent modifiables et l'employé peut arrêter lui-même.
+- **Les badges sont sans ambiguïté.** Un badge appartient à une personne, sinon
+  c'est un badge invité. La catégorie autrefois gérée séparément découle
+  maintenant de l'attribution et ne peut plus la contredire.
+- **Le programme s'appelle maintenant `easy-ocpp`** — détails ci-dessous.
 
 ## Nouveautés de la v0.3.0
 
@@ -188,4 +210,4 @@ Supprimez le service/la tâche, supprimez le dossier — il n'y a ni entrées de
 
 ---
 
-Version 0.3.1 · Licence : MIT
+Version 0.4.0 · Licence : MIT

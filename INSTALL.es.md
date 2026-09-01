@@ -1,8 +1,29 @@
-# easy-ocpp v0.3.1 – Instalación y primer arranque (Windows)
+# easy-ocpp v0.4.0 – Instalación y primer arranque (Windows)
 
 🌐 [English](INSTALL.md) · [Deutsch](ANLEITUNG.md) · [Français](INSTALL.fr.md) · [Español](INSTALL.es.md)
 
 Herramienta de gestión para cargadores (OCPP 1.5/1.6/2.0.1) — un solo binario, un solo archivo SQLite.
+
+## Novedades de la v0.4.0
+
+- **Los empleados ahora son usuarios.** Hasta ahora había dos conceptos
+  separados: una cuenta de acceso y, junto a ella, una ficha de empleado. Se han
+  unificado: un empleado es un usuario, y sus tarjetas y cargas cuelgan
+  directamente de esa cuenta. Los empleados existentes se conservan; quien no
+  tenía acceso recibe una cuenta sin contraseña y solo podrá iniciar sesión
+  cuando un administrador le asigne una en «Usuarios».
+- **Los empleados solo ven sus propias cargas.** Tras iniciar sesión llegan a su
+  propia página con las cargas en curso de sus tarjetas. El panel, los cargadores,
+  las tarjetas y la gestión de usuarios quedan reservados al administrador.
+- **Límites de carga.** Una carga se detiene automáticamente al alcanzar unos kWh
+  objetivo o un temporizador, lo que ocurra primero. Cada persona tiene valores
+  predeterminados que se aplican a cada carga nueva, fijados por el propio
+  empleado o por un administrador. En una carga en curso los valores siguen
+  siendo modificables, y el empleado puede detenerla él mismo.
+- **Las tarjetas son inequívocas.** Una tarjeta pertenece a una persona o es de
+  invitado. La categoría que antes se mantenía por separado se deriva ahora de la
+  asignación y ya no puede contradecirla.
+- **El programa se llama ahora `easy-ocpp`** — detalles más abajo.
 
 ## Novedades de la v0.3.0
 
@@ -189,4 +210,4 @@ Elimine el servicio/la tarea y borre la carpeta — no hay entradas en el regist
 
 ---
 
-Versión 0.3.1 · Licencia: MIT
+Versión 0.4.0 · Licencia: MIT
