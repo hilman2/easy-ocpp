@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% block title %}{{ subject.display_name }}{% endblock %}
+{% block crumb %}{{ subject.display_name }}{% endblock %}
+{% block content %}
+<div class="page-title-row">
+    <div>
+        <h1>{{ subject.display_name }}</h1>
+        <div class="sub">
+            <code>{{ subject.username }}</code>
+            {% if !subject.has_login() %} · <span class="muted">{{ layout.t("users.no_login") }}</span>{% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-head"><h2>{{ layout.t("users.master_data") }}</h2></div>
+    <form method="post" action="/users/{{ subject.id }}/update" class="row">
+        <label>{{ layout.t("common.username") }}
+            <input name="username" value="{{ subject.username }}" required>
+        </label>
+        <label>{{ layout.t("common.name") }}
+            <input name="display_name" value="{{ subject.display_name }}" required>
+        </label>
+        <label>{{ layout.t("common.email") }}
+            <input name="email" type="email" value="{{ subject.email.as_deref().unwrap_or("") }}">
+        </label>
+        <label>{{ layout.t("emp.department") }}
+            <input name="department" value="{{ subject.department.as_deref().unwrap_or("") }}">
+        </label>
+        <label>{{ layout.t("common.role") }}
+            <select name="role">
+                <option value="user"  {% if subject.role == "user"  %}selected{% endif %}>{{ layout.t("users.user_role") }}</option>
+                <option value="admin" {% if subject.role == "admin" %}selected{% endif %}>{{ layout.t("users.admin_role") }}</option>
+            </select>
+        </label>
+        <label>{{ layout.t("common.active") }}
+            <select name="active">
+                <option value="1" {% if subject.disabled == 0 %}selected{% endif %}>{{ layout.t("common.yes") }}</option>
+                <option value="0" {% if subject.disabled != 0 %}selected{% endif %}>{{ layout.t("common.no") }}</option>
+            </select>
+        </label>
+        <button class="primary">{{ layout.t("common.save") }}</button>
+    </form>
+</div>
+
+<div class="card">
+    <div class="card-head"><h2>{{ layout.t("users.defaults_title") }}</h2></div>
+    <form method="post" action="/users/{{ subject.id }}/defaults" class="row">
+        <label>{{ layout.t("me.limit_kwh") }}
+            <input name="limit_kwh" type="number" min="0" step="0.1"
+                   value="{{ subject.default_limit_kwh_str() }}"
+                   placeholder="{{ layout.t("me.no_limit") }}" style="max-width:120px;">
+        </label>
+        <label>{{ layout.t("me.defaults_minutes") }}
+            <input name="limit_minutes" type="number" min="0" step="1"
+                   value="{{ subject.default_limit_minutes_str() }}"
+                   placeholder="{{ layout.t("me.no_limit") }}" style="max-width:120px;">
+        </label>
+        <button class="primary">{{ layout.t("common.save") }}</button>
+    </form>
+    <p class="hint">{{ layout.t("users.defaults_hint") }}</p>
+</div>
+
+{% if subject.auth_source == "local" %}
+<div class="card">
+    <div class="card-head"><h2>{{ layout.t("common.password") }}</h2></div>
+    <form method="post" action="/users/{{ subject.id }}/password" class="row">
+        <input type="password" name="password" placeholder="{{ layout.t("users.new_pw_ph") }}" minlength="6" required>
+        <button class="primary">{{ layout.t("users.set") }}</button>
+    </form>
+    {% if !subject.has_login() %}<p class="hint">{{ layout.t("users.no_login_hint") }}</p>{% endif %}
+</div>
+{% endif %}
+
+<h2>{{ layout.t("users.chips") }}</h2>
+{% if chips.is_empty() %}
+    <p class="hint">{{ layout.t("emp.no_chips") }} {{ layout.t("emp.chips_hint_pre") }} <a href="/chips">{{ layout.t("nav.chips") }}</a> {{ layout.t("emp.chips_hint_post") }}</p>
+{% else %}
+<table class="data">
+    <thead><tr>
+        <th>idTag</th>
+        <th>{{ layout.t("common.label") }}</th>
+        <th>{{ layout.t("common.active") }}</th>
+        <th>{{ layout.t("common.expiry") }}</th>
+    </tr></thead>
+    <tbody>
+    {% for c in chips %}
+        <tr>
+            <td><code>{{ c.id_tag }}</code></td>
+            <td>{{ c.label.as_deref().unwrap_or("—") }}</td>
+            <td>{% if c.enabled != 0 %}{{ layout.t("common.yes") }}{% else %}{{ layout.t("common.no") }}{% endif %}</td>
+            <td>{{ c.expires_at.as_deref().unwrap_or("—") }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+<h2>{{ layout.t("emp.recent") }}</h2>
+<table class="data">
+    <thead><tr>
+        <th>{{ layout.t("common.start") }}</th>
+        <th>{{ layout.t("common.end") }}</th>
+        <th>{{ layout.t("common.wallbox") }}</th>
+        <th>idTag</th>
+        <th>{{ layout.t("common.energy_kwh") }}</th>
+    </tr></thead>
+    <tbody>
+    {% for t in recent_tx %}
+        <tr>
+            <td>{{ t.start_time }}</td>
+            <td>{{ t.stop_time.as_deref().unwrap_or(layout.t("common.running")) }}</td>
+            <td>{{ t.wallbox }}</td>
+            <td><code>{{ t.id_tag }}</code></td>
+            <td>{{ t.energy_wh / 1000 }}</td>
+        </tr>
+    {% endfor %}
+    {% if recent_tx.is_empty() %}
+        <tr><td colspan="5" class="empty">{{ layout.t("emp.no_sessions") }}</td></tr>
+    {% endif %}
+    </tbody>
+</table>
+
+<p><a href="/users">← {{ layout.t("common.back") }}</a></p>
+{% endblock %}

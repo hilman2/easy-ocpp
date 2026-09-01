@@ -1,0 +1,48 @@
+{# Eigene laufende Ladungen. Wird von me.html per htmx alle 10 s nachgeladen. #}
+<div id="my-sessions" hx-get="/me/live" hx-trigger="every 10s" hx-swap="outerHTML">
+{% if sessions.is_empty() %}
+    <div class="empty-state">
+        <div class="title">{{ lang.t("me.no_running") }}</div>
+    </div>
+{% else %}
+    {% for s in sessions %}
+    <div class="card">
+        <div class="card-head">
+            <h2>{{ s.wallbox_name }} <small class="muted">· #{{ s.connector_id }}</small></h2>
+        </div>
+
+        <div class="row">
+            <div><b>{% if let Some(e) = s.energy_kwh %}{{ e }}{% else %}—{% endif %}</b> kWh {{ lang.t("common.charged") }}</div>
+            <div><b>{% if let Some(p) = s.power_kw %}{{ p }}{% else %}—{% endif %}</b> kW</div>
+            {% if let Some(soc) = s.soc_percent %}<div><b>{{ soc }} %</b> SoC</div>{% endif %}
+            <div class="muted">{{ lang.t("dash.since") }} {{ s.start_time }}</div>
+        </div>
+
+        {% if s.stopped_by_energy() %}
+            <p class="ok">{{ lang.t("me.stopped_energy") }}</p>
+        {% else if s.stopped_by_time() %}
+            <p class="ok">{{ lang.t("me.stopped_time") }}</p>
+        {% endif %}
+
+        <form method="post" action="/transactions/{{ s.tx_id }}/limit" class="row">
+            <label>{{ lang.t("me.limit_kwh") }}
+                <input name="limit_kwh" type="number" min="0" step="0.1" value="{{ s.limit_kwh }}"
+                       placeholder="{{ lang.t("me.no_limit") }}" style="max-width:120px;">
+            </label>
+            <label>{{ lang.t("me.limit_minutes") }}
+                <input name="limit_minutes" type="number" min="0" step="1"
+                       value="{% if let Some(m) = s.limit_minutes_left %}{{ m }}{% endif %}"
+                       placeholder="{{ lang.t("me.no_limit") }}" style="max-width:120px;">
+            </label>
+            <button class="primary">{{ lang.t("common.save") }}</button>
+        </form>
+
+        <form method="post" action="/transactions/{{ s.tx_id }}/stop"
+              onsubmit="return confirm('{{ lang.t("me.stop_confirm") }}')">
+            <button class="linkbtn danger">{{ lang.t("me.stop_now") }}</button>
+        </form>
+        <p class="hint">{{ lang.t("me.limit_hint") }}</p>
+    </div>
+    {% endfor %}
+{% endif %}
+</div>

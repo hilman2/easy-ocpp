@@ -1,4 +1,4 @@
-# easy-occp v0.3.1 – Installation & premier démarrage (Windows)
+# easy-ocpp v0.3.1 – Installation & premier démarrage (Windows)
 
 🌐 [English](INSTALL.md) · [Deutsch](ANLEITUNG.md) · [Français](INSTALL.fr.md) · [Español](INSTALL.es.md)
 
@@ -11,7 +11,7 @@ Outil de gestion pour bornes de recharge (OCPP 1.5/1.6/2.0.1) — un seul binair
   à partir des réglages du navigateur et peut être changée à tout moment via le
   sélecteur dans l'en-tête.
 - **Dépôt GitHub avec CI et releases automatiques :** le code source est
-  désormais disponible sur <https://github.com/hilman2/easy-occp>. Chaque
+  désormais disponible sur <https://github.com/hilman2/easy-ocpp>. Chaque
   version est compilée automatiquement par la CI et publiée comme release.
 
 ## Nouveautés de la v0.2.0
@@ -27,16 +27,30 @@ Outil de gestion pour bornes de recharge (OCPP 1.5/1.6/2.0.1) — un seul binair
 - Divers correctifs de robustesse dans le traitement des relevés (valeurs par
   phase, valeurs erronées, affichages obsolètes).
 
-**Mise à jour depuis la v0.1.0 :** copiez simplement `easy-occp.exe` par-dessus
+**Mise à jour depuis la v0.1.0 :** copiez simplement `easy-ocpp.exe` par-dessus
 le fichier existant et redémarrez le service. La base de données
-(`data\easy-occp.db`) reste inchangée ; il n'y a pas de nouvelles migrations.
+(`data\easy-ocpp.db`) reste inchangée ; il n'y a pas de nouvelles migrations.
 Les valeurs en direct apparaissent à partir de la prochaine charge, une fois
 que la borne s'est reconnectée.
+
+**Renomme : `easy-occp` s'appelle desormais `easy-ocpp`.** L'ancien nom
+inversait les lettres du protocole, qui s'ecrit OCPP. Lors de la mise a jour :
+
+- Le programme s'appelle maintenant `easy-ocpp.exe`. Supprimez l'ancien
+  `easy-occp.exe`, sinon deux programmes coexistent dans le dossier.
+- **Votre base de donnees est conservee.** Si seul l'ancien fichier
+  `data\easy-occp.db` est present, le programme continue de l'utiliser et
+  l'indique au demarrage dans le journal. Pour basculer : arretez le programme,
+  renommez le fichier en `easy-ocpp.db`, puis redemarrez.
+- Un service installe (nssm, Planificateur de taches) doit pointer vers le
+  nouveau nom de programme.
+- Tout le monde est deconnecte une fois, car le cookie de session a lui aussi
+  ete renomme. Il suffit de se reconnecter.
 
 ## Contenu de ce dossier
 
 ```
-easy-occp.exe          Programme principal (Windows x64, tout inclus)
+easy-ocpp.exe          Programme principal (Windows x64, tout inclus)
 config.example.toml    Modèle de configuration
 README.md              Aperçu du projet
 INSTALL.fr.md          Ce guide
@@ -47,7 +61,7 @@ Le fichier `.exe` contient le schéma de base de données, l'interface web et le
 
 ## 1. Installation
 
-1. Copiez ce dossier à un emplacement fixe, p. ex. `C:\easy-occp\`.
+1. Copiez ce dossier à un emplacement fixe, p. ex. `C:\easy-ocpp\`.
 2. Optionnel : copiez `config.example.toml` vers `config.toml` et adaptez-le (voir plus bas). Sans `config.toml`, les valeurs par défaut s'appliquent (port 8080, répertoire de données `./data`).
 3. Assurez-vous que le port **8080** est libre sur l'hôte et autorisé en entrée dans le pare-feu Windows — sinon les bornes ne peuvent pas atteindre le serveur.
 
@@ -56,13 +70,13 @@ Le fichier `.exe` contient le schéma de base de données, l'interface web et le
 Ouvrez un **PowerShell** dans le dossier et démarrez :
 
 ```powershell
-.\easy-occp.exe
+.\easy-ocpp.exe
 ```
 
 Au premier démarrage, l'application s'occupe de tout elle-même :
 
 - crée le répertoire `data\`,
-- crée le fichier SQLite `data\easy-occp.db`,
+- crée le fichier SQLite `data\easy-ocpp.db`,
 - applique le schéma complet (les migrations sont intégrées au binaire),
 - crée l'utilisateur admin.
 
@@ -85,7 +99,7 @@ public_base_url = "http://<ip-ou-nom-du-serveur>:8080"
 
 [storage]
 data_dir = "data"
-db_file  = "easy-occp.db"
+db_file  = "easy-ocpp.db"
 
 [ocpp]
 # Intervalle en secondes auquel les bornes transmettent le relevé du compteur
@@ -127,19 +141,19 @@ Dès que la borne se connecte, elle apparaît sous **Bornes** avec le statut *on
 
 ## 6. Exécution permanente comme service Windows (optionnel)
 
-`easy-occp.exe` est un programme console ordinaire. Pour un démarrage automatique/service :
+`easy-ocpp.exe` est un programme console ordinaire. Pour un démarrage automatique/service :
 
 **Variante A : Planificateur de tâches**
 
-- Planificateur de tâches → *Créer une tâche* → Déclencheur *Au démarrage du système* → Action *Démarrer un programme* → `C:\easy-occp\easy-occp.exe` → *Démarrer dans :* `C:\easy-occp\`.
+- Planificateur de tâches → *Créer une tâche* → Déclencheur *Au démarrage du système* → Action *Démarrer un programme* → `C:\easy-ocpp\easy-ocpp.exe` → *Démarrer dans :* `C:\easy-ocpp\`.
 - Activez *« Exécuter même si l'utilisateur n'est pas connecté »*.
 
 **Variante B : NSSM (Non-Sucking Service Manager)**
 
 ```powershell
-nssm install easy-occp "C:\easy-occp\easy-occp.exe"
-nssm set easy-occp AppDirectory "C:\easy-occp"
-nssm start easy-occp
+nssm install easy-ocpp "C:\easy-ocpp\easy-ocpp.exe"
+nssm set easy-ocpp AppDirectory "C:\easy-ocpp"
+nssm start easy-ocpp
 ```
 
 ## 7. Réinitialiser le mot de passe admin
@@ -147,14 +161,14 @@ nssm start easy-occp
 Si le mot de passe admin est perdu :
 
 ```powershell
-.\easy-occp.exe --reset-admin "nouveauMotDePasse123"
+.\easy-ocpp.exe --reset-admin "nouveauMotDePasse123"
 ```
 
 Réinitialise le mot de passe du compte `admin` puis se termine.
 
 ## 8. Sauvegarde
 
-Tout l'essentiel se trouve dans **un seul fichier** : `data\easy-occp.db`.
+Tout l'essentiel se trouve dans **un seul fichier** : `data\easy-ocpp.db`.
 
 Pour une sauvegarde cohérente, arrêtez brièvement le service et copiez le fichier (y compris les éventuels `-wal` / `-shm`) — c'est tout.
 
@@ -165,7 +179,7 @@ Pour une sauvegarde cohérente, arrêtez brièvement le service et copiez le fic
 | Le navigateur affiche « page inaccessible » | Port 8080 occupé ou bloqué par le pare-feu. Vérifiez avec `netstat -ano \| findstr :8080`. |
 | La borne ne se connecte pas | Vérifiez `public_base_url` / le pare-feu / l'URL avec le `ChargePointId`. Les logs de la console montrent les connexions WS entrantes. |
 | Pas de valeurs en direct pendant la charge | Laissez la borne se reconnecter (la configuration est appliquée à la connexion). Vérifiez le log console : `MeterValueSampleInterval` doit apparaître comme « défini ». Certaines bornes nécessitent un redémarrage, d'autres ne prennent pas en charge la mesure de puissance — la puissance est alors dérivée des relevés du compteur. |
-| « database is locked » | Ne lancez pas un second `easy-occp.exe` en même temps sur la même base. |
+| « database is locked » | Ne lancez pas un second `easy-ocpp.exe` en même temps sur la même base. |
 | Plus de logs souhaités | Avant le démarrage : définissez `$env:RUST_LOG="debug"`. |
 
 ## 10. Désinstallation

@@ -15,12 +15,13 @@ pub struct ChipRow {
 }
 
 impl ChipRow {
-    pub fn is_assigned_to(&self, eid: &i64) -> bool {
-        self.chip.employee_id == Some(*eid)
+    pub fn is_assigned_to(&self, uid: &i64) -> bool {
+        self.chip.user_id == Some(*uid)
     }
 }
 
-pub struct EmpOpt {
+/// Auswahleintrag "Chip gehoert zu ..." — seit 0003 ist das ein Benutzer.
+pub struct UserOpt {
     pub id: i64,
     pub name: String,
 }
@@ -32,7 +33,7 @@ struct ListTpl {
     chips: Vec<ChipRow>,
     active_enrollment: Option<EnrollmentSession>,
     wallboxes: Vec<(i64, String)>,
-    employees: Vec<EmpOpt>,
+    users: Vec<UserOpt>,
 }
 
 pub async fn list(
@@ -63,14 +64,14 @@ pub async fn list(
         sqlx::query_as("SELECT id, name FROM wallboxes ORDER BY name")
             .fetch_all(&state.db)
             .await?;
-    let emp_rows: Vec<(i64, String)> = sqlx::query_as(
-        "SELECT id, display_name FROM employees WHERE active = 1 ORDER BY display_name",
+    let user_rows: Vec<(i64, String)> = sqlx::query_as(
+        "SELECT id, display_name FROM users WHERE disabled = 0 ORDER BY display_name",
     )
     .fetch_all(&state.db)
     .await?;
-    let employees: Vec<EmpOpt> = emp_rows
+    let users: Vec<UserOpt> = user_rows
         .into_iter()
-        .map(|(id, name)| EmpOpt { id, name })
+        .map(|(id, name)| UserOpt { id, name })
         .collect();
 
     Ok(render(&ListTpl {
@@ -78,16 +79,16 @@ pub async fn list(
         chips,
         active_enrollment: active,
         wallboxes,
-        employees,
+        users,
     })?
     .into_response())
 }
 
 #[derive(Deserialize)]
 pub struct UpdateForm {
-    pub employee_id: Option<String>,
+    /// Leer = Gast-Chip, sonst der Benutzer, dem der Chip gehört.
+    pub user_id: Option<String>,
     pub label: Option<String>,
-    pub kind: Option<String>,
     pub enabled: Option<String>,
     pub expires_at: Option<String>,
 }
@@ -108,8 +109,8 @@ pub async fn update(
     }
 
     // Leerer Select-Wert => Zuordnung entfernen.
-    let employee_id: Option<i64> = form
-        .employee_id
+    let user_id: Option<i64> = form
+        .user_id
         .as_deref()
         .map(str::trim)
         .filter(|s| !s.is_empty())
@@ -122,10 +123,10 @@ pub async fn update(
         .filter(|s| !s.is_empty())
         .map(str::to_string);
 
-    let kind = form.kind.as_deref().unwrap_or("employee");
-    if kind != "employee" && kind != "guest" {
-        return Err(AppError::BadRequest(lang.t("err.invalid_category").into()));
-    }
+    // Die Kategorie ergibt sich aus der Zuordnung — ein Chip ohne Benutzer ist
+    // ein Gast-Chip. Beides getrennt pflegen zu lassen, erzeugte nur
+    // widersprüchliche Kombinationen.
+    let kind = chip_kind(user_id);
 
     let enabled: i64 = if form.enabled.as_deref() == Some("1") { 1 } else { 0 };
 
@@ -138,14 +139,14 @@ pub async fn update(
 
     sqlx::query(
         "UPDATE chips
-            SET employee_id = ?1,
+            SET user_id     = ?1,
                 label       = ?2,
                 kind        = ?3,
                 enabled     = ?4,
                 expires_at  = ?5
           WHERE id = ?6",
     )
-    .bind(employee_id)
+    .bind(user_id)
     .bind(&label)
     .bind(kind)
     .bind(enabled)
@@ -186,7 +187,7 @@ pub async fn enroll_start(
 struct EnrollTpl {
     layout: LayoutCtx,
     session: EnrollmentSession,
-    employees: Vec<(i64, String)>,
+    users: Vec<(i64, String)>,
 }
 
 pub async fn enroll_poll(
@@ -202,15 +203,15 @@ pub async fn enroll_poll(
     .fetch_optional(&state.db)
     .await?
     .ok_or(AppError::NotFound)?;
-    let employees: Vec<(i64, String)> = sqlx::query_as(
-        "SELECT id, display_name FROM employees WHERE active = 1 ORDER BY display_name",
+    let users: Vec<(i64, String)> = sqlx::query_as(
+        "SELECT id, display_name FROM users WHERE disabled = 0 ORDER BY display_name",
     )
     .fetch_all(&state.db)
     .await?;
     Ok(render(&EnrollTpl {
         layout: LayoutCtx::new("chips", Some(user), lang),
         session: sess,
-        employees,
+        users,
     })?
     .into_response())
 }
@@ -218,8 +219,8 @@ pub async fn enroll_poll(
 #[derive(Deserialize)]
 pub struct EnrollSave {
     pub label: Option<String>,
-    pub employee_id: Option<i64>,
-    pub kind: String,
+    /// Leer = Gast-Chip, sonst der Benutzer, dem der Chip gehört.
+    pub user_id: Option<i64>,
     pub expires_at: Option<String>,
 }
 
@@ -244,9 +245,6 @@ pub async fn enroll_save(
     if sess.consumed != 0 {
         return Err(AppError::BadRequest(lang.t("err.enroll_done").into()));
     }
-    if form.kind != "employee" && form.kind != "guest" {
-        return Err(AppError::BadRequest(lang.t("err.invalid_category").into()));
-    }
     let expires_at = form
         .expires_at
         .as_deref()
@@ -265,13 +263,13 @@ pub async fn enroll_save(
     }
 
     sqlx::query(
-        "INSERT INTO chips (id_tag, label, employee_id, kind, enabled, expires_at)
+        "INSERT INTO chips (id_tag, label, user_id, kind, enabled, expires_at)
          VALUES (?1, ?2, ?3, ?4, 1, ?5)",
     )
     .bind(tag)
     .bind(form.label.as_deref())
-    .bind(form.employee_id)
-    .bind(&form.kind)
+    .bind(form.user_id)
+    .bind(chip_kind(form.user_id))
     .bind(expires_at)
     .execute(&state.db)
     .await?;
@@ -294,4 +292,13 @@ pub async fn delete(
         .execute(&state.db)
         .await?;
     Ok(Redirect::to("/chips").into_response())
+}
+
+/// Kategorie eines Chips — abgeleitet aus der Zuordnung, nicht separat gepflegt.
+fn chip_kind(user_id: Option<i64>) -> &'static str {
+    if user_id.is_some() {
+        "employee"
+    } else {
+        "guest"
+    }
 }

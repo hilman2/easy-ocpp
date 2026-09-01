@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}{{ layout.t("me.title") }}{% endblock %}
+{% block crumb %}{{ layout.t("me.title") }}{% endblock %}
+{% block content %}
+<div class="page-title-row">
+    <div>
+        <h1>{{ layout.t("me.title") }}</h1>
+        <div class="sub">{{ layout.t("me.sub") }}</div>
+    </div>
+</div>
+
+<h2>{{ layout.t("me.running") }}</h2>
+{% include "_my_sessions.html" %}
+
+<div class="card">
+    <div class="card-head"><h2>{{ layout.t("me.defaults_title") }}</h2></div>
+    <form method="post" action="/me/defaults" class="row">
+        <label>{{ layout.t("me.limit_kwh") }}
+            <input name="limit_kwh" type="number" min="0" step="0.1"
+                   value="{{ me.default_limit_kwh_str() }}"
+                   placeholder="{{ layout.t("me.no_limit") }}" style="max-width:120px;">
+        </label>
+        <label>{{ layout.t("me.defaults_minutes") }}
+            <input name="limit_minutes" type="number" min="0" step="1"
+                   value="{{ me.default_limit_minutes_str() }}"
+                   placeholder="{{ layout.t("me.no_limit") }}" style="max-width:120px;">
+        </label>
+        <button class="primary">{{ layout.t("common.save") }}</button>
+    </form>
+    <p class="hint">{{ layout.t("me.defaults_hint") }}</p>
+</div>
+
+<h2>{{ layout.t("me.recent") }}</h2>
+<div class="row">
+    <div>{{ layout.t("common.sessions") }}: <b>{{ session_count }}</b></div>
+    <div>{{ layout.t("common.total") }}: <b>{{ total_wh / 1000 }}</b> kWh</div>
+    <div><a class="linkbtn" href="/transactions.csv">⇩ {{ layout.t("tx.csv") }}</a></div>
+</div>
+<table class="data">
+    <thead><tr>
+        <th>{{ layout.t("common.start") }}</th>
+        <th>{{ layout.t("common.end") }}</th>
+        <th>{{ layout.t("common.wallbox") }}</th>
+        <th>idTag</th>
+        <th>{{ layout.t("common.energy_kwh") }}</th>
+    </tr></thead>
+    <tbody>
+    {% for t in recent_tx %}
+        <tr>
+            <td>{{ t.start_time }}</td>
+            <td>{{ t.stop_time.as_deref().unwrap_or(layout.t("common.running")) }}</td>
+            <td>{{ t.wallbox }}</td>
+            <td><code>{{ t.id_tag }}</code></td>
+            <td>{{ t.energy_wh / 1000 }}</td>
+        </tr>
+    {% endfor %}
+    {% if recent_tx.is_empty() %}
+        <tr><td colspan="5" class="empty">{{ layout.t("emp.no_sessions") }}</td></tr>
+    {% endif %}
+    </tbody>
+</table>
+{% endblock %}

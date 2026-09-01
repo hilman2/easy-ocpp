@@ -1,4 +1,4 @@
-# easy-occp – Beispielkonfiguration
+# easy-ocpp – Beispielkonfiguration
 # Speichere diese Datei als config.toml und passe sie an.
 
 [http]
@@ -7,7 +7,7 @@ public_base_url = "http://localhost:8080"
 
 [storage]
 data_dir = "data"
-db_file  = "easy-occp.db"
+db_file  = "easy-ocpp.db"
 
 [ocpp]
 # Intervall in Sekunden, in dem Wallboxen während einer Ladung Zählerstand und
@@ -18,7 +18,7 @@ meter_interval_s = 30
 # Optional: Active Directory (LDAP) – noch nicht aktiv, Feld-Stub.
 # [auth.ldap]
 # url = "ldap://dc.firma.local:389"
-# bind_dn = "CN=svc-easy-occp,OU=Service,DC=firma,DC=local"
+# bind_dn = "CN=svc-easy-ocpp,OU=Service,DC=firma,DC=local"
 # bind_password = "geheim"
 # user_base_dn = "OU=Mitarbeiter,DC=firma,DC=local"
 # user_filter = "(sAMAccountName={user})"

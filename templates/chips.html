@@ -42,8 +42,7 @@
         <tr>
             <th>idTag</th>
             <th>{{ layout.t("common.label") }}</th>
-            <th>{{ layout.t("common.employee") }}</th>
-            <th>{{ layout.t("common.category") }}</th>
+            <th>{{ layout.t("chips.assigned_to") }}</th>
             <th>{{ layout.t("common.active") }}</th>
             <th>{{ layout.t("common.expiry") }}</th>
             <th></th>
@@ -58,17 +57,11 @@
                 <input form="{{ fid }}" name="label" value="{{ row.chip.label.as_deref().unwrap_or("") }}" placeholder="—" style="min-width:140px;">
             </td>
             <td>
-                <select form="{{ fid }}" name="employee_id">
-                    <option value="">{{ layout.t("chips.unassigned") }}</option>
-                    {% for e in employees %}
-                        <option value="{{ e.id }}" {% if row.is_assigned_to(e.id) %}selected{% endif %}>{{ e.name }}</option>
+                <select form="{{ fid }}" name="user_id">
+                    <option value="">{{ layout.t("chips.guest_option") }}</option>
+                    {% for u in users %}
+                        <option value="{{ u.id }}" {% if row.is_assigned_to(u.id) %}selected{% endif %}>{{ u.name }}</option>
                     {% endfor %}
-                </select>
-            </td>
-            <td>
-                <select form="{{ fid }}" name="kind">
-                    <option value="employee" {% if row.chip.kind == "employee" %}selected{% endif %}>{{ layout.t("common.employee") }}</option>
-                    <option value="guest"    {% if row.chip.kind == "guest" %}selected{% endif %}>{{ layout.t("common.guest") }}</option>
                 </select>
             </td>
             <td>
@@ -92,6 +85,6 @@
     {% endfor %}
     </tbody>
 </table>
-<p class="hint">{{ layout.t("chips.row_hint") }}</p>
+<p class="hint">{{ layout.t("chips.row_hint") }} {{ layout.t("chips.kind_hint") }}</p>
 {% endif %}
 {% endblock %}

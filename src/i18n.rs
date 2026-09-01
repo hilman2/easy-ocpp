@@ -595,6 +595,220 @@ impl Lang {
             ),
             "err.invalid_date" => tr!("ungültiges Datum", "invalid date", "date non valide", "fecha no válida"),
 
+
+            // ---- Eigene Seite / Ladelimits --------------------------------
+            "nav.me" => tr!(
+                "Meine Ladungen",
+                "My charging",
+                "Mes recharges",
+                "Mis cargas"
+            ),
+            "me.title" => tr!(
+                "Meine Ladungen",
+                "My charging",
+                "Mes recharges",
+                "Mis cargas"
+            ),
+            "me.sub" => tr!(
+                "Laufende Ladungen über deine Chips — mit Abschaltung bei Ziel-kWh oder Zeit.",
+                "Charging sessions on your chips — with cut-off at a target kWh or time.",
+                "Recharges en cours sur vos badges — avec arrêt à un objectif en kWh ou à une heure.",
+                "Cargas en curso con tus chips — con corte al alcanzar kWh objetivo u hora."
+            ),
+            "me.running" => tr!(
+                "Läuft gerade",
+                "In progress",
+                "En cours",
+                "En curso"
+            ),
+            "me.no_running" => tr!(
+                "Gerade lädt nichts auf deine Chips.",
+                "Nothing is charging on your chips right now.",
+                "Aucune recharge en cours sur vos badges.",
+                "Ahora mismo no hay ninguna carga con tus chips."
+            ),
+            "me.limit_title" => tr!(
+                "Abschaltung",
+                "Cut-off",
+                "Arrêt",
+                "Corte"
+            ),
+            "me.limit_kwh" => tr!(
+                "Ziel (kWh)",
+                "Target (kWh)",
+                "Objectif (kWh)",
+                "Objetivo (kWh)"
+            ),
+            "me.limit_minutes" => tr!(
+                "Noch (Minuten)",
+                "Remaining (minutes)",
+                "Restant (minutes)",
+                "Restante (minutos)"
+            ),
+            "me.limit_hint" => tr!(
+                "Leer oder 0 = keine Abschaltung. Es gilt, was zuerst erreicht wird.",
+                "Empty or 0 = no cut-off. Whichever is reached first applies.",
+                "Vide ou 0 = pas d'arrêt. Le premier atteint s'applique.",
+                "Vacío o 0 = sin corte. Se aplica lo que se alcance primero."
+            ),
+            "me.no_limit" => tr!("keine", "none", "aucun", "ninguno"),
+            "me.timer_left" => tr!(
+                "Timer",
+                "Timer",
+                "Minuteur",
+                "Temporizador"
+            ),
+            "me.minutes_short" => tr!("min", "min", "min", "min"),
+            "me.stop_now" => tr!(
+                "Jetzt beenden",
+                "Stop now",
+                "Arrêter",
+                "Detener ahora"
+            ),
+            "me.stop_confirm" => tr!(
+                "Ladung jetzt beenden?",
+                "Stop this charging session now?",
+                "Arrêter la recharge maintenant ?",
+                "¿Detener la carga ahora?"
+            ),
+            "me.stopped_energy" => tr!(
+                "Ziel-kWh erreicht — wird beendet",
+                "Target kWh reached — stopping",
+                "Objectif en kWh atteint — arrêt en cours",
+                "kWh objetivo alcanzados — deteniendo"
+            ),
+            "me.stopped_time" => tr!(
+                "Zeit abgelaufen — wird beendet",
+                "Time is up — stopping",
+                "Temps écoulé — arrêt en cours",
+                "Tiempo agotado — deteniendo"
+            ),
+            "me.defaults_title" => tr!(
+                "Meine Standardvorgaben",
+                "My defaults",
+                "Mes valeurs par défaut",
+                "Mis valores predeterminados"
+            ),
+            "me.defaults_hint" => tr!(
+                "Gelten automatisch für jede neue Ladung. Der Timer zählt ab Ladebeginn.",
+                "Applied automatically to every new session. The timer starts when charging starts.",
+                "Appliquées automatiquement à chaque nouvelle recharge. Le minuteur démarre au début de la recharge.",
+                "Se aplican automáticamente a cada carga nueva. El temporizador cuenta desde el inicio."
+            ),
+            "me.defaults_minutes" => tr!(
+                "Dauer (Minuten)",
+                "Duration (minutes)",
+                "Durée (minutes)",
+                "Duración (minutos)"
+            ),
+            "me.recent" => tr!(
+                "Meine letzten Ladungen",
+                "My recent sessions",
+                "Mes dernières recharges",
+                "Mis últimas cargas"
+            ),
+
+            // ---- Benutzer (= Mitarbeiter) ---------------------------------
+            "users.title" => tr!(
+                "Benutzer & Mitarbeiter",
+                "Users & employees",
+                "Utilisateurs et employés",
+                "Usuarios y empleados"
+            ),
+            "users.sub" => tr!(
+                "Jeder Mitarbeiter ist ein Benutzer. Ein Benutzer darf nur die Ladungen seiner eigenen Chips sehen und steuern.",
+                "Every employee is a user. A user may only see and control the charging done with their own chips.",
+                "Chaque employé est un utilisateur. Un utilisateur ne voit et ne contrôle que les recharges de ses propres badges.",
+                "Cada empleado es un usuario. Un usuario solo ve y controla las cargas hechas con sus propios chips."
+            ),
+            "users.master_data" => tr!(
+                "Stammdaten",
+                "Details",
+                "Coordonnées",
+                "Datos"
+            ),
+            "users.chips" => tr!(
+                "Chips dieser Person",
+                "Chips of this person",
+                "Badges de cette personne",
+                "Chips de esta persona"
+            ),
+            "users.defaults_title" => tr!(
+                "Standard-Ladelimits",
+                "Default charging limits",
+                "Limites de recharge par défaut",
+                "Límites de carga predeterminados"
+            ),
+            "users.defaults_hint" => tr!(
+                "Werden beim Start jeder Ladung dieser Person übernommen.",
+                "Applied when this person starts a charging session.",
+                "Reprises au démarrage de chaque recharge de cette personne.",
+                "Se aplican al iniciar cada carga de esta persona."
+            ),
+            "users.pw_optional" => tr!(
+                "Passwort (leer = noch kein Login)",
+                "Password (empty = no login yet)",
+                "Mot de passe (vide = pas encore de connexion)",
+                "Contraseña (vacío = sin acceso todavía)"
+            ),
+            "users.no_login" => tr!(
+                "kein Login",
+                "no login",
+                "pas de connexion",
+                "sin acceso"
+            ),
+            "users.no_login_hint" => tr!(
+                "Ohne Passwort kann sich diese Person nicht anmelden. Ihre Ladungen werden trotzdem erfasst.",
+                "Without a password this person cannot sign in. Their charging is still recorded.",
+                "Sans mot de passe, cette personne ne peut pas se connecter. Ses recharges sont tout de même enregistrées.",
+                "Sin contraseña esta persona no puede iniciar sesión. Sus cargas se registran igualmente."
+            ),
+
+            // ---- Chips ----------------------------------------------------
+            "chips.guest_option" => tr!(
+                "— Gast —",
+                "— Guest —",
+                "— Invité —",
+                "— Invitado —"
+            ),
+            "chips.assigned_to" => tr!(
+                "Gehört zu",
+                "Belongs to",
+                "Appartient à",
+                "Pertenece a"
+            ),
+            "chips.kind_hint" => tr!(
+                "Ohne Zuordnung ist es ein Gast-Chip.",
+                "Without an assignment it is a guest chip.",
+                "Sans attribution, c'est un badge invité.",
+                "Sin asignación es un chip de invitado."
+            ),
+
+            "err.last_admin" => tr!(
+                "Der letzte aktive Administrator kann nicht deaktiviert, herabgestuft oder gelöscht werden.",
+                "The last active administrator cannot be disabled, demoted or deleted.",
+                "Le dernier administrateur actif ne peut pas être désactivé, rétrogradé ou supprimé.",
+                "El último administrador activo no se puede desactivar, degradar ni eliminar."
+            ),
+            "err.limit_kwh" => tr!(
+                "Ziel-kWh muss eine Zahl ab 0 sein.",
+                "Target kWh must be a number of 0 or more.",
+                "L'objectif en kWh doit être un nombre positif ou nul.",
+                "Los kWh objetivo deben ser un número de 0 o más."
+            ),
+            "err.limit_minutes" => tr!(
+                "Minuten müssen eine ganze Zahl ab 0 sein.",
+                "Minutes must be a whole number of 0 or more.",
+                "Les minutes doivent être un nombre entier positif ou nul.",
+                "Los minutos deben ser un número entero de 0 o más."
+            ),
+            "err.tx_not_running" => tr!(
+                "Diese Ladung läuft nicht mehr.",
+                "This charging session is no longer running.",
+                "Cette recharge n'est plus en cours.",
+                "Esta carga ya no está en curso."
+            ),
+
             // Unbekannter Key: unverändert zurückgeben, fällt sofort auf.
             other => {
                 tracing::warn!("i18n: unbekannter Key '{other}'");

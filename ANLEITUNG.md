@@ -1,4 +1,4 @@
-# easy-occp v0.3.1 – Installation & Erststart (Windows)
+# easy-ocpp v0.3.1 – Installation & Erststart (Windows)
 
 🌐 [English](INSTALL.md) · [Deutsch](ANLEITUNG.md) · [Français](INSTALL.fr.md) · [Español](INSTALL.es.md)
 
@@ -11,7 +11,7 @@ Management-Tool für Wallboxen (OCPP 1.5/1.6/2.0.1) — ein Binary, eine SQLite-
   Browser-Einstellung erkannt und lässt sich jederzeit über den Umschalter in
   der Kopfzeile ändern.
 - **GitHub-Repository mit CI und automatischen Releases:** Der Quellcode liegt
-  jetzt auf <https://github.com/hilman2/easy-occp>. Jede Version wird per CI
+  jetzt auf <https://github.com/hilman2/easy-ocpp>. Jede Version wird per CI
   automatisch gebaut und als Release veröffentlicht.
 
 ## Was ist neu in v0.2.0
@@ -27,15 +27,29 @@ Management-Tool für Wallboxen (OCPP 1.5/1.6/2.0.1) — ein Binary, eine SQLite-
 - Diverse Robustheits-Fixes bei der Messwert-Verarbeitung (Phasenwerte,
   fehlerhafte Werte, veraltete Anzeigen).
 
-**Update von v0.1.0:** Einfach die `easy-occp.exe` über die bestehende Datei
-kopieren und den Dienst neu starten. Die Datenbank (`data\easy-occp.db`) bleibt
+**Update von v0.1.0:** Einfach die `easy-ocpp.exe` über die bestehende Datei
+kopieren und den Dienst neu starten. Die Datenbank (`data\easy-ocpp.db`) bleibt
 unverändert; es gibt keine neuen Migrationen. Die Live-Werte erscheinen ab der
 nächsten Ladung, nachdem sich die Wallbox neu verbunden hat.
+
+**Umbenannt: `easy-occp` heisst jetzt `easy-ocpp`.** Im alten Namen steckte
+ein Dreher — das Protokoll heisst OCPP. Beim Update:
+
+- Das Programm heisst jetzt `easy-ocpp.exe`. Die alte `easy-occp.exe` loeschen,
+  sonst liegen zwei Programme im Ordner.
+- **Die Datenbank bleibt erhalten.** Findet das Programm nur die alte
+  `data\easy-occp.db`, arbeitet es unveraendert mit ihr weiter und schreibt beim
+  Start einen Hinweis ins Log. Wer umstellen moechte: Programm stoppen, Datei in
+  `easy-ocpp.db` umbenennen, neu starten.
+- Ein eingerichteter Dienst (nssm, Aufgabenplanung) muss auf den neuen
+  Programmnamen zeigen.
+- Alle Anmeldungen sind einmalig ungueltig, weil auch der Sitzungs-Cookie neu
+  heisst. Einfach neu anmelden.
 
 ## Inhalt dieses Ordners
 
 ```
-easy-occp.exe          Hauptprogramm (Windows x64, alles inkl.)
+easy-ocpp.exe          Hauptprogramm (Windows x64, alles inkl.)
 config.example.toml    Vorlage für die Konfiguration
 README.md              Projekt-Übersicht
 ANLEITUNG.md           Diese Datei
@@ -45,7 +59,7 @@ Die `.exe` enthält Datenbank-Schema, Web-UI und statische Assets — **nichts w
 
 ## 1. Installation
 
-1. Diesen Ordner an einen festen Ort kopieren, z. B. `C:\easy-occp\`.
+1. Diesen Ordner an einen festen Ort kopieren, z. B. `C:\easy-ocpp\`.
 2. Optional: `config.example.toml` nach `config.toml` kopieren und anpassen (siehe unten). Ohne `config.toml` laufen die Defaults (Port 8080, Datenverzeichnis `./data`).
 3. Sicherstellen, dass Port **8080** auf dem Host frei ist und in der Windows-Firewall eingehend freigegeben ist — sonst erreichen die Wallboxen den Server nicht.
 
@@ -54,13 +68,13 @@ Die `.exe` enthält Datenbank-Schema, Web-UI und statische Assets — **nichts w
 Im Ordner eine **PowerShell** öffnen und starten:
 
 ```powershell
-.\easy-occp.exe
+.\easy-ocpp.exe
 ```
 
 Beim ersten Start erledigt die Anwendung alles selbst:
 
 - legt das Verzeichnis `data\` an,
-- erzeugt die SQLite-Datei `data\easy-occp.db`,
+- erzeugt die SQLite-Datei `data\easy-ocpp.db`,
 - spielt das komplette Schema ein (Migrationen sind in die Binary eingebettet),
 - legt den Admin-Benutzer an.
 
@@ -83,7 +97,7 @@ public_base_url = "http://<server-ip-oder-hostname>:8080"
 
 [storage]
 data_dir = "data"
-db_file  = "easy-occp.db"
+db_file  = "easy-ocpp.db"
 
 [ocpp]
 # Intervall in Sekunden, in dem Wallboxen während einer Ladung Zählerstand und
@@ -124,19 +138,19 @@ Sobald die Wallbox verbindet, erscheint sie unter **Wallboxen** mit Status *onli
 
 ## 6. Als Windows-Dienst dauerhaft laufen lassen (optional)
 
-`easy-occp.exe` ist ein gewöhnliches Konsolenprogramm. Für Autostart/Service:
+`easy-ocpp.exe` ist ein gewöhnliches Konsolenprogramm. Für Autostart/Service:
 
 **Variante A: Aufgabenplanung**
 
-- Aufgabenplanung → *Aufgabe erstellen* → Trigger *Beim Systemstart* → Aktion *Programm starten* → `C:\easy-occp\easy-occp.exe` → *Starten in:* `C:\easy-occp\`.
+- Aufgabenplanung → *Aufgabe erstellen* → Trigger *Beim Systemstart* → Aktion *Programm starten* → `C:\easy-ocpp\easy-ocpp.exe` → *Starten in:* `C:\easy-ocpp\`.
 - *„Unabhängig von der Benutzeranmeldung ausführen"* aktivieren.
 
 **Variante B: NSSM (Non-Sucking Service Manager)**
 
 ```powershell
-nssm install easy-occp "C:\easy-occp\easy-occp.exe"
-nssm set easy-occp AppDirectory "C:\easy-occp"
-nssm start easy-occp
+nssm install easy-ocpp "C:\easy-ocpp\easy-ocpp.exe"
+nssm set easy-ocpp AppDirectory "C:\easy-ocpp"
+nssm start easy-ocpp
 ```
 
 ## 7. Admin-Passwort zurücksetzen
@@ -144,14 +158,14 @@ nssm start easy-occp
 Falls das Admin-Passwort verloren ist:
 
 ```powershell
-.\easy-occp.exe --reset-admin "neuesPasswort123"
+.\easy-ocpp.exe --reset-admin "neuesPasswort123"
 ```
 
 Setzt das Passwort des `admin`-Accounts neu und beendet sich.
 
 ## 8. Backup
 
-Alles Relevante liegt in **einer einzigen Datei**: `data\easy-occp.db`.
+Alles Relevante liegt in **einer einzigen Datei**: `data\easy-ocpp.db`.
 
 Für ein konsistentes Backup den Dienst kurz stoppen und die Datei (inkl. evtl. `-wal` / `-shm`) wegsichern — fertig.
 
@@ -162,7 +176,7 @@ Für ein konsistentes Backup den Dienst kurz stoppen und die Datei (inkl. evtl. 
 | Browser zeigt „Seite nicht erreichbar" | Port 8080 belegt oder Firewall blockiert. `netstat -ano \| findstr :8080` prüfen. |
 | Wallbox verbindet nicht | `public_base_url` / Firewall / `ChargePointId`-URL prüfen. Logs in der Konsole zeigen eingehende WS-Verbindungen. |
 | Keine Live-Werte während der Ladung | Wallbox neu verbinden lassen (Konfiguration wird beim Connect gesetzt). Konsolen-Log prüfen: `MeterValueSampleInterval` sollte als „gesetzt" erscheinen. Manche Boxen brauchen einen Neustart, andere unterstützen keine Leistungsmessung — dann wird die Leistung aus den Zählerständen abgeleitet. |
-| „database is locked" | Kein zweites `easy-occp.exe` gleichzeitig auf derselben DB starten. |
+| „database is locked" | Kein zweites `easy-ocpp.exe` gleichzeitig auf derselben DB starten. |
 | Mehr Logs gewünscht | Vor dem Start: `$env:RUST_LOG="debug"` setzen. |
 
 ## 10. Deinstallation

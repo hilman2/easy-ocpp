@@ -5,7 +5,7 @@ use rand::RngCore;
 use crate::domain::user::{session_expires_at, User};
 use crate::{AppError, AppResult, AppState};
 
-pub const COOKIE_NAME: &str = "easy_occp_sid";
+pub const COOKIE_NAME: &str = "easy_ocpp_sid";
 
 pub fn new_token() -> String {
     let mut buf = [0u8; 32];

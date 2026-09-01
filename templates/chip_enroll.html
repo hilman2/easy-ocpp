@@ -9,16 +9,10 @@
         <p class="ok">{{ layout.t("enroll.detected") }} <code>{{ tag }}</code></p>
         <form method="post" action="/chips/enroll/{{ session.id }}/save" class="row">
             <label>{{ layout.t("common.label") }} <input name="label" placeholder="{{ layout.t("enroll.label_ph") }}"></label>
-            <label>{{ layout.t("common.category") }}
-                <select name="kind">
-                    <option value="employee">{{ layout.t("common.employee") }}</option>
-                    <option value="guest">{{ layout.t("common.guest") }}</option>
-                </select>
-            </label>
-            <label>{{ layout.t("enroll.employee_optional") }}
-                <select name="employee_id">
-                    <option value="">{{ layout.t("enroll.none_opt") }}</option>
-                    {% for (id, name) in employees %}<option value="{{ id }}">{{ name }}</option>{% endfor %}
+            <label>{{ layout.t("chips.assigned_to") }}
+                <select name="user_id">
+                    <option value="">{{ layout.t("chips.guest_option") }}</option>
+                    {% for (id, name) in users %}<option value="{{ id }}">{{ name }}</option>{% endfor %}
                 </select>
             </label>
             <label>{{ layout.t("enroll.valid_until") }}
@@ -26,6 +20,7 @@
             </label>
             <button class="primary">{{ layout.t("common.save") }}</button>
         </form>
+        <p class="hint">{{ layout.t("chips.kind_hint") }}</p>
     {% when None %}
         <p>{{ layout.t("enroll.hold_hint") }} <b>{{ session.expires_at }}</b>.</p>
         <p class="hint">{{ layout.t("enroll.autorefresh") }}</p>

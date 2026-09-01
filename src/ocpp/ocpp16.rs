@@ -646,6 +646,29 @@ async fn try_capture_for_enrollment(state: &AppState, cp_id: &str, id_tag: &str)
     Ok(())
 }
 
+/// Liest die Standard-Ladelimits des Benutzers und rechnet das Zeitlimit auf
+/// einen konkreten Abschaltzeitpunkt um (Startzeit + Minuten).
+async fn default_limits(
+    state: &AppState,
+    user_id: i64,
+    start: DateTime<Utc>,
+) -> (Option<i64>, Option<String>) {
+    let row: Option<(Option<i64>, Option<i64>)> = sqlx::query_as(
+        "SELECT default_limit_wh, default_limit_minutes FROM users WHERE id = ?1",
+    )
+    .bind(user_id)
+    .fetch_optional(&state.db)
+    .await
+    .unwrap_or(None);
+    let Some((wh, minutes)) = row else {
+        return (None, None);
+    };
+    let until = minutes
+        .filter(|m| *m > 0)
+        .map(|m| rfc3339(start + chrono::Duration::minutes(m)));
+    (wh.filter(|w| *w > 0), until)
+}
+
 async fn handle_start(
     state: &AppState,
     cp_id: &str,
@@ -672,7 +695,7 @@ async fn handle_start(
         }));
     }
 
-    // Chip + Mitarbeiter auflösen
+    // Chip + Benutzer auflösen
     let chip: Option<crate::domain::chip::Chip> = sqlx::query_as::<_, crate::domain::chip::Chip>(
         "SELECT * FROM chips WHERE id_tag = ?1",
     )
@@ -680,24 +703,34 @@ async fn handle_start(
     .fetch_optional(&state.db)
     .await
     .map_err(db_err("StartTransaction chip lookup"))?;
-    let (chip_id, employee_id) = chip
+    let (chip_id, user_id) = chip
         .as_ref()
-        .map(|c| (Some(c.id), c.employee_id))
+        .map(|c| (Some(c.id), c.user_id))
         .unwrap_or((None, None));
+
+    // Ladelimits aus dem Profil des Benutzers übernehmen. Gast-Chips ohne
+    // Zuordnung laden ohne Limit weiter.
+    let (limit_wh, limit_until) = match user_id {
+        Some(uid) => default_limits(state, uid, ts).await,
+        None => (None, None),
+    };
 
     // Insert; OCPP-transactionId generieren wir selbst (unsere rowid).
     let res = sqlx::query(
-        "INSERT INTO transactions (wallbox_id, connector_id, id_tag, chip_id, employee_id,
-                                   start_time, start_meter_wh, started_remote)
-         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, 0)",
+        "INSERT INTO transactions (wallbox_id, connector_id, id_tag, chip_id, user_id,
+                                   start_time, start_meter_wh, started_remote,
+                                   limit_wh, limit_until)
+         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, 0, ?8, ?9)",
     )
     .bind(wb_id)
     .bind(connector_id)
     .bind(&id_tag)
     .bind(chip_id)
-    .bind(employee_id)
+    .bind(user_id)
     .bind(rfc3339(ts))
     .bind(meter_start)
+    .bind(limit_wh)
+    .bind(&limit_until)
     .execute(&state.db)
     .await
     .map_err(db_err("StartTransaction insert"))?;
@@ -910,6 +943,10 @@ async fn handle_meter(
         .await
         .map_err(db_err("MeterValues insert"))?;
     }
+
+    // Frische Zählerstände: sofort gegen ein gesetztes Energielimit prüfen,
+    // damit nicht bis zum nächsten Watchdog-Takt weitergeladen wird.
+    crate::ocpp::limits::enforce_transaction(state, tx_id).await;
 
     Ok(json!({}))
 }

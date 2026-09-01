@@ -17,12 +17,50 @@ pub struct Transaction {
     pub stop_meter_wh: Option<i64>,
     pub stop_reason: Option<String>,
     pub started_remote: i64,
+    /// Ziel-Energie in Wh — die Ladung wird gestoppt, sobald so viel geladen
+    /// wurde. None = kein Energielimit.
+    pub limit_wh: Option<i64>,
+    /// Zeitpunkt (RFC3339), zu dem die Ladung gestoppt wird. None = kein Timer.
+    pub limit_until: Option<String>,
+    /// 1, sobald der Watchdog wegen eines Limits einen RemoteStop geschickt hat.
+    pub limit_stopped: i64,
 }
 
 impl Transaction {
     pub fn energy_wh(&self) -> Option<i64> {
         self.stop_meter_wh.map(|s| (s - self.start_meter_wh).max(0))
     }
+    pub fn is_running(&self) -> bool {
+        self.stop_time.is_none()
+    }
+}
+
+/// Wandelt eine kWh-Eingabe aus einem Formular in Wh. Akzeptiert Komma und
+/// Punkt als Dezimaltrenner; leer oder 0 bedeutet "kein Limit".
+pub fn parse_kwh_to_wh(raw: Option<&str>) -> Result<Option<i64>, ()> {
+    let Some(s) = raw.map(str::trim).filter(|s| !s.is_empty()) else {
+        return Ok(None);
+    };
+    let v: f64 = s.replace(',', ".").parse().map_err(|_| ())?;
+    if v < 0.0 || !v.is_finite() {
+        return Err(());
+    }
+    if v == 0.0 {
+        return Ok(None);
+    }
+    Ok(Some((v * 1000.0).round() as i64))
+}
+
+/// Wandelt eine Minuten-Eingabe aus einem Formular. Leer oder 0 = kein Limit.
+pub fn parse_minutes(raw: Option<&str>) -> Result<Option<i64>, ()> {
+    let Some(s) = raw.map(str::trim).filter(|s| !s.is_empty()) else {
+        return Ok(None);
+    };
+    let v: i64 = s.parse().map_err(|_| ())?;
+    if v < 0 {
+        return Err(());
+    }
+    Ok(if v == 0 { None } else { Some(v) })
 }
 
 /// Aktuelle Messwerte einer laufenden Transaktion, abgeleitet aus den zuletzt

@@ -1,4 +1,4 @@
-# easy-occp v0.3.1 – Installation & First Start (Windows)
+# easy-ocpp v0.3.1 – Installation & First Start (Windows)
 
 🌐 [English](INSTALL.md) · [Deutsch](ANLEITUNG.md) · [Français](INSTALL.fr.md) · [Español](INSTALL.es.md)
 
@@ -11,7 +11,7 @@ Management tool for wallboxes (OCPP 1.5/1.6/2.0.1) — one binary, one SQLite fi
   browser settings and can be changed at any time via the switcher in the
   header.
 - **GitHub repository with CI and automatic releases:** The source code now
-  lives at <https://github.com/hilman2/easy-occp>. Every version is built
+  lives at <https://github.com/hilman2/easy-ocpp>. Every version is built
   automatically by CI and published as a release.
 
 ## What's new in v0.2.0
@@ -27,15 +27,27 @@ Management tool for wallboxes (OCPP 1.5/1.6/2.0.1) — one binary, one SQLite fi
 - Various robustness fixes in meter-value processing (phase values, invalid
   values, stale displays).
 
-**Updating from v0.1.0:** Simply copy `easy-occp.exe` over the existing file
-and restart the service. The database (`data\easy-occp.db`) remains unchanged;
+**Updating from v0.1.0:** Simply copy `easy-ocpp.exe` over the existing file
+and restart the service. The database (`data\easy-ocpp.db`) remains unchanged;
 there are no new migrations. Live values appear from the next charging session
 onward, once the wallbox has reconnected.
+
+**Renamed: `easy-occp` is now `easy-ocpp`.** The old name had the protocol
+letters swapped — it is spelled OCPP. When updating:
+
+- The program is now called `easy-ocpp.exe`. Delete the old `easy-occp.exe`,
+  otherwise you end up with two programs in the folder.
+- **Your database is kept.** If only the old `data\easy-occp.db` is present, the
+  program keeps using it and logs a note at startup. To switch over: stop the
+  program, rename the file to `easy-ocpp.db`, start again.
+- An installed service (nssm, Task Scheduler) must point at the new program name.
+- Everyone is signed out once, because the session cookie was renamed too. Just
+  sign in again.
 
 ## Contents of this folder
 
 ```
-easy-occp.exe          Main program (Windows x64, all-in-one)
+easy-ocpp.exe          Main program (Windows x64, all-in-one)
 config.example.toml    Configuration template
 README.md              Project overview
 INSTALL.md             This file
@@ -46,7 +58,7 @@ The `.exe` contains the database schema, the web UI and all static assets — **
 
 ## 1. Installation
 
-1. Copy this folder to a permanent location, e.g. `C:\easy-occp\`.
+1. Copy this folder to a permanent location, e.g. `C:\easy-ocpp\`.
 2. Optional: copy `config.example.toml` to `config.toml` and adjust it (see below). Without a `config.toml` the defaults apply (port 8080, data directory `./data`).
 3. Make sure port **8080** is free on the host and allowed inbound in the Windows Firewall — otherwise the wallboxes cannot reach the server.
 
@@ -55,13 +67,13 @@ The `.exe` contains the database schema, the web UI and all static assets — **
 Open a **PowerShell** in the folder and start:
 
 ```powershell
-.\easy-occp.exe
+.\easy-ocpp.exe
 ```
 
 On first start the application takes care of everything itself:
 
 - creates the `data\` directory,
-- creates the SQLite file `data\easy-occp.db`,
+- creates the SQLite file `data\easy-ocpp.db`,
 - applies the complete schema (migrations are embedded in the binary),
 - creates the admin user.
 
@@ -84,7 +96,7 @@ public_base_url = "http://<server-ip-or-hostname>:8080"
 
 [storage]
 data_dir = "data"
-db_file  = "easy-occp.db"
+db_file  = "easy-ocpp.db"
 
 [ocpp]
 # Interval in seconds at which wallboxes report meter reading and power during
@@ -125,19 +137,19 @@ As soon as the wallbox connects, it appears under **Wallboxes** with status *onl
 
 ## 6. Running permanently as a Windows service (optional)
 
-`easy-occp.exe` is an ordinary console program. For autostart/service:
+`easy-ocpp.exe` is an ordinary console program. For autostart/service:
 
 **Option A: Task Scheduler**
 
-- Task Scheduler → *Create Task* → Trigger *At system startup* → Action *Start a program* → `C:\easy-occp\easy-occp.exe` → *Start in:* `C:\easy-occp\`.
+- Task Scheduler → *Create Task* → Trigger *At system startup* → Action *Start a program* → `C:\easy-ocpp\easy-ocpp.exe` → *Start in:* `C:\easy-ocpp\`.
 - Enable *"Run whether user is logged on or not"*.
 
 **Option B: NSSM (Non-Sucking Service Manager)**
 
 ```powershell
-nssm install easy-occp "C:\easy-occp\easy-occp.exe"
-nssm set easy-occp AppDirectory "C:\easy-occp"
-nssm start easy-occp
+nssm install easy-ocpp "C:\easy-ocpp\easy-ocpp.exe"
+nssm set easy-ocpp AppDirectory "C:\easy-ocpp"
+nssm start easy-ocpp
 ```
 
 ## 7. Resetting the admin password
@@ -145,14 +157,14 @@ nssm start easy-occp
 If the admin password is lost:
 
 ```powershell
-.\easy-occp.exe --reset-admin "newPassword123"
+.\easy-ocpp.exe --reset-admin "newPassword123"
 ```
 
 Resets the password of the `admin` account and exits.
 
 ## 8. Backup
 
-Everything relevant lives in **a single file**: `data\easy-occp.db`.
+Everything relevant lives in **a single file**: `data\easy-ocpp.db`.
 
 For a consistent backup, briefly stop the service and copy the file (incl. any `-wal` / `-shm`) somewhere safe — done.
 
@@ -163,7 +175,7 @@ For a consistent backup, briefly stop the service and copy the file (incl. any `
 | Browser shows "page unreachable" | Port 8080 in use or blocked by the firewall. Check with `netstat -ano \| findstr :8080`. |
 | Wallbox does not connect | Check `public_base_url` / firewall / `ChargePointId` URL. The console logs show incoming WS connections. |
 | No live values during charging | Let the wallbox reconnect (the configuration is applied on connect). Check the console log: `MeterValueSampleInterval` should appear as "set". Some boxes need a restart, others do not support power measurement — in that case the power is derived from the meter readings. |
-| "database is locked" | Do not start a second `easy-occp.exe` on the same DB at the same time. |
+| "database is locked" | Do not start a second `easy-ocpp.exe` on the same DB at the same time. |
 | More logs wanted | Before starting: set `$env:RUST_LOG="debug"`. |
 
 ## 10. Uninstallation
