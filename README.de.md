@@ -6,6 +6,8 @@
 [![Release](https://img.shields.io/github/v/release/hilman2/easy-ocpp)](https://github.com/hilman2/easy-ocpp/releases/latest)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
+**[Projektseite und Dokumentation](https://hilman2.github.io/easy-ocpp/de/)**
+
 Selbst gehosteter **OCPP-Server (CSMS)** für Ladestationen, gebaut für **KMUs mit 1–10 Wallboxen**. Ladepunkt-Verwaltung, RFID-Chips, Ladelimits und Auswertungen, ohne Cloud-Abo.
 
 - **Ein Binary, eine SQLite-Datei** – keine externe Datenbank, kein Message-Broker.

@@ -6,6 +6,8 @@
 [![Release](https://img.shields.io/github/v/release/hilman2/easy-ocpp)](https://github.com/hilman2/easy-ocpp/releases/latest)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
+**[Sitio del proyecto y documentación](https://hilman2.github.io/easy-ocpp/es/)**
+
 Servidor **OCPP autoalojado (CSMS)** para estaciones de carga, pensado para **pymes con 1–10 cargadores**. Gestión de puntos de carga, tarjetas RFID, límites de carga e informes, sin suscripción en la nube.
 
 - **Un solo binario, un solo archivo SQLite** – sin base de datos externa, sin message broker.

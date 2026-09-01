@@ -6,6 +6,8 @@
 [![Release](https://img.shields.io/github/v/release/hilman2/easy-ocpp)](https://github.com/hilman2/easy-ocpp/releases/latest)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
+**[Project website and documentation](https://hilman2.github.io/easy-ocpp/)**
+
 Self-hosted **OCPP server (CSMS)** for EV charging stations, built for **small businesses with 1–10 wallboxes**. Charge point management, RFID chip handling, charging limits and reports, without a cloud subscription.
 
 - **One binary, one SQLite file** – no external database, no message broker.
