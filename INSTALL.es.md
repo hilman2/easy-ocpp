@@ -156,8 +156,6 @@ meter_interval_s = 30
 - `public_base_url`: dirección pública en la que el servidor es accesible desde el punto de vista de los cargadores.
 - `meter_interval_s`: intervalo de envío de las lecturas en vivo (30 s por defecto).
 
-Las secciones LDAP / Entra ID están comentadas en el ejemplo, por ahora son esbozos y no están activas.
-
 ## 4. Configurar un cargador
 
 Introduzca la URL del backend en la configuración del dispositivo (portal del fabricante o interfaz web del cargador):

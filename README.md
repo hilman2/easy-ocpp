@@ -13,7 +13,7 @@ Self-hosted **OCPP server (CSMS)** for EV charging stations, built for **small b
 - **One binary, one SQLite file** – no external database, no message broker.
 - **OCPP 1.6J** (complete) + **OCPP 2.0.1** (WebSocket scaffold, BootNotification / TransactionEvent) + **OCPP 1.5 SOAP** (scaffold for Boot/Heartbeat).
 - **Modern web UI** (Askama + htmx), local accounts with Argon2 passwords.
-- Signing in is local only. `config.toml` has fields for LDAP and Entra, but nothing reads them yet, so neither can be used to log in.
+- Accounts and passwords live in the SQLite file. There is no directory or single sign-on integration.
 - Runs on **Windows** (primary focus) **and Linux**.
 
 ## Features
@@ -34,13 +34,6 @@ Self-hosted **OCPP server (CSMS)** for EV charging stations, built for **small b
 | Password change, required by an administrator or done by the user | ✅ |
 | Monthly report sent by email to whoever charged | ✅ |
 | Multilingual UI (Deutsch, English, Français, Español) | ✅ |
-| Active Directory (LDAP) | ❌ Not implemented |
-| Entra ID (OIDC)        | ❌ Not implemented |
-
-The two entries at the bottom are config fields and nothing else. `config.toml`
-accepts an `[auth.ldap]` and an `[auth.oidc]` section, but no code reads them:
-there is no redirect, no token check and no directory query. Filling them in
-changes nothing. Accounts and passwords live in the SQLite file.
 
 ## Getting started
 

@@ -67,6 +67,5 @@ pub async fn authenticate_username_password(
     if let Some(user) = local::try_login(state, username, password).await? {
         return Ok(user);
     }
-    // LDAP/OIDC-Integration folgt; Stubs sind in auth::local::ldap_stub dokumentiert.
     Err(AppError::Unauthorized)
 }

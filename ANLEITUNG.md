@@ -153,8 +153,6 @@ meter_interval_s = 30
 - `public_base_url`: öffentliche Adresse, unter der der Server aus Sicht der Wallboxen erreichbar ist.
 - `meter_interval_s`: Meldeintervall der Live-Messwerte (Standard 30 s).
 
-LDAP / Entra-ID-Abschnitte sind im Beispiel auskommentiert, derzeit Feld-Stubs und nicht aktiv.
-
 ## 4. Wallbox einrichten
 
 Wallbox-Backend-URL in der jeweiligen Geräte-Konfiguration (Herstellerportal oder Web-UI der Box) eintragen:

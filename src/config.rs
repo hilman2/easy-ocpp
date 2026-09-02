@@ -10,8 +10,6 @@ pub struct Config {
     #[serde(default)]
     pub storage: StorageConfig,
     #[serde(default)]
-    pub auth: AuthConfig,
-    #[serde(default)]
     pub ocpp: OcppConfig,
     /// Fehlt der Abschnitt, findet kein Monatsversand statt.
     #[serde(default)]
@@ -140,31 +138,6 @@ fn default_db_file() -> String {
 /// Installationen behalten ihre Datei, siehe [`Config::db_path`].
 pub const LEGACY_DB_FILE: &str = "easy-occp.db";
 
-#[derive(Clone, Debug, Default, Deserialize, Serialize)]
-pub struct AuthConfig {
-    #[serde(default)]
-    pub ldap: Option<LdapConfig>,
-    #[serde(default)]
-    pub oidc: Option<OidcConfig>,
-}
-
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct LdapConfig {
-    pub url: String,
-    pub bind_dn: String,
-    pub bind_password: String,
-    pub user_base_dn: String,
-    pub user_filter: String,
-}
-
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct OidcConfig {
-    pub issuer: String,
-    pub client_id: String,
-    pub client_secret: String,
-    pub redirect_uri: String,
-}
-
 impl Config {
     pub fn load(path: &Path) -> Result<Self> {
         if !path.exists() {
@@ -213,7 +186,6 @@ impl Default for Config {
         Self {
             http: HttpConfig::default(),
             storage: StorageConfig::default(),
-            auth: AuthConfig::default(),
             ocpp: OcppConfig::default(),
             mail: None,
         }

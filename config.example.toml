@@ -15,21 +15,6 @@ db_file  = "easy-ocpp.db"
 # gesetzt (ChangeConfiguration). 0 = Auto-Konfiguration deaktivieren.
 meter_interval_s = 30
 
-# Optional: Active Directory (LDAP) – noch nicht aktiv, Feld-Stub.
-# [auth.ldap]
-# url = "ldap://dc.firma.local:389"
-# bind_dn = "CN=svc-easy-ocpp,OU=Service,DC=firma,DC=local"
-# bind_password = "geheim"
-# user_base_dn = "OU=Mitarbeiter,DC=firma,DC=local"
-# user_filter = "(sAMAccountName={user})"
-
-# Optional: Entra / OIDC – noch nicht aktiv, Feld-Stub.
-# [auth.oidc]
-# issuer = "https://login.microsoftonline.com/<tenant>/v2.0"
-# client_id = "..."
-# client_secret = "..."
-# redirect_uri = "http://localhost:8080/oidc/callback"
-
 # Monatsversand der Ladeberichte. Fehlt dieser Abschnitt, wird nichts
 # verschickt. Am Monatsersten bekommt jeder Benutzer mit E-Mail-Adresse, der im
 # Vormonat geladen hat, seinen eigenen Bericht als PDF.

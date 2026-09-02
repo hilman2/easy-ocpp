@@ -158,8 +158,6 @@ meter_interval_s = 30
 - `public_base_url`: adresse publique à laquelle le serveur est joignable du point de vue des bornes.
 - `meter_interval_s`: intervalle de transmission des relevés en direct (30 s par défaut).
 
-Les sections LDAP / Entra ID sont commentées dans l'exemple, ce sont pour l'instant des ébauches, non actives.
-
 ## 4. Configurer une borne
 
 Saisissez l'URL du backend dans la configuration de l'appareil (portail du fabricant ou interface web de la borne) :
