@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}{{ layout.t("txd.title") }} {{ tx.id }}{% endblock %}
+{% block crumb %}{{ layout.t("txd.title") }} {{ tx.id }}{% endblock %}
+{% block content %}
+<div class="page-title-row">
+    <div>
+        <h1>{{ layout.t("txd.title") }} {{ tx.id }}</h1>
+        <div class="sub">
+            {{ wallbox_name }} · #{{ tx.connector_id }}
+            {% if let Some(n) = user_name %} · {{ n }}{% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="row">
+        <div>{{ layout.t("common.start") }}: <b>{{ tx.start_time }}</b></div>
+        <div>{{ layout.t("common.end") }}:
+            <b>{{ tx.stop_time.as_deref().unwrap_or(layout.t("common.running")) }}</b>
+        </div>
+        <div>{{ layout.t("common.energy_kwh") }}:
+            <b>{% if let Some(e) = energy_kwh %}{{ e }}{% else %}–{% endif %}</b>
+        </div>
+        {% if let Some(p) = power_kw %}<div>{{ layout.t("common.power") }}: <b>{{ p }} kW</b></div>{% endif %}
+        <div>idTag: <code>{{ tx.id_tag }}</code></div>
+    </div>
+    {% if let Some(r) = tx.stop_reason %}
+        <p class="hint">{{ layout.t("txd.stop_reason") }}: <b>{{ r }}</b></p>
+    {% endif %}
+</div>
+
+<h2>{{ layout.t("txd.events") }}</h2>
+{% if events.is_empty() %}
+    <div class="empty-state">
+        <div class="title">{{ layout.t("txd.no_events") }}</div>
+        <div>{{ layout.t("txd.no_events_hint") }}</div>
+    </div>
+{% else %}
+<table class="data">
+    <thead><tr>
+        <th>{{ layout.t("common.status") }}</th>
+        <th>{{ layout.t("txd.time") }}</th>
+        <th>{{ layout.t("txd.meaning") }}</th>
+        <th>{{ layout.t("txd.detail") }}</th>
+    </tr></thead>
+    <tbody>
+    {% for e in events %}
+        <tr>
+            <td class="nowrap">
+                {% if e.is_fault() %}<span class="badge danger">{{ e.status }}</span>
+                {% else %}<code>{{ e.status }}</code>{% endif %}
+            </td>
+            <td class="nowrap">{{ e.timestamp }}</td>
+            <td>{{ lang.ocpp_status(e.status.as_str()) }}</td>
+            <td>
+                {% if let Some(c) = e.error_code %}{% if c != "NoError" %}<code>{{ c }}</code> {% endif %}{% endif %}
+                {% if let Some(v) = e.vendor_error %}<code>{{ v }}</code> {% endif %}
+                {% if let Some(i) = e.info %}{{ i }}{% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<p class="hint">{{ layout.t("txd.events_hint") }}</p>
+{% endif %}
+
+<p><a href="/transactions">← {{ layout.t("common.back") }}</a></p>
+{% endblock %}

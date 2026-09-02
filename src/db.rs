@@ -162,3 +162,20 @@ fn sha384(data: &[u8]) -> Vec<u8> {
     hasher.update(data);
     hasher.finalize().to_vec()
 }
+
+/// Loescht Wallbox-Meldungen, die aelter sind als die eingestellte Frist.
+/// 0 Tage bedeutet unbegrenzt aufheben.
+pub async fn prune_connector_events(db: &SqlitePool, retention_days: i64) -> Result<u64> {
+    if retention_days <= 0 {
+        return Ok(0);
+    }
+    let res = sqlx::query(
+        "DELETE FROM connector_events
+          WHERE timestamp < datetime('now', ?1)",
+    )
+    .bind(format!("-{retention_days} days"))
+    .execute(db)
+    .await
+    .context("Alte Wallbox-Meldungen konnten nicht geloescht werden")?;
+    Ok(res.rows_affected())
+}

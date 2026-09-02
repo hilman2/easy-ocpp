@@ -9,7 +9,7 @@ use serde::Deserialize;
 use super::{render, LayoutCtx};
 use crate::auth::AdminUser;
 use crate::domain::transaction::{fmt_kw, fmt_kwh, live_meter};
-use crate::domain::wallbox::{Connector, Wallbox};
+use crate::domain::wallbox::{Connector, Wallbox, ConnectorEvent};
 use crate::i18n::Lang;
 use crate::{AppError, AppResult, AppState};
 
@@ -97,6 +97,8 @@ struct DetailTpl {
     online: bool,
     connectors: Vec<Connector>,
     active_tx: Vec<ActiveTx>,
+    /// Verlauf der StatusNotification dieser Wallbox, neueste zuerst.
+    events: Vec<ConnectorEvent>,
     new_password: Option<String>,
     lang: Lang,
 }
@@ -199,6 +201,8 @@ pub async fn detail(
     .await?;
     let active_tx = load_active_tx(&state, id).await?;
 
+    let events = crate::domain::wallbox::events_for_wallbox(&state.db, id, 200).await?;
+
     let online = state.ocpp_hub.get(&wb.charge_point_id).is_some();
     let tpl = DetailTpl {
         layout: LayoutCtx::new("wallboxes", Some(user), lang),
@@ -206,6 +210,7 @@ pub async fn detail(
         online,
         connectors,
         active_tx,
+        events,
         new_password: q.pw,
         lang,
     };

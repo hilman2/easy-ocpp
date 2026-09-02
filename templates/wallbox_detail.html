@@ -75,4 +75,39 @@
 <div hx-get="/wallboxes/{{ wb.id }}/live" hx-trigger="every 10s" hx-swap="innerHTML">
     {% include "_wallbox_live.html" %}
 </div>
+
+<h2>{{ layout.t("wbd.events") }}</h2>
+{% if events.is_empty() %}
+    <p class="hint">{{ layout.t("wbd.no_events") }}</p>
+{% else %}
+<table class="data">
+    <thead><tr>
+        <th>{{ layout.t("txd.time") }}</th>
+        <th>C.</th>
+        <th>{{ layout.t("common.status") }}</th>
+        <th>{{ layout.t("txd.meaning") }}</th>
+        <th>{{ layout.t("txd.detail") }}</th>
+    </tr></thead>
+    <tbody>
+    {% for e in events %}
+        <tr>
+            <td class="nowrap">{{ e.timestamp }}</td>
+            <td>{{ e.connector_id }}</td>
+            <td class="nowrap">
+                {% if e.is_fault() %}<span class="badge danger">{{ e.status }}</span>
+                {% else %}<code>{{ e.status }}</code>{% endif %}
+            </td>
+            <td>{{ lang.ocpp_status(e.status.as_str()) }}</td>
+            <td>
+                {% if let Some(c) = e.error_code %}{% if c != "NoError" %}<code>{{ c }}</code> {% endif %}{% endif %}
+                {% if let Some(v) = e.vendor_error %}<code>{{ v }}</code> {% endif %}
+                {% if let Some(i) = e.info %}{{ i }}{% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<p class="hint">{{ layout.t("wbd.events_hint") }}</p>
+{% endif %}
+
 {% endblock %}

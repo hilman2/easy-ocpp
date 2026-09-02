@@ -516,6 +516,9 @@ async fn handle_status(
     let status = payload.get("status").and_then(|v| v.as_str()).unwrap_or("");
     let error_code = payload.get("errorCode").and_then(|v| v.as_str());
     let info = payload.get("info").and_then(|v| v.as_str());
+    // Steht in keiner Norm, ist aber bei den meisten Herstellern die einzige
+    // Angabe, mit der sich ein Fehler wirklich einordnen laesst.
+    let vendor_error = payload.get("vendorErrorCode").and_then(|v| v.as_str());
     let ts = sane_timestamp(payload.get("timestamp").and_then(|v| v.as_str()));
     let ts_s = rfc3339(ts);
 
@@ -539,7 +542,63 @@ async fn handle_status(
     .await
     .map_err(db_err("StatusNotification upsert"))?;
 
+    record_event(state, wb_id, connector_id, status, error_code, info, vendor_error, &ts_s)
+        .await
+        .map_err(db_err("StatusNotification event"))?;
+
     Ok(json!({}))
+}
+
+/// Haelt den Verlauf fest, aber nur wenn sich etwas geaendert hat. Manche
+/// Wallboxen wiederholen denselben Status im Heartbeat-Takt; ohne diesen
+/// Vergleich waere die Tabelle binnen Tagen voller Kopien.
+#[allow(clippy::too_many_arguments)]
+async fn record_event(
+    state: &AppState,
+    wb_id: i64,
+    connector_id: i64,
+    status: &str,
+    error_code: Option<&str>,
+    info: Option<&str>,
+    vendor_error: Option<&str>,
+    ts: &str,
+) -> sqlx::Result<()> {
+    type Last = (String, Option<String>, Option<String>, Option<String>);
+    let letzte: Option<Last> = sqlx::query_as(
+        "SELECT status, error_code, info, vendor_error FROM connector_events
+          WHERE wallbox_id = ?1 AND connector_id = ?2
+          ORDER BY timestamp DESC, id DESC LIMIT 1",
+    )
+    .bind(wb_id)
+    .bind(connector_id)
+    .fetch_optional(&state.db)
+    .await?;
+
+    if let Some((s, e, i, v)) = letzte {
+        if s == status
+            && e.as_deref() == error_code
+            && i.as_deref() == info
+            && v.as_deref() == vendor_error
+        {
+            return Ok(());
+        }
+    }
+
+    sqlx::query(
+        "INSERT INTO connector_events
+             (wallbox_id, connector_id, status, error_code, info, vendor_error, timestamp)
+         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)",
+    )
+    .bind(wb_id)
+    .bind(connector_id)
+    .bind(status)
+    .bind(error_code)
+    .bind(info)
+    .bind(vendor_error)
+    .bind(ts)
+    .execute(&state.db)
+    .await?;
+    Ok(())
 }
 
 async fn handle_authorize(

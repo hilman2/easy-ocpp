@@ -79,6 +79,25 @@ impl Lang {
         Lang::En
     }
 
+    /// Klartext zu einem OCPP-Statuswert. Unbekannte Werte liefern einen
+    /// neutralen Text statt eines leeren Feldes; die Kennung selbst steht in
+    /// der Oberflaeche ohnehin daneben.
+    pub fn ocpp_status(self, status: &str) -> &'static str {
+        let key = match status.to_ascii_lowercase().as_str() {
+            "available" => "ocpp.available",
+            "preparing" => "ocpp.preparing",
+            "charging" => "ocpp.charging",
+            "suspendedev" => "ocpp.suspended_ev",
+            "suspendedevse" => "ocpp.suspended_evse",
+            "finishing" => "ocpp.finishing",
+            "reserved" => "ocpp.reserved",
+            "unavailable" => "ocpp.unavailable",
+            "faulted" => "ocpp.faulted",
+            _ => "ocpp.unknown",
+        };
+        self.t(key)
+    }
+
     /// Übersetzten Text für einen Key liefern.
     pub fn t(self, key: &'static str) -> &'static str {
         let l = self;
@@ -904,6 +923,115 @@ impl Lang {
                 "This message was generated automatically by easy-ocpp.",
                 "Ce message a été généré automatiquement par easy-ocpp.",
                 "Este mensaje se ha generado automáticamente con easy-ocpp."
+            ),
+
+
+            // ---- Wallbox-Meldungen -----------------------------------------
+            "txd.title" => tr!("Ladung", "Session", "Recharge", "Carga"),
+            "txd.events" => tr!(
+                "Meldungen der Wallbox",
+                "Messages from the wallbox",
+                "Messages de la borne",
+                "Mensajes del cargador"
+            ),
+            "txd.no_events" => tr!(
+                "Keine Meldungen zu dieser Ladung.",
+                "No messages for this session.",
+                "Aucun message pour cette recharge.",
+                "Sin mensajes para esta carga."
+            ),
+            "txd.no_events_hint" => tr!(
+                "Entweder hat die Wallbox nichts gemeldet, oder die Ladung ist aus der Zeit vor dieser Version.",
+                "Either the wallbox reported nothing, or the session predates this version.",
+                "Soit la borne n'a rien signalé, soit la recharge est antérieure à cette version.",
+                "O el cargador no informó de nada, o la carga es anterior a esta versión."
+            ),
+            "txd.events_hint" => tr!(
+                "Die Wallbox meldet jeden Zustandswechsel. Fehlt ein erwarteter Schritt, sagt oft schon das etwas aus.",
+                "The wallbox reports every change of state. A missing step often tells you something in itself.",
+                "La borne signale chaque changement d'état. L'absence d'une étape attendue est déjà une information.",
+                "El cargador informa de cada cambio de estado. La falta de un paso esperado ya dice algo."
+            ),
+            "txd.time" => tr!("Zeitpunkt", "Time", "Horodatage", "Momento"),
+            "txd.meaning" => tr!("Bedeutung", "Meaning", "Signification", "Significado"),
+            "txd.detail" => tr!("Details", "Details", "Détails", "Detalles"),
+            "txd.stop_reason" => tr!(
+                "Beendet durch",
+                "Ended by",
+                "Terminée par",
+                "Finalizada por"
+            ),
+            "wbd.events" => tr!(
+                "Letzte Meldungen",
+                "Recent messages",
+                "Derniers messages",
+                "Últimos mensajes"
+            ),
+            "wbd.no_events" => tr!(
+                "Diese Wallbox hat noch nichts gemeldet.",
+                "This wallbox has not reported anything yet.",
+                "Cette borne n'a encore rien signalé.",
+                "Este cargador todavía no ha informado de nada."
+            ),
+            "wbd.events_hint" => tr!(
+                "Gespeichert wird nur, was sich geändert hat. Wiederholt eine Wallbox denselben Status, entsteht kein neuer Eintrag.",
+                "Only changes are stored. If a wallbox repeats the same status, no new entry appears.",
+                "Seuls les changements sont enregistrés. Si une borne répète le même état, aucune nouvelle entrée n'apparaît.",
+                "Solo se guardan los cambios. Si un cargador repite el mismo estado, no se crea una entrada nueva."
+            ),
+
+            // Klartext zu den Statuswerten aus OCPP 1.6. Die Kennung selbst
+            // bleibt daneben stehen, weil die Handbücher der Hersteller sie
+            // genau so schreiben.
+            "ocpp.available" => tr!(
+                "Frei, keine Ladung",
+                "Free, not charging",
+                "Libre, pas de recharge",
+                "Libre, sin carga"
+            ),
+            "ocpp.preparing" => tr!(
+                "Kabel steckt, wartet auf Freigabe",
+                "Cable plugged in, waiting to start",
+                "Câble branché, en attente de démarrage",
+                "Cable conectado, esperando para empezar"
+            ),
+            "ocpp.charging" => tr!("Lädt", "Charging", "En charge", "Cargando"),
+            "ocpp.suspended_ev" => tr!(
+                "Das Fahrzeug nimmt gerade keinen Strom ab, etwa weil es voll ist",
+                "The vehicle is not drawing power at the moment, for example because it is full",
+                "Le véhicule ne tire pas de courant pour l'instant, par exemple parce qu'il est plein",
+                "El vehículo no está consumiendo, por ejemplo porque está lleno"
+            ),
+            "ocpp.suspended_evse" => tr!(
+                "Die Wallbox liefert gerade keinen Strom, etwa wegen Lastmanagement",
+                "The wallbox is not supplying power at the moment, for example due to load management",
+                "La borne ne fournit pas de courant pour l'instant, par exemple à cause de la gestion de charge",
+                "El cargador no está suministrando ahora, por ejemplo por gestión de carga"
+            ),
+            "ocpp.finishing" => tr!(
+                "Ladung beendet, Kabel steckt noch",
+                "Session finished, cable still plugged in",
+                "Recharge terminée, câble encore branché",
+                "Carga finalizada, cable aún conectado"
+            ),
+            "ocpp.reserved" => tr!("Reserviert", "Reserved", "Réservée", "Reservado"),
+            "ocpp.unavailable" => tr!(
+                "Außer Betrieb gesetzt",
+                "Taken out of service",
+                "Mise hors service",
+                "Fuera de servicio"
+            ),
+            "ocpp.faulted" => tr!(
+                "Störung, die Wallbox meldet einen Fehler",
+                "Fault, the wallbox is reporting an error",
+                "Panne, la borne signale une erreur",
+                "Avería, el cargador informa de un error"
+            ),
+            "ocpp.unknown" => tr!(
+                "Unbekannter Status",
+                "Unknown status",
+                "État inconnu",
+                "Estado desconocido"
             ),
 
             // Unbekannter Key: unverändert zurückgeben, fällt sofort auf.

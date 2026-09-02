@@ -144,6 +144,7 @@ pub async fn create(
 }
 
 pub struct RecentTx {
+    pub id: i64,
     pub start_time: String,
     pub stop_time: Option<String>,
     pub wallbox: String,
@@ -217,6 +218,7 @@ pub async fn recent_transactions(state: &AppState, user_id: i64) -> AppResult<Ve
             stop_m.map(|s| (s - start_m).max(0))
         };
         out.push(RecentTx {
+            id,
             start_time: st,
             stop_time: et,
             wallbox: wb,

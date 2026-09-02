@@ -33,6 +33,7 @@ Servidor **OCPP autoalojado (CSMS)** para estaciones de carga, pensado para **py
 | Autoservicio del empleado: su carga en vivo, sus límites, parada por él mismo | ✅ |
 | Cambio de contraseña, exigido por un administrador o hecho por el usuario | ✅ |
 | Informe mensual enviado por correo a quienes hayan cargado | ✅ |
+| Mensajes de los cargadores (estado y averías), 60 días, por carga y por cargador | ✅ |
 | Interfaz multilingüe (Deutsch, English, Français, Español) | ✅ |
 
 ## Puesta en marcha

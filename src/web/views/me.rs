@@ -13,6 +13,7 @@ use super::{render, LayoutCtx};
 use crate::auth::AuthUser;
 use crate::domain::transaction::{fmt_kw, fmt_kwh, live_meter};
 use crate::domain::user::User;
+use crate::domain::wallbox::ConnectorEvent;
 use crate::i18n::Lang;
 use crate::{AppResult, AppState};
 
@@ -31,6 +32,9 @@ pub struct MySession {
     /// 1 = wegen Energielimit gestoppt, 2 = wegen Zeitlimit. Die Wallbox
     /// beendet die Ladung gleich, die Zeile bleibt bis dahin sichtbar.
     pub limit_stopped: i64,
+    /// Die letzten Meldungen der Wallbox seit Ladebeginn. Beantwortet die
+    /// Frage, warum gerade nichts fließt, ohne dass jemand nachfragen muss.
+    pub events: Vec<ConnectorEvent>,
 }
 
 impl MySession {
@@ -109,12 +113,13 @@ type SessionRow = (
     Option<i64>,
     Option<String>,
     i64,
+    i64,
 );
 
 async fn load_my_sessions(state: &AppState, user_id: i64) -> AppResult<Vec<MySession>> {
     let rows: Vec<SessionRow> = sqlx::query_as(
         "SELECT t.id, w.name, t.connector_id, t.start_time, t.start_meter_wh,
-                t.limit_wh, t.limit_until, t.limit_stopped
+                t.limit_wh, t.limit_until, t.limit_stopped, t.wallbox_id
          FROM transactions t
          JOIN wallboxes w ON w.id = t.wallbox_id
          WHERE t.stop_time IS NULL AND t.user_id = ?1
@@ -126,8 +131,10 @@ async fn load_my_sessions(state: &AppState, user_id: i64) -> AppResult<Vec<MySes
 
     let now = Utc::now();
     let mut out = Vec::with_capacity(rows.len());
-    for (tx_id, wb, conn, start, start_wh, limit_wh, limit_until, limit_stopped) in rows {
+    for (tx_id, wb, conn, start, start_wh, limit_wh, limit_until, limit_stopped, wb_id) in rows {
         let live = live_meter(&state.db, tx_id, start_wh).await?;
+        let events =
+            crate::domain::wallbox::events_for_session(&state.db, wb_id, conn, &start, None).await?;
         out.push(MySession {
             tx_id,
             wallbox_name: wb,
@@ -141,6 +148,7 @@ async fn load_my_sessions(state: &AppState, user_id: i64) -> AppResult<Vec<MySes
                 .unwrap_or_default(),
             limit_minutes_left: limit_until.as_deref().and_then(|s| minutes_left(s, now)),
             limit_stopped,
+            events,
         });
     }
     Ok(out)

@@ -13,6 +13,7 @@ use crate::domain::transaction::{
     fmt_kw, fmt_kwh, live_meter, parse_kwh_to_wh, parse_minutes, Transaction,
 };
 use crate::domain::user::User;
+use crate::domain::wallbox::ConnectorEvent;
 use crate::i18n::Lang;
 use crate::{AppError, AppResult, AppState};
 
@@ -338,4 +339,76 @@ fn csv_escape(s: &str) -> String {
     } else {
         s.to_string()
     }
+}
+
+// -----------------------------------------------------------------------------
+// Detailseite einer Ladung mit den Meldungen der Wallbox aus dem Zeitraum
+// -----------------------------------------------------------------------------
+
+#[derive(Template)]
+#[template(path = "transaction_detail.html")]
+struct DetailTpl {
+    layout: LayoutCtx,
+    tx: Transaction,
+    wallbox_name: String,
+    user_name: Option<String>,
+    energy_kwh: Option<String>,
+    power_kw: Option<String>,
+    events: Vec<ConnectorEvent>,
+    lang: Lang,
+}
+
+/// Eine einzelne Ladung im Detail. Ein Mitarbeiter sieht nur die eigenen,
+/// der Admin alle.
+pub async fn detail(
+    State(state): State<AppState>,
+    AuthUser(user): AuthUser,
+    Path(id): Path<i64>,
+    lang: Lang,
+) -> AppResult<Response> {
+    let tx = own_transaction(&state, &user, id).await?;
+
+    let (wallbox_name,): (String,) =
+        sqlx::query_as("SELECT name FROM wallboxes WHERE id = ?1")
+            .bind(tx.wallbox_id)
+            .fetch_one(&state.db)
+            .await?;
+
+    let user_name: Option<String> = match tx.user_id {
+        Some(uid) => sqlx::query_as::<_, (String,)>("SELECT display_name FROM users WHERE id = ?1")
+            .bind(uid)
+            .fetch_optional(&state.db)
+            .await?
+            .map(|(n,)| n),
+        None => tx.guest_label.clone(),
+    };
+
+    // Laufende Ladung: aktueller Stand aus den MeterValues, sonst der Endstand.
+    let (energy_wh, power_kw) = if tx.is_running() {
+        let live = live_meter(&state.db, tx.id, tx.start_meter_wh).await?;
+        (live.energy_wh, live.power_w.map(fmt_kw))
+    } else {
+        (tx.energy_wh(), None)
+    };
+
+    let events = crate::domain::wallbox::events_for_session(
+        &state.db,
+        tx.wallbox_id,
+        tx.connector_id,
+        &tx.start_time,
+        tx.stop_time.as_deref(),
+    )
+    .await?;
+
+    Ok(render(&DetailTpl {
+        layout: LayoutCtx::new("transactions", Some(user), lang),
+        tx,
+        wallbox_name,
+        user_name,
+        energy_kwh: energy_wh.map(fmt_kwh),
+        power_kw,
+        events,
+        lang,
+    })?
+    .into_response())
 }

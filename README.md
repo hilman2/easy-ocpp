@@ -33,6 +33,7 @@ Self-hosted **OCPP server (CSMS)** for EV charging stations, built for **small b
 | Employee self-service: own sessions live, own limits, stop own session | ✅ |
 | Password change, required by an administrator or done by the user | ✅ |
 | Monthly report sent by email to whoever charged | ✅ |
+| Wallbox messages (status and faults) kept for 60 days, per session and per wallbox | ✅ |
 | Multilingual UI (Deutsch, English, Français, Español) | ✅ |
 
 ## Getting started

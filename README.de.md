@@ -33,6 +33,7 @@ Selbst gehosteter **OCPP-Server (CSMS)** für Ladestationen, gebaut für **KMUs 
 | Mitarbeiter-Selbstbedienung: eigene Ladung live, eigene Limits, selbst beenden | ✅ |
 | Passwortwechsel, vom Administrator verlangt oder selbst ausgelöst | ✅ |
 | Monatsbericht per E-Mail an alle, die geladen haben | ✅ |
+| Wallbox-Meldungen (Status und Störungen), 60 Tage aufgehoben, je Ladung und je Wallbox | ✅ |
 | Mehrsprachige UI (Deutsch, English, Français, Español) | ✅ |
 
 ## Starten

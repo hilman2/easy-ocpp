@@ -95,6 +95,24 @@ async fn main() -> Result<()> {
     // Verschickt die Monatsberichte, sofern [mail] konfiguriert ist.
     mail::spawn(state.clone());
 
+    // Raeumt alte Wallbox-Meldungen weg: einmal beim Start, danach taeglich.
+    {
+        let st = state.clone();
+        let tage = cfg.storage.event_retention_days;
+        tokio::spawn(async move {
+            let mut ticker = tokio::time::interval(std::time::Duration::from_secs(24 * 3600));
+            ticker.set_missed_tick_behavior(tokio::time::MissedTickBehavior::Delay);
+            loop {
+                ticker.tick().await;
+                match db::prune_connector_events(&st.db, tage).await {
+                    Ok(n) if n > 0 => tracing::info!("{n} alte Wallbox-Meldungen geloescht."),
+                    Ok(_) => {}
+                    Err(e) => tracing::warn!("Aufraeumen der Wallbox-Meldungen: {e:#}"),
+                }
+            }
+        });
+    }
+
     let http_addr: SocketAddr = cfg.http.bind.parse().context("http.bind ungültig")?;
     let app = web::router(state.clone());
 

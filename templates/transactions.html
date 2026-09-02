@@ -19,7 +19,7 @@
     <tbody>
     {% for r in rows %}
         <tr>
-            <td>{{ r.id }}</td>
+            <td><a href="/transactions/{{ r.id }}">{{ r.id }}</a></td>
             <td>{{ r.wallbox_name }}</td>
             <td>{{ r.connector_id }}</td>
             <td><code>{{ r.id_tag }}</code></td>

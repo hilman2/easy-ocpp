@@ -115,6 +115,9 @@ pub struct StorageConfig {
     pub data_dir: PathBuf,
     #[serde(default = "default_db_file")]
     pub db_file: String,
+    /// Wie lange Wallbox-Meldungen aufgehoben werden. 0 = unbegrenzt.
+    #[serde(default = "default_event_retention_days")]
+    pub event_retention_days: i64,
 }
 
 impl Default for StorageConfig {
@@ -122,6 +125,7 @@ impl Default for StorageConfig {
         Self {
             data_dir: default_data_dir(),
             db_file: default_db_file(),
+            event_retention_days: default_event_retention_days(),
         }
     }
 }
@@ -131,6 +135,9 @@ fn default_data_dir() -> PathBuf {
 }
 fn default_db_file() -> String {
     "easy-ocpp.db".to_string()
+}
+fn default_event_retention_days() -> i64 {
+    60
 }
 
 /// Dateiname der Datenbank bis einschliesslich v0.3.1. Damals hiess das

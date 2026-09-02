@@ -18,6 +18,14 @@
             <div class="muted">{{ lang.t("dash.since") }} {{ s.start_time }}</div>
         </div>
 
+        {% if let Some(e) = s.events.last() %}
+        <p class="{% if e.is_fault() %}flash danger{% else %}hint{% endif %}">
+            <b>{{ e.status }}</b> · {{ lang.ocpp_status(e.status.as_str()) }}
+            {% if let Some(c) = e.error_code %}{% if c != "NoError" %} · <code>{{ c }}</code>{% endif %}{% endif %}
+            {% if let Some(i) = e.info %} · {{ i }}{% endif %}
+        </p>
+        {% endif %}
+
         {% if s.stopped_by_energy() %}
             <p class="ok">{{ lang.t("me.stopped_energy") }}</p>
         {% else if s.stopped_by_time() %}

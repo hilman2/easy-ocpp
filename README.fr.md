@@ -33,6 +33,7 @@ Serveur **OCPP auto-hébergé (CSMS)** pour bornes de recharge, conçu pour les 
 | Libre-service employé : sa recharge en direct, ses limites, arrêt par lui-même | ✅ |
 | Changement de mot de passe, exigé par un administrateur ou fait par l'utilisateur | ✅ |
 | Rapport mensuel envoyé par e-mail à ceux qui ont rechargé | ✅ |
+| Messages des bornes (état et pannes), conservés 60 jours, par recharge et par borne | ✅ |
 | Interface multilingue (Deutsch, English, Français, Español) | ✅ |
 
 ## Démarrage

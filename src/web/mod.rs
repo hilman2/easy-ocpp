@@ -54,6 +54,7 @@ pub fn router(state: AppState) -> Router {
         )
         .route("/transactions", get(views::transactions::list))
         .route("/transactions.csv", get(views::transactions::export_csv))
+        .route("/transactions/:id", get(views::transactions::detail))
         .route("/transactions/:id/limit", post(views::transactions::set_limit))
         .route("/transactions/:id/stop", post(views::transactions::stop))
         .route("/stats", get(views::stats::show))

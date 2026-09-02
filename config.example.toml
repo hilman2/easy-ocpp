@@ -8,6 +8,8 @@ public_base_url = "http://localhost:8080"
 [storage]
 data_dir = "data"
 db_file  = "easy-ocpp.db"
+# Wie lange die Meldungen der Wallboxen aufgehoben werden. 0 = unbegrenzt.
+event_retention_days = 60
 
 [ocpp]
 # Intervall in Sekunden, in dem Wallboxen während einer Ladung Zählerstand und

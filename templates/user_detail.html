@@ -109,7 +109,7 @@
     <tbody>
     {% for t in recent_tx %}
         <tr>
-            <td>{{ t.start_time }}</td>
+            <td><a href="/transactions/{{ t.id }}">{{ t.start_time }}</a></td>
             <td>{{ t.stop_time.as_deref().unwrap_or(layout.t("common.running")) }}</td>
             <td>{{ t.wallbox }}</td>
             <td><code>{{ t.id_tag }}</code></td>
