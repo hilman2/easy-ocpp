@@ -12,8 +12,8 @@ Self-hosted **OCPP server (CSMS)** for EV charging stations, built for **small b
 
 - **One binary, one SQLite file** – no external database, no message broker.
 - **OCPP 1.6J** (complete) + **OCPP 2.0.1** (WebSocket scaffold, BootNotification / TransactionEvent) + **OCPP 1.5 SOAP** (scaffold for Boot/Heartbeat).
-- **Modern web UI** (Askama + htmx), local users with Argon2 passwords.
-- Active Directory (LDAP) and Microsoft Entra (OIDC) are prepared as configuration fields – the concrete bind/flow implementations will follow.
+- **Modern web UI** (Askama + htmx), local accounts with Argon2 passwords.
+- Signing in is local only. `config.toml` has fields for LDAP and Entra, but nothing reads them yet, so neither can be used to log in.
 - Runs on **Windows** (primary focus) **and Linux**.
 
 ## Features
@@ -31,9 +31,16 @@ Self-hosted **OCPP server (CSMS)** for EV charging stations, built for **small b
 | Charging limits per session: target kWh and/or timer, automatic stop | ✅ |
 | Per-user defaults for those limits, set by the employee or the admin | ✅ |
 | Employee self-service: own sessions live, own limits, stop own session | ✅ |
+| Password change, required by an administrator or done by the user | ✅ |
+| Monthly report sent by email to whoever charged | ✅ |
 | Multilingual UI (Deutsch, English, Français, Español) | ✅ |
-| Active Directory (LDAP) | 🟡 Config prepared |
-| Entra ID (OIDC)        | 🟡 Config prepared |
+| Active Directory (LDAP) | ❌ Not implemented |
+| Entra ID (OIDC)        | ❌ Not implemented |
+
+The two entries at the bottom are config fields and nothing else. `config.toml`
+accepts an `[auth.ldap]` and an `[auth.oidc]` section, but no code reads them:
+there is no redirect, no token check and no directory query. Filling them in
+changes nothing. Accounts and passwords live in the SQLite file.
 
 ## Getting started
 

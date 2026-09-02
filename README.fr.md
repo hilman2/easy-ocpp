@@ -12,8 +12,8 @@ Serveur **OCPP auto-hébergé (CSMS)** pour bornes de recharge, conçu pour les 
 
 - **Un seul binaire, un seul fichier SQLite** – pas de base de données externe, pas de message broker.
 - **OCPP 1.6J** (complet) + **OCPP 2.0.1** (ossature WebSocket, BootNotification / TransactionEvent) + **OCPP 1.5 SOAP** (ossature pour Boot/Heartbeat).
-- **Interface web moderne** (Askama + htmx), utilisateurs locaux avec mots de passe Argon2.
-- Active Directory (LDAP) et Microsoft Entra (OIDC) sont préparés sous forme de champs de configuration – les implémentations concrètes des bind/flows suivront.
+- **Interface web moderne** (Askama + htmx), comptes locaux avec mots de passe Argon2.
+- La connexion est uniquement locale. Le fichier `config.toml` contient des champs pour LDAP et Entra, mais rien ne les lit pour l'instant : impossible de s'y connecter par ce biais.
 - Fonctionne sous **Windows** (priorité) **et Linux**.
 
 ## Fonctionnalités
@@ -31,9 +31,17 @@ Serveur **OCPP auto-hébergé (CSMS)** pour bornes de recharge, conçu pour les 
 | Limites par recharge : objectif en kWh et/ou minuteur, arrêt automatique | ✅ |
 | Valeurs par défaut par personne, définies par l'employé ou par l'admin | ✅ |
 | Libre-service employé : sa recharge en direct, ses limites, arrêt par lui-même | ✅ |
+| Changement de mot de passe, exigé par un administrateur ou fait par l'utilisateur | ✅ |
+| Rapport mensuel envoyé par e-mail à ceux qui ont rechargé | ✅ |
 | Interface multilingue (Deutsch, English, Français, Español) | ✅ |
-| Active Directory (LDAP) | 🟡 Config préparée |
-| Entra ID (OIDC)        | 🟡 Config préparée |
+| Active Directory (LDAP) | ❌ Non implémenté |
+| Entra ID (OIDC)        | ❌ Non implémenté |
+
+Les deux dernières lignes sont des champs de configuration, rien de plus. Le
+fichier `config.toml` accepte une section `[auth.ldap]` et `[auth.oidc]`, mais
+aucune ligne de code ne les lit : pas de redirection, pas de vérification de
+jeton, pas d'interrogation d'annuaire. Les remplir ne change rien. Les comptes
+et les mots de passe se trouvent dans le fichier SQLite.
 
 ## Démarrage
 

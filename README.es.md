@@ -12,8 +12,8 @@ Servidor **OCPP autoalojado (CSMS)** para estaciones de carga, pensado para **py
 
 - **Un solo binario, un solo archivo SQLite** – sin base de datos externa, sin message broker.
 - **OCPP 1.6J** (completo) + **OCPP 2.0.1** (esqueleto WebSocket, BootNotification / TransactionEvent) + **OCPP 1.5 SOAP** (esqueleto para Boot/Heartbeat).
-- **Interfaz web moderna** (Askama + htmx), usuarios locales con contraseñas Argon2.
-- Active Directory (LDAP) y Microsoft Entra (OIDC) están preparados como campos de configuración – las implementaciones concretas de bind/flow llegarán más adelante.
+- **Interfaz web moderna** (Askama + htmx), cuentas locales con contraseñas Argon2.
+- El inicio de sesión es solo local. El archivo `config.toml` tiene campos para LDAP y Entra, pero de momento nada los lee, así que no se puede entrar por esa vía.
 - Funciona en **Windows** (prioridad) **y Linux**.
 
 ## Funcionalidades
@@ -31,9 +31,17 @@ Servidor **OCPP autoalojado (CSMS)** para estaciones de carga, pensado para **py
 | Límites por carga: kWh objetivo o temporizador, parada automática | ✅ |
 | Valores predeterminados por persona, fijados por el empleado o por el admin | ✅ |
 | Autoservicio del empleado: su carga en vivo, sus límites, parada por él mismo | ✅ |
+| Cambio de contraseña, exigido por un administrador o hecho por el usuario | ✅ |
+| Informe mensual enviado por correo a quienes hayan cargado | ✅ |
 | Interfaz multilingüe (Deutsch, English, Français, Español) | ✅ |
-| Active Directory (LDAP) | 🟡 Config preparada |
-| Entra ID (OIDC)        | 🟡 Config preparada |
+| Active Directory (LDAP) | ❌ No implementado |
+| Entra ID (OIDC)        | ❌ No implementado |
+
+Las dos últimas filas son campos de configuración y nada más. El archivo
+`config.toml` admite una sección `[auth.ldap]` y `[auth.oidc]`, pero ninguna
+línea de código las lee: no hay redirección, ni comprobación de tokens, ni
+consulta al directorio. Rellenarlas no cambia nada. Las cuentas y las
+contraseñas están en el archivo SQLite.
 
 ## Puesta en marcha
 

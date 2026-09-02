@@ -12,8 +12,8 @@ Selbst gehosteter **OCPP-Server (CSMS)** für Ladestationen, gebaut für **KMUs 
 
 - **Ein Binary, eine SQLite-Datei** – keine externe Datenbank, kein Message-Broker.
 - **OCPP 1.6J** (vollständig) + **OCPP 2.0.1** (WebSocket-Gerüst, BootNotification / TransactionEvent) + **OCPP 1.5 SOAP** (Gerüst für Boot/Heartbeat).
-- **Moderne Web-UI** (Askama + htmx), lokale Benutzer mit Argon2-Passwörtern.
-- Active Directory (LDAP) und Microsoft Entra (OIDC) sind als Konfigurations-Felder vorbereitet – die konkreten Bind-/Flow-Implementierungen folgen.
+- **Moderne Web-UI** (Askama + htmx), lokale Konten mit Argon2-Passwörtern.
+- Die Anmeldung läuft ausschließlich lokal. In der `config.toml` stehen Felder für LDAP und Entra, gelesen werden sie bisher von nichts, anmelden kann man sich damit also nicht.
 - Läuft auf **Windows** (Fokus) **und Linux**.
 
 ## Features
@@ -31,9 +31,17 @@ Selbst gehosteter **OCPP-Server (CSMS)** für Ladestationen, gebaut für **KMUs 
 | Ladelimits je Ladung: Ziel-kWh und/oder Timer, automatische Abschaltung | ✅ |
 | Standardvorgaben dafür je Person, gesetzt vom Mitarbeiter oder vom Admin | ✅ |
 | Mitarbeiter-Selbstbedienung: eigene Ladung live, eigene Limits, selbst beenden | ✅ |
+| Passwortwechsel, vom Administrator verlangt oder selbst ausgelöst | ✅ |
+| Monatsbericht per E-Mail an alle, die geladen haben | ✅ |
 | Mehrsprachige UI (Deutsch, English, Français, Español) | ✅ |
-| Active Directory (LDAP) | 🟡 Konfig vorbereitet |
-| Entra ID (OIDC)        | 🟡 Konfig vorbereitet |
+| Active Directory (LDAP) | ❌ Nicht umgesetzt |
+| Entra ID (OIDC)        | ❌ Nicht umgesetzt |
+
+Die beiden letzten Einträge sind Konfigurationsfelder und sonst nichts. Die
+`config.toml` nimmt einen Abschnitt `[auth.ldap]` und `[auth.oidc]` an, gelesen
+wird er von keiner Zeile Code: es gibt keine Weiterleitung, keine Token-Prüfung
+und keine Verzeichnisabfrage. Sie auszufüllen ändert nichts. Konten und
+Passwörter liegen in der SQLite-Datei.
 
 ## Starten
 
