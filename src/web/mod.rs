@@ -32,6 +32,11 @@ pub fn router(state: AppState) -> Router {
         .route("/wallboxes/:id/auth", post(views::wallboxes::set_auth))
         .route("/wallboxes/:id/auth/clear", post(views::wallboxes::clear_auth))
         .route("/chips", get(views::chips::list))
+        .route("/energy", get(views::energy::page).post(views::energy::save))
+        .route("/energy/live", get(views::energy::live))
+        .route("/energy/wallboxes/:id", post(views::energy::hardware))
+        .route("/api/energy/status", get(views::energy::status))
+        .route("/api/energy/meter", post(views::energy::meter))
         .route("/chips/enroll", post(views::chips::enroll_start))
         .route("/chips/enroll/:id", get(views::chips::enroll_poll))
         .route("/chips/enroll/:id/save", post(views::chips::enroll_save))
@@ -83,6 +88,7 @@ async fn force_password_change(
         || path == "/login"
         || path == "/logout"
         || path == "/ocpp15"
+        || path == "/api/energy/meter"
         || path.starts_with("/ocpp/")
         || path.starts_with("/static/")
         || path.starts_with("/lang/");

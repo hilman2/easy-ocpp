@@ -17,6 +17,15 @@ event_retention_days = 60
 # gesetzt (ChangeConfiguration). 0 = Auto-Konfiguration deaktivieren.
 meter_interval_s = 30
 
+# Messwertschnittstelle fuer die optionale Ueberschussregelung.
+# Aktivierung, Netzlimit und Puffer werden unter /energy in der Web-UI gesetzt.
+# Der Lieferant sendet zeitgleiche Netz- und gesamte Ladeleistung in Watt an
+# POST /api/energy/meter mit Authorization: Bearer <meter_token>.
+# Positiver grid_power_w = Bezug, negativer Wert = Einspeisung.
+# charging_power_w ist im Netz-Messwert enthalten; keine Sollwerte verwenden.
+# [energy]
+# meter_token = "durch-einen-zufaelligen-Token-mit-mindestens-24-Zeichen-ersetzen"
+
 # Monatsversand der Ladeberichte. Fehlt dieser Abschnitt, wird nichts
 # verschickt. Am Monatsersten bekommt jeder Benutzer mit E-Mail-Adresse, der im
 # Vormonat geladen hat, seinen eigenen Bericht als PDF.

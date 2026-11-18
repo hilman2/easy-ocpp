@@ -1,4 +1,5 @@
 pub mod hub;
+pub mod energy;
 pub mod limits;
 pub mod ocpp16;
 pub mod ocpp20;

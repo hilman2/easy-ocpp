@@ -138,6 +138,60 @@ de nouvelles mesures, afin de ne pas continuer à charger jusqu'au cycle suivant
 Si la borne refuse l'arrêt, une nouvelle tentative a lieu au cycle suivant. La
 recharge n'est considérée comme traitée qu'une fois la borne d'accord.
 
+## Recharge sur surplus et limite réseau
+
+La page **Recharge sur surplus**, réservée à l'administrateur, active une
+régulation initialement désactivée. Les badges ordinaires utilisent uniquement
+le surplus. **Direction / invités** sont prioritaires. **Réseau autorisé** est
+un droit distinct par badge, par exemple pour les véhicules de société; la
+limite du site reste obligatoire pour tous. Les badges invités, existants et
+nouveaux, sont prioritaires sans droit au réseau. À priorité égale, les voitures
+partagent la puissance si leurs minimums sont disponibles; sinon certaines
+attendent à 0 W et reprennent lorsque la puissance revient.
+
+La limite par défaut est **150000 W (150 kW)** avec une marge réglable de
+**10000 W**, soit une cible de 140 kW importés pour tout le bâtiment. Si les
+autres consommateurs dépassent déjà cette cible, toutes les voitures sont
+suspendues. Vérifier puissances minimale/maximale, phases et unité OCPP avant
+activation. Les réglages s'appliquent par connecteur; les consignes en ampères
+supposent 230 V par phase et sont arrondies vers le bas.
+
+Un futur adaptateur de compteur envoie des mesures synchronisées toutes les
+quelques secondes via HTTPS à `POST /api/energy/meter`, avec
+`Authorization: Bearer <meter_token>`. Définir un jeton aléatoire d'au moins
+24 caractères sous `[energy]` dans `config.toml` et redémarrer.
+Exemple (remplacer l'horodatage par l'instant réel de mesure) :
+
+```json
+{"timestamp":"2026-10-15T10:00:00Z","grid_power_w":-5000,"charging_power_w":10000}
+```
+
+`grid_power_w` est la puissance du site : positive à l'import, négative à
+l'export. `charging_power_w` est la **somme mesurée simultanément sur tous les
+connecteurs gérés**, déjà incluse dans la puissance réseau. Ne pas envoyer de
+compteurs d'énergie, de consignes ou de mesures OCPP prises à des instants
+différents. L'exemple représente 15 kW de surplus avant les voitures.
+L'adaptateur doit synchroniser les deux mesures; aucune intégration Modbus/MQTT
+ou constructeur n'est encore fournie. Les horodatages périmés, répétés ou futurs
+sont refusés. Les mesures en mémoire doivent être renvoyées après redémarrage.
+
+Sans mesures récentes (15 secondes par défaut), la recharge est suspendue et
+les nouveaux démarrages sont bloqués. Avec mesures récentes, une transaction
+autorisée peut attendre à 0 W. Un profil par défaut à zéro protège le départ.
+Les baisses sont confirmées avant toute réattribution, qui attend une nouvelle
+mesure. Un refus ne libère aucun budget et déclenche une tentative d'arrêt.
+Les profils positifs reviennent à zéro après au plus 30 secondes sans
+renouvellement. La préautorisation locale, l'autorisation hors ligne et le
+cache sont désactivés et le restent à la désactivation. Désactiver la régulation
+supprime ses propres profils et permet la recharge normale. Avant la première
+activation, aucun réglage des bornes n'est modifié.
+
+**OCPP 1.6J requis**, avec Smart Charging, limites à zéro et horloge vérifiés.
+Les autres protocoles sont bloqués pendant la régulation. Les profils ont été
+testés sur simulateur et doivent être validés sur les bornes réelles. Une limite
+stricte de 150 kW lors de pointes ou de coupures nécessite des mesures rapides
+et un régulateur local; OCPP et une marge seuls ne la garantissent pas.
+
 ## Docker
 
 ```powershell

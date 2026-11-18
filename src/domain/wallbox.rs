@@ -18,6 +18,10 @@ pub struct Wallbox {
     pub last_boot: Option<String>,
     pub connector_count: i64,
     pub created_at: String,
+    pub charging_min_w: i64,
+    pub charging_max_w: i64,
+    pub charging_phases: i64,
+    pub charging_rate_unit: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, FromRow)]

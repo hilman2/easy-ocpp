@@ -25,6 +25,7 @@ pub struct AppState {
     pub db: SqlitePool,
     pub ocpp_hub: Arc<ocpp::hub::Hub>,
     pub config: Arc<config::Config>,
+    pub energy: Arc<ocpp::energy::Controller>,
 }
 
 #[derive(Parser, Debug)]
@@ -87,10 +88,12 @@ async fn main() -> Result<()> {
         db: db.clone(),
         ocpp_hub: Arc::new(ocpp::hub::Hub::default()),
         config: Arc::new(cfg.clone()),
+        energy: Arc::new(ocpp::energy::Controller::default()),
     };
 
     // Wacht ueber Timer und Ziel-kWh der laufenden Ladungen.
     ocpp::limits::spawn_watchdog(state.clone());
+    ocpp::energy::spawn(state.clone());
 
     // Verschickt die Monatsberichte, sofern [mail] konfiguriert ist.
     mail::spawn(state.clone());

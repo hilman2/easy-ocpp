@@ -19,6 +19,10 @@ pub async fn soap_handler(
     headers: axum::http::HeaderMap,
     body: Bytes,
 ) -> impl IntoResponse {
+    if crate::ocpp::energy::Settings::load(&state).await.map_or(true, |s| s.enabled) {
+        return Response::builder().status(StatusCode::SERVICE_UNAVAILABLE)
+            .body("Energy management requires OCPP 1.6J".to_string()).unwrap();
+    }
     let soap_action = headers
         .get("SOAPAction")
         .and_then(|v| v.to_str().ok())

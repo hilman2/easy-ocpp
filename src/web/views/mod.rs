@@ -1,6 +1,7 @@
 pub mod auth;
 pub mod chips;
 pub mod dashboard;
+pub mod energy;
 pub mod me;
 pub mod password;
 pub mod reports;

@@ -117,6 +117,10 @@
           <h3>Vier Sprachen</h3>
           <p>Die gesamte Oberfläche auf Deutsch, Englisch, Französisch und Spanisch, pro Benutzer umschaltbar.</p>
         </article>
+        <article class="feature">
+          <h3>Überschussladen</h3>
+          <p>Optionale OCPP-1.6J-Regelung mit Chip-Prioritäten, getrennter Netzfreigabe und Anschlusslimit mit Puffer. Startet ausgeschaltet; Zähleradapter und getestetes Smart Charging erforderlich. Eine harte Anschlussgrenze braucht lokale Lastregelung.</p>
+        </article>
     </div>
   </section>
 
@@ -141,7 +145,7 @@
 
   <section id="limits" class="wrap">
     <h2>Ladelimits, die tatsächlich abschalten</h2>
-    <p>Eine Ladung endet von selbst, sobald sie eine Ziel-Energie oder einen Timer erreicht, je nachdem was zuerst eintritt. Beides ist optional. Jede Person hat Standardvorgaben, die für jede neue Ladung gelten und die entweder der Mitarbeiter selbst oder ein Administrator setzt; an der laufenden Ladung lassen sich die Werte weiterhin ändern.</p>
+    <p>Eine Ladung endet von selbst, sobald sie eine Ziel-Energie oder einen Timer erreicht, je nachdem was zuerst eintritt. Beides ist optional. Jede Person hat Standardvorgaben, die für jede neue Ladung gelten und die entweder der Mitarbeiter selbst oder ein Administrator setzt; an der laufenden Ladung lassen sich die Werte weiterhin ändern. Optionale OCPP-1.6J-Regelung mit Chip-Prioritäten, getrennter Netzfreigabe und Anschlusslimit mit Puffer. Startet ausgeschaltet; Zähleradapter und getestetes Smart Charging erforderlich. Eine harte Anschlussgrenze braucht lokale Lastregelung.</p>
     <p class="note">Ein Watchdog prüft alle 15 Sekunden und schickt RemoteStopTransaction. Das Energielimit wird zusätzlich sofort beim Eintreffen neuer Messwerte geprüft, damit nicht bis zum nächsten Takt über das Ziel hinaus geladen wird. Lehnt eine Wallbox den Stop ab, wird es erneut versucht.</p>
   </section>
 

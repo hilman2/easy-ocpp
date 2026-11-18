@@ -91,6 +91,8 @@ pub struct UpdateForm {
     pub label: Option<String>,
     pub enabled: Option<String>,
     pub expires_at: Option<String>,
+    pub charging_priority: i64,
+    pub allow_grid: Option<String>,
 }
 
 pub async fn update(
@@ -106,6 +108,9 @@ pub async fn update(
         .await?;
     if exists.is_none() {
         return Err(AppError::NotFound);
+    }
+    if !matches!(form.charging_priority, 0 | 1) {
+        return Err(AppError::BadRequest(lang.t("energy.invalid_settings").into()));
     }
 
     // Leerer Select-Wert => Zuordnung entfernen.
@@ -143,7 +148,9 @@ pub async fn update(
                 label       = ?2,
                 kind        = ?3,
                 enabled     = ?4,
-                expires_at  = ?5
+                expires_at  = ?5,
+                charging_priority = ?7,
+                allow_grid = ?8
           WHERE id = ?6",
     )
     .bind(user_id)
@@ -152,8 +159,12 @@ pub async fn update(
     .bind(enabled)
     .bind(&expires_at)
     .bind(id)
+    .bind(form.charging_priority)
+    .bind(form.allow_grid.as_deref() == Some("1"))
     .execute(&state.db)
     .await?;
+
+    state.energy.wake.notify_one();
 
     Ok(Redirect::to("/chips").into_response())
 }
@@ -263,14 +274,15 @@ pub async fn enroll_save(
     }
 
     sqlx::query(
-        "INSERT INTO chips (id_tag, label, user_id, kind, enabled, expires_at)
-         VALUES (?1, ?2, ?3, ?4, 1, ?5)",
+        "INSERT INTO chips (id_tag, label, user_id, kind, enabled, expires_at, charging_priority)
+         VALUES (?1, ?2, ?3, ?4, 1, ?5, ?6)",
     )
     .bind(tag)
     .bind(form.label.as_deref())
     .bind(form.user_id)
     .bind(chip_kind(form.user_id))
     .bind(expires_at)
+    .bind(if form.user_id.is_none() { 1 } else { 0 })
     .execute(&state.db)
     .await?;
 

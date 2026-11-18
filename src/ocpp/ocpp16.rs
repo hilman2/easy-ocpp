@@ -113,6 +113,13 @@ pub async fn ws_handler(
     };
 
     let version = chosen.unwrap_or("ocpp1.6").to_string();
+    match crate::ocpp::energy::Settings::load(&state).await {
+        Ok(settings) if settings.enabled && version != "ocpp1.6" => {
+            return (StatusCode::SERVICE_UNAVAILABLE, "Energy management requires OCPP 1.6J").into_response();
+        }
+        Err(_) => return (StatusCode::SERVICE_UNAVAILABLE, "Energy settings unavailable").into_response(),
+        _ => {}
+    }
     upgrade
         .on_upgrade(move |socket| handle_socket(socket, cp_id, version, state))
         .into_response()
@@ -486,6 +493,8 @@ async fn handle_boot(
     .await
     .map_err(db_err("BootNotification update"))?;
 
+    state.energy.reset_wallbox(cp_id).await;
+
     Ok(json!({
         "status": "Accepted",
         "currentTime": now,
@@ -622,6 +631,9 @@ async fn handle_authorize(
     let _ = try_capture_for_enrollment(state, cp_id, &id_tag).await;
 
     let status = authorize_status(state, &id_tag).await;
+    let status = if status == "Accepted" && !state.energy.may_start(state, cp_id).await {
+        "Blocked"
+    } else { status };
     Ok(json!({"idTagInfo":{"status": status}}))
 }
 
@@ -747,6 +759,9 @@ async fn handle_start(
     let ts = sane_timestamp(payload.get("timestamp").and_then(|v| v.as_str()));
 
     let status = authorize_status(state, &id_tag).await;
+    let status = if status == "Accepted" && !state.energy.may_start(state, cp_id).await {
+        "Blocked"
+    } else { status };
     if status != "Accepted" {
         return Ok(json!({
             "transactionId": 0,
@@ -800,6 +815,8 @@ async fn handle_start(
         .execute(&state.db)
         .await
         .map_err(db_err("StartTransaction id"))?;
+
+    state.energy.wake.notify_one();
 
     // Sofort eine erste Messung anfordern, damit die UI nicht bis zum ersten
     // Sample-Intervall ohne Werte dasteht. Ablehnung (NotImplemented) ist ok.

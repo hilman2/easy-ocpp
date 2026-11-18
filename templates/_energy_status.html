@@ -1,0 +1,15 @@
+<div class="card-head"><h2>{{ lang.t("energy.live") }}</h2></div>
+<p>{{ lang.t("common.status") }}: {% if status.enabled %}{{ lang.t("common.active") }}{% else %}{{ lang.t("energy.disabled") }}{% endif %}
+    | {% if status.fresh %}{{ lang.t("energy.fresh") }}{% else %}{{ lang.t("energy.stale") }}{% endif %}</p>
+{% if let Some(m) = status.meter %}
+<p>{{ lang.t("energy.grid_power") }}: <b>{{ m.grid_power_w }} W</b> | {{ lang.t("energy.charging_power") }}: {{ m.charging_power_w }} W | {{ m.timestamp }}</p>
+{% endif %}
+<p>{{ lang.t("energy.surplus") }}: <b>{{ status.surplus_w }} W</b> | {{ lang.t("energy.capacity") }}: <b>{{ status.capacity_w }} W</b></p>
+{% if !status.sessions.is_empty() %}
+<table class="data"><thead><tr><th>{{ lang.t("common.wallbox") }}</th><th>{{ lang.t("energy.priority") }}</th><th>{{ lang.t("energy.allow_grid") }}</th><th>{{ lang.t("energy.target") }}</th><th>{{ lang.t("energy.applied") }}</th></tr></thead><tbody>
+{% for s in status.sessions %}
+<tr><td><a href="/transactions/{{ s.id }}">{{ s.charge_point_id }} / {{ s.connector_id }}</a></td><td>{% if s.priority == 1 %}{{ lang.t("energy.priority_group") }}{% else %}{{ lang.t("energy.employee") }}{% endif %}</td><td>{% if s.allow_grid %}{{ lang.t("common.yes") }}{% else %}{{ lang.t("common.no") }}{% endif %}</td><td>{{ s.target_w }} W</td><td>{% if let Some(w) = s.applied_w %}{{ w }} W{% else %}{{ lang.t("energy.unconfirmed") }}{% endif %}</td></tr>
+{% endfor %}
+</tbody></table>
+{% endif %}
+{% for error in status.errors %}<p class="flash">{{ error }}</p>{% endfor %}

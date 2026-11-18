@@ -136,6 +136,63 @@ damit nicht bis zum nächsten Takt weitergeladen wird. Lehnt die Wallbox den Sto
 ab, wird beim nächsten Takt erneut versucht. Abgehakt wird die Ladung erst,
 wenn die Wallbox angenommen hat.
 
+## Überschussladen und Netzbezug begrenzen
+
+Unter **Überschussladen** verwaltet der Administrator die optionale Regelung.
+Sie ist zunächst ausgeschaltet. Normale Chips laden nur mit Überschuss;
+**GF / Gäste** haben Vorrang. **Netzstrom erlaubt** ist eine getrennte Freigabe
+pro Chip für beispielsweise Firmenautos. Sie umgeht niemals das Anschlusslimit.
+Bestehende und neue Gast-Chips erhalten hohe Priorität, aber keine Netzfreigabe.
+Gleichrangige Autos teilen das Budget, sofern ihre Mindestladeleistung reicht.
+Sonst warten einzelne Autos mit 0 W und laufen bei mehr Leistung wieder an.
+
+Das Netzlimit ist mit **150000 W (150 kW)** vorbelegt, der einstellbare Puffer
+mit **10000 W**. Daraus ergibt sich ein Regelziel von höchstens 140 kW Bezug.
+Gezählt wird der gesamte Standort einschließlich Gebäudelast. Sind allein die
+anderen Verbraucher schon über dem Ziel, werden alle Autos pausiert.
+Hardwarewerte gelten je Anschluss: Mindest-/Maximalleistung, Phasen und
+unterstützte OCPP-Einheit vor Aktivierung unter **Überschussladen** prüfen.
+Bei Stromvorgaben wird konservativ abgerundet und mit 230 V je Phase gerechnet.
+
+Die Messwertquelle ist austauschbar. Ein späterer Zähleradapter sendet alle
+wenigen Sekunden über HTTPS an `POST /api/energy/meter`, mit
+`Authorization: Bearer <meter_token>`. Den zufälligen Token mit mindestens
+24 Zeichen unter `[energy]` in `config.toml` setzen und den Server neu starten.
+Beispielinhalt (Zeitstempel durch den tatsächlichen Messzeitpunkt ersetzen):
+
+```json
+{"timestamp":"2026-10-15T10:00:00Z","grid_power_w":-5000,"charging_power_w":10000}
+```
+
+`grid_power_w` ist die vorzeichenbehaftete Leistung am Netzanschluss: positiv
+für Bezug, negativ für Einspeisung. `charging_power_w` ist die **zeitgleich
+gemessene Summe aller verwalteten Ladeanschlüsse**, bereits in der Netzleistung
+enthalten. Keine Energiezählerstände, Sollwerte oder ungleichzeitig abgelesenen
+OCPP-Werte einsetzen. Im Beispiel sind ohne Autos 15 kW Überschuss verfügbar.
+Der Adapter muss beide Messungen synchron zusammenführen; Modbus/MQTT oder eine
+Hersteller-API sind noch nicht angebunden. Alte, wiederholte oder zukünftige
+Zeitstempel werden abgewiesen. Messwerte bleiben nur im Arbeitsspeicher und
+müssen nach einem Serverneustart neu eintreffen.
+
+Ohne frische Messwerte (standardmäßig höchstens 15 Sekunden alt) wird pausiert;
+neue Starts bleiben gesperrt. Mit frischen Werten kann eine autorisierte
+Transaktion zunächst mit 0 W auf Überschuss warten. Ein Null-Standardprofil
+schützt den Start. Die Regelung senkt zuerst bestehende Freigaben und wartet
+vor einer Umverteilung auf Bestätigung und eine neue Messung. Abgelehnte
+Profile geben kein Budget frei; zusätzlich wird ein Stop versucht. Freigaben
+fallen nach spätestens 30 Sekunden ohne Erneuerung auf 0 zurück.
+Die Regelung deaktiviert lokale Vorautorisierung, Offline-Autorisierung und
+den Autorisierungscache; diese Einstellungen bleiben beim Ausschalten erhalten.
+Ausschalten entfernt gezielt die eigenen Ladeprofile und erlaubt normales Laden.
+Ein nie aktiviertes System verändert keine Wallbox-Einstellungen.
+
+**Voraussetzung:** OCPP 1.6J mit getesteter Smart-Charging-Unterstützung,
+Null-Limits und korrekter Stationszeit. Andere Protokolle werden bei aktiver
+Regelung gesperrt. Die Profile sind mit einem Simulator getestet, müssen aber
+mit den konkreten Wallboxen abgenommen werden. OCPP und ein Puffer garantieren
+keine harte 150-kW-Grenze bei Lastsprüngen oder Kommunikationsausfall. Dafür
+ist eine schnelle lokale Messung und ein lokaler Lastregler erforderlich.
+
 ## Docker
 
 ```powershell

@@ -136,6 +136,58 @@ seguir cargando hasta el siguiente ciclo. Si el cargador rechaza la parada, se
 reintenta en el ciclo siguiente: la carga solo se da por resuelta cuando el
 cargador la ha aceptado.
 
+## Carga con excedentes y límite de red
+
+El administrador puede activar **Carga con excedentes**, inicialmente
+desactivada. Los chips normales usan solo excedentes; **Dirección / invitados**
+tienen prioridad. **Red permitida** es un permiso independiente por chip, por
+ejemplo para vehículos de empresa; nunca evita el límite del sitio. Los chips
+de invitados, existentes y nuevos, tienen prioridad sin permiso de red.
+Las prioridades iguales comparten potencia si caben sus mínimos; en caso
+contrario algunos coches esperan a 0 W y reanudan al volver la potencia.
+
+El límite predeterminado es **150000 W (150 kW)** con margen ajustable de
+**10000 W**, para un objetivo de 140 kW de red en todo el edificio. Si otros
+consumos ya superan ese objetivo, todos los coches se pausan. Revisar potencia
+mínima/máxima, fases y unidad OCPP antes de activar. Los ajustes son por
+conector; los límites en amperios suponen 230 V por fase y se redondean hacia abajo.
+
+Un futuro adaptador del contador enviará lecturas sincronizadas cada pocos
+segundos por HTTPS a `POST /api/energy/meter`, con
+`Authorization: Bearer <meter_token>`. Configurar un token aleatorio de al menos
+24 caracteres en `[energy]` de `config.toml` y reiniciar.
+Ejemplo (sustituir la fecha por la hora real de medición):
+
+```json
+{"timestamp":"2026-10-15T10:00:00Z","grid_power_w":-5000,"charging_power_w":10000}
+```
+
+`grid_power_w` es la potencia del sitio: positiva para consumo, negativa para
+vertido. `charging_power_w` es la **suma medida simultáneamente de todos los
+conectores gestionados**, ya incluida en la potencia de red. No enviar
+contadores de energía, consignas ni lecturas OCPP de momentos distintos.
+El ejemplo representa 15 kW de excedente antes de los coches. El adaptador debe
+sincronizar ambas medidas; aún no hay integración Modbus/MQTT ni de fabricante.
+Las fechas caducadas, repetidas o futuras se rechazan. Las lecturas se guardan
+en memoria y deben volver a recibirse tras reiniciar el servidor.
+
+Sin lecturas recientes (15 segundos por defecto), se pausa la carga y se
+bloquean nuevos inicios. Con lecturas recientes, una sesión autorizada puede
+esperar a 0 W. Un perfil predeterminado a cero protege el inicio. Se confirman
+primero las reducciones y se espera una nueva lectura para redistribuir.
+Un perfil rechazado no libera potencia y provoca un intento de parada.
+Los perfiles positivos vuelven a cero en 30 segundos sin renovación.
+La preautorización local, la autorización sin conexión y la caché se desactivan
+y permanecen así al desactivar la regulación. Desactivar elimina solo sus
+propios perfiles y permite la carga normal. Antes de la primera activación no
+se cambian ajustes del cargador.
+
+**Requiere OCPP 1.6J**, Smart Charging, límites a cero y reloj comprobados.
+Los otros protocolos se bloquean mientras está activa la regulación. Los
+perfiles se han probado con simulador y deben validarse con los cargadores
+reales. OCPP y un margen no garantizan un límite estricto de 150 kW ante picos
+o fallos de comunicación; se necesita medición rápida y control local.
+
 ## Docker
 
 ```powershell

@@ -117,6 +117,10 @@
           <h3>Four languages</h3>
           <p>The whole interface in German, English, French and Spanish, switchable per user.</p>
         </article>
+        <article class="feature">
+          <h3>Surplus charging</h3>
+          <p>Optional OCPP 1.6J surplus control with chip priorities, separate grid permission and a site import limit with reserve. Starts disabled; a meter adapter and tested Smart Charging are required. A hard site ceiling needs local load control.</p>
+        </article>
     </div>
   </section>
 
@@ -141,7 +145,7 @@
 
   <section id="limits" class="wrap">
     <h2>Charging limits that actually stop the session</h2>
-    <p>A session ends by itself once it reaches a target energy or a timer, whichever comes first. Both are optional. Every person has defaults that apply to each new session, set either by the employee or by an administrator; on a running session the values can still be changed.</p>
+    <p>A session ends by itself once it reaches a target energy or a timer, whichever comes first. Both are optional. Every person has defaults that apply to each new session, set either by the employee or by an administrator; on a running session the values can still be changed. Optional OCPP 1.6J surplus control with chip priorities, separate grid permission and a site import limit with reserve. Starts disabled; a meter adapter and tested Smart Charging are required. A hard site ceiling needs local load control.</p>
     <p class="note">A watchdog checks every 15 seconds and sends RemoteStopTransaction. The energy limit is additionally checked the moment new meter values arrive, so charging does not run past the target until the next tick. If a wallbox rejects the stop, it is retried.</p>
   </section>
 

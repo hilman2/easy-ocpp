@@ -20,6 +20,12 @@ pub async fn maybe_handle(
     action: &str,
     payload: &Value,
 ) -> Result<Option<Value>, crate::ocpp::OcppCallError> {
+    if !state.energy.may_start(state, cp_id).await {
+        return Err(crate::ocpp::OcppCallError {
+            code: "NotSupported".into(),
+            description: "Energy management requires OCPP 1.6J".into(),
+        });
+    }
     match action {
         "TransactionEvent" => {
             handle_transaction_event(state, cp_id, payload).await.map(Some)

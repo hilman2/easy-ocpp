@@ -135,6 +135,59 @@ charging does not continue until the next tick. If the wallbox rejects the stop,
 it is retried on the next tick. The session is only marked as handled after the
 wallbox has accepted.
 
+## Surplus charging and grid import limits
+
+Administrators can enable **Surplus charging**, initially disabled. Ordinary
+chips charge on surplus only; **Management / guests** take priority.
+**Grid power allowed** is a separate permission per chip for company cars,
+and never bypasses the site limit. Existing and new guest chips receive high
+priority without grid permission. Equal priorities share available power when
+their minimum charging power fits; otherwise individual cars wait at 0 W and
+resume when sufficient power returns.
+
+The default grid limit is **150000 W (150 kW)** with a **10000 W** configurable
+reserve, targeting at most 140 kW import. This includes the whole building.
+If other loads alone exceed the target, all cars pause. Before enabling, check
+minimum/maximum power, phases and supported OCPP unit per wallbox under
+**Surplus charging**. These values apply per connector. Current limits use
+230 V per phase and are rounded down.
+
+A future meter adapter sends synchronous readings every few seconds over HTTPS
+to `POST /api/energy/meter` with `Authorization: Bearer <meter_token>`.
+Set a random token of at least 24 characters under `[energy]` in `config.toml`
+and restart. Example body (replace the timestamp with the actual reading time):
+
+```json
+{"timestamp":"2026-10-15T10:00:00Z","grid_power_w":-5000,"charging_power_w":10000}
+```
+
+`grid_power_w` is signed site power: positive imports, negative exports.
+`charging_power_w` is the **simultaneously measured total of all managed
+connectors**, already included in site power. Do not send energy counters,
+setpoints or OCPP readings from different times. The example provides 15 kW
+surplus before cars. The adapter must synchronize both measurements; there is
+no Modbus/MQTT or manufacturer integration yet. Stale, repeated and future
+timestamps are rejected. Readings are held in memory and must arrive again
+after a server restart.
+
+Missing or stale readings (15 seconds by default) pause charging and block new
+starts. With fresh readings an authorized session may wait for surplus at 0 W.
+A zero default profile protects the start. Existing limits are reduced first;
+reallocation waits for acknowledgment and a new measurement. Rejected profiles
+release no capacity and trigger a stop attempt. Positive profiles fall back to
+zero within 30 seconds without renewal. Local preauthorization, offline
+authorization and the authorization cache are disabled; those settings stay
+disabled when management is turned off. Turning it off removes only its own
+charging profiles and permits normal charging. A system never enabled leaves
+wallbox settings untouched.
+
+**Requires OCPP 1.6J**, tested Smart Charging, zero limits and an accurate station
+clock. Other protocols are blocked while management is active. Profiles are
+tested against a simulator and still require commissioning on your hardware.
+OCPP plus a reserve cannot guarantee a hard 150 kW ceiling during load spikes
+or communication failures; that needs fast local metering and a local load
+controller.
+
 ## Docker
 
 ```powershell

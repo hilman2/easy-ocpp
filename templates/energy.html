@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}{{ layout.t("energy.title") }}{% endblock %}
+{% block crumb %}{{ layout.t("energy.title") }}{% endblock %}
+{% block content %}
+<h1>{{ layout.t("energy.title") }}</h1>
+<p class="sub">{{ layout.t("energy.description") }}</p>
+<div class="card">
+    <div class="card-head"><h2>{{ layout.t("energy.connection") }}</h2></div>
+    <form method="post" action="/energy" class="row">
+        <label class="check"><input type="checkbox" name="enabled" value="1" {% if settings.enabled %}checked{% endif %}> {{ layout.t("common.active") }}</label>
+        <label>{{ layout.t("energy.grid_limit") }} (W)<input type="number" name="grid_limit_w" value="{{ settings.grid_limit_w }}" min="1" max="10000000" required></label>
+        <label>{{ layout.t("energy.reserve") }} (W)<input type="number" name="reserve_w" value="{{ settings.reserve_w }}" min="0" required></label>
+        <label>{{ layout.t("energy.max_age") }} (s)<input type="number" name="max_age_s" value="{{ settings.max_age_s }}" min="1" max="15" required></label>
+        <label>{{ layout.t("energy.resume_margin") }} (W)<input type="number" name="resume_margin_w" value="{{ settings.resume_margin_w }}" min="0" max="100000" required></label>
+        <button class="primary">{{ layout.t("common.save") }}</button>
+    </form>
+    <p class="hint">{{ layout.t("energy.safety_hint") }}</p>
+    {% if !meter_configured %}<p class="flash">{{ layout.t("energy.token_missing") }}</p>{% endif %}
+</div>
+<div class="card" hx-get="/energy/live" hx-trigger="every 5s" hx-swap="innerHTML">
+    {% include "_energy_status.html" %}
+</div>
+<div class="card">
+    <div class="card-head"><h2>{{ layout.t("energy.hardware") }}</h2></div>
+    <p class="hint">{{ layout.t("energy.hardware_hint") }}</p>
+    {% for wb in wallboxes %}
+    <h3>{{ wb.name }}</h3>
+    <form method="post" action="/energy/wallboxes/{{ wb.id }}" class="row">
+        <label>{{ layout.t("energy.min_power") }} (W)<input type="number" name="charging_min_w" value="{{ wb.charging_min_w }}" min="1" required></label>
+        <label>{{ layout.t("energy.max_power") }} (W)<input type="number" name="charging_max_w" value="{{ wb.charging_max_w }}" min="1" max="10000000" required></label>
+        <label>{{ layout.t("energy.phases") }}<select name="charging_phases"><option value="1" {% if wb.charging_phases == 1 %}selected{% endif %}>1</option><option value="3" {% if wb.charging_phases == 3 %}selected{% endif %}>3</option></select></label>
+        <label>{{ layout.t("energy.rate_unit") }}<select name="charging_rate_unit"><option value="W" {% if wb.charging_rate_unit == "W" %}selected{% endif %}>W</option><option value="A" {% if wb.charging_rate_unit == "A" %}selected{% endif %}>A</option></select></label>
+        <button class="primary" {% if settings.enabled %}disabled{% endif %}>{{ layout.t("common.save") }}</button>
+    </form>
+    {% endfor %}
+</div>
+<p><a href="/chips">{{ layout.t("energy.tags_link") }}</a></p>
+{% endblock %}

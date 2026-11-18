@@ -263,7 +263,7 @@ pub async fn remote_start(
             .await?;
     if existing.is_none() {
         sqlx::query(
-            "INSERT INTO chips (id_tag, label, kind, enabled) VALUES (?1, ?2, 'guest', 1)",
+            "INSERT INTO chips (id_tag, label, kind, enabled, charging_priority) VALUES (?1, ?2, 'guest', 1, 1)",
         )
         .bind(id_tag)
         .bind(form.guest_label.as_deref())
@@ -272,6 +272,9 @@ pub async fn remote_start(
     }
 
     let connector = form.connector_id.unwrap_or(1);
+    if !state.energy.may_start(&state, &wb.charge_point_id).await {
+        return Err(AppError::Conflict(lang.t("energy.not_ready").into()));
+    }
     let status = crate::ocpp::ocpp16::remote_start(
         &state.ocpp_hub,
         &wb.charge_point_id,

@@ -37,6 +37,7 @@
         <div>{{ layout.t("chips.none_body") }}</div>
     </div>
 {% else %}
+<div class="table-scroll">
 <table class="data">
     <thead>
         <tr>
@@ -45,6 +46,8 @@
             <th>{{ layout.t("chips.assigned_to") }}</th>
             <th>{{ layout.t("common.active") }}</th>
             <th>{{ layout.t("common.expiry") }}</th>
+            <th>{{ layout.t("energy.priority") }}</th>
+            <th>{{ layout.t("energy.allow_grid") }}</th>
             <th></th>
         </tr>
     </thead>
@@ -74,6 +77,15 @@
                 <input form="{{ fid }}" name="expires_at" value="{{ row.chip.expires_at.as_deref().unwrap_or("") }}" placeholder="YYYY-MM-DD" style="min-width:130px;">
             </td>
             <td class="nowrap">
+                <select form="{{ fid }}" name="charging_priority">
+                    <option value="0" {% if row.chip.charging_priority == 0 %}selected{% endif %}>{{ layout.t("energy.employee") }}</option>
+                    <option value="1" {% if row.chip.charging_priority == 1 %}selected{% endif %}>{{ layout.t("energy.priority_group") }}</option>
+                </select>
+            </td>
+            <td>
+                <input form="{{ fid }}" type="checkbox" name="allow_grid" value="1" aria-label="{{ layout.t("energy.allow_grid") }}" style="width:auto;min-width:0;" {% if row.chip.allow_grid != 0 %}checked{% endif %}>
+            </td>
+            <td class="nowrap">
                 <form id="{{ fid }}" method="post" action="/chips/{{ row.chip.id }}/update" style="display:inline;">
                     <button class="primary sm" type="submit">{{ layout.t("common.save") }}</button>
                 </form>
@@ -85,6 +97,8 @@
     {% endfor %}
     </tbody>
 </table>
+</div>
 <p class="hint">{{ layout.t("chips.row_hint") }} {{ layout.t("chips.kind_hint") }}</p>
+<p class="hint">{{ layout.t("energy.tag_hint") }}</p>
 {% endif %}
 {% endblock %}

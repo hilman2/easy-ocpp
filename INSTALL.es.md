@@ -4,6 +4,16 @@
 
 Herramienta de gestión para cargadores (OCPP 1.5/1.6/2.0.1). Un solo binario, un solo archivo SQLite.
 
+## Carga con excedentes y Docker (versión de desarrollo)
+
+La regulación opcional está desactivada inicialmente. Revisar límite de red
+(150 kW), margen (10 kW) y cargadores en « Carga con excedentes »; configurar
+prioridad y permiso de red en « Chips ». El contador real aún necesita un
+adaptador. API protegida y Docker:
+[README.es.md](README.es.md#carga-con-excedentes-y-límite-de-red).
+Requiere OCPP 1.6J con límite cero probado. Un límite garantizado necesita
+control local.
+
 ## Novedades de la v0.6.0
 
 - **Los mensajes de los cargadores quedan registrados.** Hasta ahora solo se

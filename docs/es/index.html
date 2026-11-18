@@ -117,6 +117,10 @@
           <h3>Cuatro idiomas</h3>
           <p>Toda la interfaz en alemán, inglés, francés y español, conmutable por usuario.</p>
         </article>
+        <article class="feature">
+          <h3>Carga con excedentes</h3>
+          <p>Regulación OCPP 1.6J opcional con prioridad por chip, permiso de red independiente y límite con margen. Desactivada inicialmente; requiere adaptador de contador y Smart Charging probado. Un límite estricto necesita control local.</p>
+        </article>
     </div>
   </section>
 
@@ -141,7 +145,7 @@
 
   <section id="limits" class="wrap">
     <h2>Límites que detienen la carga de verdad</h2>
-    <p>Una carga termina sola en cuanto alcanza una energía objetivo o un temporizador, lo que ocurra primero. Ambos son opcionales. Cada persona tiene valores predeterminados que se aplican a cada carga nueva y que fija el propio empleado o un administrador; en una carga en curso los valores siguen siendo modificables.</p>
+    <p>Una carga termina sola en cuanto alcanza una energía objetivo o un temporizador, lo que ocurra primero. Ambos son opcionales. Cada persona tiene valores predeterminados que se aplican a cada carga nueva y que fija el propio empleado o un administrador; en una carga en curso los valores siguen siendo modificables. Regulación OCPP 1.6J opcional con prioridad por chip, permiso de red independiente y límite con margen. Desactivada inicialmente; requiere adaptador de contador y Smart Charging probado. Un límite estricto necesita control local.</p>
     <p class="note">Un vigilante comprueba cada 15 segundos y envía RemoteStopTransaction. El límite de energía se comprueba además en cuanto llegan nuevas mediciones, para no sobrepasar el objetivo esperando al siguiente ciclo. Si un cargador rechaza la parada, se vuelve a intentar.</p>
   </section>
 

@@ -4,6 +4,16 @@
 
 Outil de gestion pour bornes de recharge (OCPP 1.5/1.6/2.0.1). Un seul binaire, un seul fichier SQLite.
 
+## Recharge sur surplus et Docker (version de développement)
+
+La régulation optionnelle est désactivée par défaut. Vérifier limite réseau
+(150 kW), marge (10 kW) et bornes dans « Recharge sur surplus »; régler priorité
+et droit au réseau dans « Badges ». Le compteur réel nécessite encore un
+adaptateur. API protégée et Docker :
+[README.fr.md](README.fr.md#recharge-sur-surplus-et-limite-réseau).
+OCPP 1.6J avec limites à zéro vérifiées requis. Une limite garantie exige un
+régulateur local.
+
 ## Nouveautés de la v0.6.0
 
 - **Les messages des bornes sont enregistrés.** Jusqu'ici, seul l'état actuel

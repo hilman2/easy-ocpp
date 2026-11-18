@@ -4,6 +4,16 @@
 
 Management tool for wallboxes (OCPP 1.5/1.6/2.0.1). One binary, one SQLite file.
 
+## Surplus charging and Docker (development version)
+
+Optional surplus control starts disabled. Check the grid limit (150 kW by
+default), reserve (10 kW) and wallbox values under "Surplus charging"; assign
+priority and grid permission under "Chips". The actual meter still needs an
+adapter. Protected meter API and Docker setup:
+[README.md](README.md#surplus-charging-and-grid-import-limits).
+Requires OCPP 1.6J with tested zero limits. A guaranteed site limit needs a
+local load controller.
+
 ## What's new in v0.6.0
 
 - **Wallbox messages are recorded.** Until now only the current state of each

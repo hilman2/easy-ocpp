@@ -4,6 +4,16 @@
 
 Management-Tool für Wallboxen (OCPP 1.5/1.6/2.0.1). Ein Binary, eine SQLite-Datei.
 
+## Überschussladen und Docker (Entwicklungsstand)
+
+Die optionale Überschussregelung startet ausgeschaltet. Unter „Überschussladen"
+Netzlimit (vorbelegt mit 150 kW), Sicherheitspuffer (10 kW) und Wallboxwerte
+prüfen, unter „Chips" Priorität und Netzstromfreigabe vergeben. Die konkrete
+Messwertquelle muss noch angebunden werden. Einrichtung der geschützten
+Messwert-API und Docker-Start: [README.de.md](README.de.md#überschussladen-und-netzbezug-begrenzen).
+Nur für OCPP 1.6J mit getesteten Null-Limits. Für eine garantierte Anschlussgrenze
+ist ein lokaler Lastregler erforderlich.
+
 ## Was ist neu in v0.6.0
 
 - **Wallbox-Meldungen werden aufgezeichnet.** Bisher war nur der aktuelle

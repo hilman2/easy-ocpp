@@ -2,6 +2,22 @@
 
 What changed in each release, written for the people who use easy-ocpp.
 
+## Unreleased
+
+**Charge private cars on surplus and give management and guests priority.**
+Administrators can assign charging priority and a separate permission to use
+grid power to each chip. Company cars still share the site's grid import
+limit, with an adjustable reserve below it. When power is scarce, cars are
+throttled or paused and resume when enough power returns. The default is a
+150 kW site limit with a 10 kW reserve.
+
+**Prepare your meter connection before enabling.** Surplus charging starts
+disabled. A protected input accepts synchronous site and charging power from
+a future meter adapter; no particular meter is connected yet. Missing or stale
+readings pause charging. Wallboxes need tested OCPP 1.6J Smart Charging and
+zero-limit support. A local load controller is still required to guarantee a
+hard ceiling during sudden building load changes or communication failures.
+
 ## 0.6.0 (18 November 2026)
 
 **You can now see what a wallbox reported, and when.** Until now easy-ocpp only

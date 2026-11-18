@@ -469,6 +469,17 @@ C['es'] = {
 
 
 # ---------------------------------------------------------------------------
+# Dokumentation der optionalen Ueberschussregelung in allen vier Sprachen.
+SURPLUS = {
+    'en': ('Surplus charging', 'Optional OCPP 1.6J surplus control with chip priorities, separate grid permission and a site import limit with reserve. Starts disabled; a meter adapter and tested Smart Charging are required. A hard site ceiling needs local load control.'),
+    'de': ('Überschussladen', 'Optionale OCPP-1.6J-Regelung mit Chip-Prioritäten, getrennter Netzfreigabe und Anschlusslimit mit Puffer. Startet ausgeschaltet; Zähleradapter und getestetes Smart Charging erforderlich. Eine harte Anschlussgrenze braucht lokale Lastregelung.'),
+    'fr': ('Recharge sur surplus', 'Régulation OCPP 1.6J optionnelle avec priorité par badge, droit réseau distinct et limite du site avec marge. Désactivée par défaut; adaptateur de compteur et Smart Charging testé requis. Une limite stricte exige une régulation locale.'),
+    'es': ('Carga con excedentes', 'Regulación OCPP 1.6J opcional con prioridad por chip, permiso de red independiente y límite con margen. Desactivada inicialmente; requiere adaptador de contador y Smart Charging probado. Un límite estricto necesita control local.'),
+}
+for language, (title, description) in SURPLUS.items():
+    C[language]['features'].append((title, description))
+    C[language]['limits_body'] += ' ' + description
+
 # Rechtsseiten. Anbieterangaben nach § 5 DDG und Hinweise nach Art. 13 DSGVO.
 # Massgeblich ist die deutsche Fassung, die uebrigen sind Uebersetzungen.
 # ---------------------------------------------------------------------------

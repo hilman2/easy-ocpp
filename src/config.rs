@@ -11,9 +11,25 @@ pub struct Config {
     pub storage: StorageConfig,
     #[serde(default)]
     pub ocpp: OcppConfig,
+    #[serde(default)]
+    pub energy: EnergyConfig,
     /// Fehlt der Abschnitt, findet kein Monatsversand statt.
     #[serde(default)]
     pub mail: Option<MailConfig>,
+}
+
+#[derive(Clone, Default, Deserialize, Serialize)]
+pub struct EnergyConfig {
+    /// Bearer-Token fuer den spaeteren Messwertlieferanten, nur ueber TLS nutzen.
+    pub meter_token: Option<String>,
+}
+
+impl std::fmt::Debug for EnergyConfig {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("EnergyConfig")
+            .field("meter_token", &self.meter_token.as_ref().map(|_| "[redacted]"))
+            .finish()
+    }
 }
 
 /// Verschluesselung der SMTP-Verbindung.
@@ -194,6 +210,7 @@ impl Default for Config {
             http: HttpConfig::default(),
             storage: StorageConfig::default(),
             ocpp: OcppConfig::default(),
+            energy: EnergyConfig::default(),
             mail: None,
         }
     }

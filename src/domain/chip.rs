@@ -11,6 +11,8 @@ pub struct Chip {
     pub enabled: i64,
     pub expires_at: Option<String>,
     pub created_at: String,
+    pub charging_priority: i64,
+    pub allow_grid: i64,
 }
 
 impl Chip {
