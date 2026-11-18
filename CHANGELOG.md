@@ -2,6 +2,44 @@
 
 What changed in each release, written for the people who use easy-ocpp.
 
+## 0.6.0 (18 November 2026)
+
+**You can now see what a wallbox reported, and when.** Until now easy-ocpp only
+knew the current state of each connector, and every new message replaced the
+one before. Now each change is kept. The page of a wallbox lists its last 200
+messages, with faults highlighted and the manufacturer's own error code shown
+where the wallbox sends one. That answers questions such as whether a wallbox
+was out of order during the night.
+
+**Every charging session has its own page.** Open it from any list of sessions
+to see the key figures and what the wallbox reported while the car was
+connected, including the few minutes after the end. That is usually enough to
+tell why a session stopped. Employees can open the pages of their own sessions
+only.
+
+**Your running session tells you what is going on in plain words.** On your own
+page, the latest message from the wallbox is spelled out. If it says the car is
+not drawing power, the wallbox is fine and the car has paused or is full.
+
+**Run it in Docker.** The source now comes with a Dockerfile and a Compose
+file. The database lives in a persistent volume and your configuration is
+mounted read-only. The README has the two commands to get going.
+
+**LDAP and Entra settings are gone from the configuration.** They never did
+anything, and the example configuration no longer lists them.
+
+### Updating
+
+Copy the new program over the old one and restart. The database is extended on
+the first start. After that an older version of the program refuses to open it,
+so make a copy of the `data` folder first if you want a way back.
+
+Wallbox messages are kept for 60 days. Change that with `event_retention_days`
+under `[storage]` in `config.toml`; 0 keeps them forever.
+
+If your `config.toml` still has `[auth.ldap]` or `[auth.oidc]` sections, you
+can delete them. Leaving them in does no harm.
+
 ## 0.5.0 (1 September 2026)
 
 **Your monthly report can come to you by email.** On the first of each month,

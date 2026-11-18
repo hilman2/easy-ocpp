@@ -1,8 +1,36 @@
-# easy-ocpp v0.5.0 – Installation & premier démarrage (Windows)
+# easy-ocpp v0.6.0 – Installation & premier démarrage (Windows)
 
 🌐 [English](INSTALL.md) · [Deutsch](ANLEITUNG.md) · [Français](INSTALL.fr.md) · [Español](INSTALL.es.md)
 
 Outil de gestion pour bornes de recharge (OCPP 1.5/1.6/2.0.1). Un seul binaire, un seul fichier SQLite.
+
+## Nouveautés de la v0.6.0
+
+- **Les messages des bornes sont enregistrés.** Jusqu'ici, seul l'état actuel
+  de chaque connecteur était visible. easy-ocpp conserve désormais chaque
+  changement d'état : la page de la borne liste les 200 derniers messages, les
+  défauts sont mis en évidence et le code d'erreur du fabricant est affiché.
+- **Une page par recharge.** Depuis n'importe quelle liste de recharges, un clic
+  ouvre une page avec les données principales et les messages reçus pendant la
+  recharge. On y voit pourquoi une recharge s'est arrêtée. Les employés ne
+  voient que leurs propres recharges.
+- **Un message clair pour la recharge en cours.** Sous « Mes recharges », le
+  dernier message de la borne est affiché en toutes lettres, par exemple que la
+  voiture ne tire pas de courant en ce moment.
+- **Fonctionnement dans Docker.** Le code source est livré avec un `Dockerfile`
+  et un `compose.yaml`. La base de données se trouve dans un volume persistant
+  et `config.toml` est monté en lecture seule. Le démarrage est décrit dans
+  [README.fr.md](README.fr.md#docker).
+- **LDAP et Entra retirés de la configuration.** Les sections `[auth.ldap]` et
+  `[auth.oidc]` n'ont jamais eu d'effet et ont disparu de la configuration
+  d'exemple. Si votre `config.toml` les contient encore, vous pouvez les
+  supprimer ; elles ne gênent pas.
+
+**À propos de la mise à jour :** la base de données est étendue automatiquement
+au premier démarrage. Une version plus ancienne du programme ne peut ensuite
+plus l'ouvrir. Pour pouvoir revenir en arrière, copiez d'abord le dossier
+`data`. Les messages sont conservés 60 jours ; la durée se règle avec
+`event_retention_days` dans la section `[storage]`, 0 signifiant sans limite.
 
 ## Nouveautés de la v0.5.0
 
@@ -231,4 +259,4 @@ Supprimez le service/la tâche, supprimez le dossier. Il n'y a ni entrées de re
 
 ---
 
-Version 0.5.0 · Licence : MIT
+Version 0.6.0 · Licence : MIT
