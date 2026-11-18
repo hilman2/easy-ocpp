@@ -136,6 +136,30 @@ damit nicht bis zum nächsten Takt weitergeladen wird. Lehnt die Wallbox den Sto
 ab, wird beim nächsten Takt erneut versucht. Abgehakt wird die Ladung erst,
 wenn die Wallbox angenommen hat.
 
+## Docker
+
+```powershell
+Copy-Item config.example.toml config.toml
+docker compose up -d --build
+```
+
+Die Oberfläche ist unter <http://localhost:8080> erreichbar. Die Datenbank liegt
+im persistenten Volume `easy-ocpp-data`; `config.toml` wird nur lesbar eingebunden.
+`docker compose down` erhält die Daten, `docker compose down -v` löscht sie.
+
+### Hinter einem Reverse-Proxy
+
+In `deploy/` liegt ein Aufbau für einen Host, auf dem ein Caddy mehrere Dienste
+bedient. `compose.yaml` hängt easy-ocpp ohne eigenen Port in das Docker-Netz des
+Proxys, `easy-ocpp.caddy.example` ist die passende Datei für Caddy.
+
+Zwei Dinge sind für die Wallboxen wichtig. Die meisten sprechen OCPP ohne TLS,
+`ws://` über Port 80 muss also direkt bei easy-ocpp ankommen: Ein OCPP-Client
+folgt keiner Umleitung auf HTTPS. Das Beispiel lässt auf Port 80 nur `/ocpp/*`
+und `/ocpp15` durch und leitet alles andere um. Außerdem trennt ein Reload des
+Proxys offene WebSockets sofort, wenn man ihm keine Frist gibt. Das erledigt
+`stream_close_delay`.
+
 ## Datenhaltung
 
 Alles liegt in **einer SQLite-Datei** unter `data/easy-ocpp.db` (über `config.toml` änderbar). Migrationen liegen in `migrations/` und werden beim Start automatisch angewendet.

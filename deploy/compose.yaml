@@ -1,0 +1,55 @@
+# easy-ocpp hinter einem Reverse-Proxy, der mehrere Dienste eines Hosts bedient.
+#
+# Der Container veroeffentlicht keinen Port. Er haengt im Docker-Netz des
+# Proxys und ist dort unter dem Namen "easy-ocpp" erreichbar. Die passende
+# Datei fuer Caddy liegt daneben: easy-ocpp.caddy.example.
+#
+# Einrichten, in dem Verzeichnis, in dem diese Datei liegt:
+#
+#   cp ../config.example.toml config.toml      # anpassen, bind bleibt 0.0.0.0:8080
+#   sudo install -d -o 10001 -g 10001 data     # der Dienst laeuft als Benutzer 10001
+#   docker compose up -d --build
+#
+# Eine bestehende Datenbank vor dem ersten Start nach data/easy-ocpp.db legen
+# und ebenfalls dem Benutzer 10001 uebergeben.
+#
+# Wer das Image nicht auf dem Server bauen will, baut es woanders, spielt es mit
+# "docker load" ein und nennt es in einer .env neben dieser Datei:
+#
+#   EASY_OCPP_IMAGE=easy-ocpp:0.6.0
+#
+# Sicherung: Dienst stoppen und data/ kopieren. Im laufenden Betrieb gehoeren
+# alle Dateien data/easy-ocpp.db* zusammen.
+name: easy-ocpp
+
+services:
+  easy-ocpp:
+    image: ${EASY_OCPP_IMAGE:-easy-ocpp:latest}
+    build: ..
+    restart: unless-stopped
+    # Reicht das Stoppsignal an das Programm weiter, sonst wartet Docker 10 s.
+    init: true
+    environment:
+      # Bestimmt die Stunde, zu der die Monatsberichte verschickt werden.
+      TZ: ${TZ:-Europe/Berlin}
+    volumes:
+      - ./data:/app/data
+      - ./config.toml:/app/config.toml:ro
+    networks:
+      proxy:
+        aliases:
+          - easy-ocpp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+networks:
+  proxy:
+    external: true
+    name: ${PROXY_NETWORK:-proxy}

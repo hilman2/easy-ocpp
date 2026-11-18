@@ -1,8 +1,35 @@
-# easy-ocpp v0.5.0 – Installation & First Start (Windows)
+# easy-ocpp v0.6.0 – Installation & First Start (Windows)
 
 🌐 [English](INSTALL.md) · [Deutsch](ANLEITUNG.md) · [Français](INSTALL.fr.md) · [Español](INSTALL.es.md)
 
 Management tool for wallboxes (OCPP 1.5/1.6/2.0.1). One binary, one SQLite file.
+
+## What's new in v0.6.0
+
+- **Wallbox messages are recorded.** Until now only the current state of each
+  connector was visible. easy-ocpp now keeps every change of state: the wallbox
+  detail page lists the last 200 messages, faults are highlighted, and the
+  manufacturer's error code is shown alongside.
+- **A page for every charging session.** From any list of sessions, one click
+  opens a page with the key figures and the messages from the time of the
+  session. This shows why a session ended. Employees only see their own
+  sessions.
+- **Plain words on a running session.** Under "My charging", the latest message
+  from the wallbox is spelled out, for example that the car is currently not
+  drawing power.
+- **Running in Docker.** The source code ships with a `Dockerfile` and a
+  `compose.yaml`. The database lives in a persistent volume and `config.toml` is
+  mounted read-only. Getting started is described in
+  [README.md](README.md#docker).
+- **LDAP and Entra removed from the configuration.** The `[auth.ldap]` and
+  `[auth.oidc]` sections never had any effect and are gone from the example
+  configuration. If your `config.toml` still has them you can delete them; they
+  do no harm.
+
+**About updating:** the database is extended automatically on first start.
+After that an older version of the program can no longer open it. If you want a
+way back, copy the `data` folder first. Messages are kept for 60 days; change
+this with `event_retention_days` in the `[storage]` section, 0 means unlimited.
 
 ## What's new in v0.5.0
 
@@ -224,4 +251,4 @@ Remove the service/task, delete the folder. There are no registry entries and no
 
 ---
 
-Version 0.5.0 · License: MIT
+Version 0.6.0 · License: MIT

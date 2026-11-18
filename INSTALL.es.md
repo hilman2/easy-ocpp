@@ -1,8 +1,36 @@
-# easy-ocpp v0.5.0 – Instalación y primer arranque (Windows)
+# easy-ocpp v0.6.0 – Instalación y primer arranque (Windows)
 
 🌐 [English](INSTALL.md) · [Deutsch](ANLEITUNG.md) · [Français](INSTALL.fr.md) · [Español](INSTALL.es.md)
 
 Herramienta de gestión para cargadores (OCPP 1.5/1.6/2.0.1). Un solo binario, un solo archivo SQLite.
+
+## Novedades de la v0.6.0
+
+- **Los mensajes de los cargadores quedan registrados.** Hasta ahora solo se
+  veía el estado actual de cada conector. easy-ocpp guarda ahora cada cambio de
+  estado: la página del cargador muestra los últimos 200 mensajes, las averías
+  aparecen destacadas y se indica el código de error del fabricante.
+- **Una página para cada carga.** Desde cualquier lista de cargas, un clic abre
+  una página con los datos principales y los mensajes recibidos durante la
+  carga. Así se ve por qué terminó una carga. Los empleados solo ven sus
+  propias cargas.
+- **Texto claro en la carga en curso.** En «Mis cargas», el último mensaje del
+  cargador aparece explicado, por ejemplo que el coche no está tomando
+  corriente en ese momento.
+- **Funcionamiento en Docker.** El código fuente incluye un `Dockerfile` y un
+  `compose.yaml`. La base de datos reside en un volumen persistente y
+  `config.toml` se monta en modo de solo lectura. El arranque se describe en
+  [README.es.md](README.es.md#docker).
+- **LDAP y Entra eliminados de la configuración.** Las secciones `[auth.ldap]`
+  y `[auth.oidc]` nunca tuvieron efecto y han desaparecido de la configuración
+  de ejemplo. Si su `config.toml` aún las contiene, puede borrarlas; no
+  molestan.
+
+**Sobre la actualización:** la base de datos se amplía automáticamente en el
+primer arranque. Después, una versión anterior del programa ya no puede
+abrirla. Si quiere poder volver atrás, copie antes la carpeta `data`. Los
+mensajes se conservan 60 días; el plazo se cambia con `event_retention_days`
+en la sección `[storage]`, 0 significa sin límite.
 
 ## Novedades de la v0.5.0
 
@@ -229,4 +257,4 @@ Elimine el servicio/la tarea y borre la carpeta. No hay entradas en el registro 
 
 ---
 
-Versión 0.5.0 · Licencia: MIT
+Versión 0.6.0 · Licencia: MIT

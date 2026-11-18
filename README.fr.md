@@ -138,6 +138,31 @@ de nouvelles mesures, afin de ne pas continuer à charger jusqu'au cycle suivant
 Si la borne refuse l'arrêt, une nouvelle tentative a lieu au cycle suivant. La
 recharge n'est considérée comme traitée qu'une fois la borne d'accord.
 
+## Docker
+
+```powershell
+Copy-Item config.example.toml config.toml
+docker compose up -d --build
+```
+
+Interface : <http://localhost:8080>. La base persiste dans le volume
+`easy-ocpp-data`; `config.toml` est monté en lecture seule.
+`docker compose down` conserve les données; `docker compose down -v` les supprime.
+
+### Derrière un proxy inverse
+
+`deploy/` contient une configuration pour un hôte où un seul Caddy dessert
+plusieurs services. `compose.yaml` rattache easy-ocpp au réseau Docker du proxy
+sans publier de port, et `easy-ocpp.caddy.example` est le fichier de site
+correspondant.
+
+Deux points comptent pour les bornes. La plupart parlent OCPP sans TLS : `ws://`
+sur le port 80 doit donc atteindre easy-ocpp directement, car un client OCPP ne
+suit pas une redirection vers HTTPS. L'exemple ne laisse passer sur le port 80
+que `/ocpp/*` et `/ocpp15` et redirige tout le reste. De plus, recharger le
+proxy ferme aussitôt les WebSockets ouverts, sauf si on lui accorde un délai.
+C'est le rôle de `stream_close_delay`.
+
 ## Stockage des données
 
 Tout est stocké dans **un seul fichier SQLite** sous `data/easy-ocpp.db` (modifiable via `config.toml`). Les migrations se trouvent dans `migrations/` et sont appliquées automatiquement au démarrage.

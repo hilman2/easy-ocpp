@@ -1,0 +1,10 @@
+.git
+target
+data
+release
+config.toml
+config.local.toml
+.env
+*.db
+*.db-wal
+*.db-shm

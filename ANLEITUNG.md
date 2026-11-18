@@ -1,8 +1,37 @@
-# easy-ocpp v0.5.0 – Installation & Erststart (Windows)
+# easy-ocpp v0.6.0 – Installation & Erststart (Windows)
 
 🌐 [English](INSTALL.md) · [Deutsch](ANLEITUNG.md) · [Français](INSTALL.fr.md) · [Español](INSTALL.es.md)
 
 Management-Tool für Wallboxen (OCPP 1.5/1.6/2.0.1). Ein Binary, eine SQLite-Datei.
+
+## Was ist neu in v0.6.0
+
+- **Wallbox-Meldungen werden aufgezeichnet.** Bisher war nur der aktuelle
+  Zustand je Anschluss zu sehen. Jetzt hält easy-ocpp jede Zustandsänderung
+  fest: Auf der Detailseite der Wallbox stehen die letzten 200 Meldungen,
+  Störungen sind hervorgehoben, und der Fehlercode des Herstellers wird mit
+  angezeigt.
+- **Detailseite je Ladung.** Aus jeder Ladungsliste führt ein Klick auf eine
+  Seite mit den Eckdaten und den Meldungen aus dem Zeitraum der Ladung. Daran
+  lässt sich ablesen, warum eine Ladung endete. Mitarbeiter sehen nur ihre
+  eigenen Ladungen.
+- **Klartext bei der laufenden Ladung.** Unter „Meine Ladungen" steht die
+  jüngste Meldung der Wallbox in Worten, zum Beispiel dass das Auto gerade
+  keinen Strom abnimmt.
+- **Betrieb in Docker.** Dem Quelltext liegen ein `Dockerfile` und eine
+  `compose.yaml` bei. Die Datenbank liegt in einem dauerhaften Volume, die
+  `config.toml` wird nur lesend eingebunden. Der Start ist in der
+  [README.de.md](README.de.md#docker) beschrieben.
+- **LDAP und Entra aus der Konfiguration entfernt.** Die Abschnitte
+  `[auth.ldap]` und `[auth.oidc]` hatten nie eine Wirkung und sind aus der
+  Beispielkonfiguration verschwunden. Wer sie noch in seiner `config.toml`
+  stehen hat, kann sie löschen; sie stören aber nicht.
+
+**Zum Update:** Die Datenbank wird beim ersten Start automatisch erweitert.
+Danach lässt sie sich mit einer älteren Programmversion nicht mehr öffnen. Wer
+zurück können will, kopiert vorher den Ordner `data`. Die Meldungen werden
+60 Tage aufgehoben; die Dauer lässt sich mit `event_retention_days` im
+Abschnitt `[storage]` ändern, 0 heißt unbegrenzt.
 
 ## Was ist neu in v0.5.0
 
@@ -226,4 +255,4 @@ Dienst/Aufgabe entfernen, Ordner löschen. Es gibt keine Registry-Einträge und 
 
 ---
 
-Version 0.5.0 · Lizenz: MIT
+Version 0.6.0 · Lizenz: MIT

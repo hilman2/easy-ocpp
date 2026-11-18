@@ -1,0 +1,38 @@
+# easy-ocpp hinter Caddy. Als eigene Datei in die Caddy-Konfiguration aufnehmen
+# und charge.example.com durch den eigenen Namen ersetzen. Der Container ist im
+# Docker-Netz des Proxys unter "easy-ocpp" erreichbar, siehe compose.yaml.
+
+# Oberflaeche ueber HTTPS, dazu wss:// fuer Wallboxen, die dem Zertifikat
+# vertrauen. Mit einem eigenen Zertifikat statt Let's Encrypt:
+#   tls /certs/example.crt /certs/example.key
+charge.example.com {
+	reverse_proxy easy-ocpp:8080 {
+		# Ein Reload des Proxys trennt offene WebSockets sofort. Mit dieser
+		# Frist bleiben die Verbindungen der Wallboxen ueber einen Reload
+		# hinweg bestehen.
+		stream_close_delay 5m
+	}
+
+	encode zstd gzip
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		-Server
+	}
+}
+
+# Die meisten Wallboxen sprechen OCPP ohne TLS, also ws:// ueber Port 80.
+# Eine Umleitung auf HTTPS sperrt sie aus, weil ein OCPP-Client ihr nicht
+# folgt. Deshalb gehen hier genau die OCPP-Pfade durch, alles andere wird
+# umgeleitet. Die Adresse in der Wallbox lautet dann
+#   ws://charge.example.com/ocpp/<ChargePointId>
+http://charge.example.com {
+	@ocpp path /ocpp/* /ocpp15
+	handle @ocpp {
+		reverse_proxy easy-ocpp:8080 {
+			stream_close_delay 5m
+		}
+	}
+	handle {
+		redir https://{host}{uri} permanent
+	}
+}

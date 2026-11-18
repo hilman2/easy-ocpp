@@ -135,6 +135,30 @@ charging does not continue until the next tick. If the wallbox rejects the stop,
 it is retried on the next tick. The session is only marked as handled after the
 wallbox has accepted.
 
+## Docker
+
+```powershell
+Copy-Item config.example.toml config.toml
+docker compose up -d --build
+```
+
+Open <http://localhost:8080>. The database persists in the `easy-ocpp-data`
+volume; `config.toml` is mounted read-only. `docker compose down` preserves
+data; `docker compose down -v` deletes it.
+
+### Behind a reverse proxy
+
+`deploy/` holds a setup for a host where one Caddy serves several services.
+`compose.yaml` attaches easy-ocpp to the proxy's Docker network without
+publishing a port, and `easy-ocpp.caddy.example` is the matching site file.
+
+Two things matter for the wallboxes. Most of them speak OCPP without TLS, so
+`ws://` on port 80 has to reach easy-ocpp directly: an OCPP client does not
+follow a redirect to HTTPS. The example lets only `/ocpp/*` and `/ocpp15`
+through on port 80 and redirects everything else. And reloading the proxy
+closes open WebSockets at once unless it is told to wait, which
+`stream_close_delay` does.
+
 ## Data storage
 
 Everything lives in **one SQLite file** at `data/easy-ocpp.db` (changeable via `config.toml`). Migrations reside in `migrations/` and are applied automatically at startup.
