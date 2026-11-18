@@ -138,6 +138,17 @@ de nouvelles mesures, afin de ne pas continuer à charger jusqu'au cycle suivant
 Si la borne refuse l'arrêt, une nouvelle tentative a lieu au cycle suivant. La
 recharge n'est considérée comme traitée qu'une fois la borne d'accord.
 
+## Docker
+
+```powershell
+Copy-Item config.example.toml config.toml
+docker compose up -d --build
+```
+
+Interface : <http://localhost:8080>. La base persiste dans le volume
+`easy-ocpp-data`; `config.toml` est monté en lecture seule.
+`docker compose down` conserve les données; `docker compose down -v` les supprime.
+
 ## Stockage des données
 
 Tout est stocké dans **un seul fichier SQLite** sous `data/easy-ocpp.db` (modifiable via `config.toml`). Les migrations se trouvent dans `migrations/` et sont appliquées automatiquement au démarrage.

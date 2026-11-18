@@ -136,6 +136,17 @@ seguir cargando hasta el siguiente ciclo. Si el cargador rechaza la parada, se
 reintenta en el ciclo siguiente: la carga solo se da por resuelta cuando el
 cargador la ha aceptado.
 
+## Docker
+
+```powershell
+Copy-Item config.example.toml config.toml
+docker compose up -d --build
+```
+
+Interfaz: <http://localhost:8080>. La base persiste en el volumen
+`easy-ocpp-data`; `config.toml` se monta en solo lectura.
+`docker compose down` conserva los datos; `docker compose down -v` los elimina.
+
 ## Almacenamiento de datos
 
 Todo se guarda en **un solo archivo SQLite** en `data/easy-ocpp.db` (modificable mediante `config.toml`). Las migraciones se encuentran en `migrations/` y se aplican automáticamente al iniciar.

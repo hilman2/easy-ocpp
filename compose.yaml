@@ -1,0 +1,12 @@
+services:
+  easy-ocpp:
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - easy-ocpp-data:/app/data
+      - ./config.toml:/app/config.toml:ro
+    restart: unless-stopped
+
+volumes:
+  easy-ocpp-data:

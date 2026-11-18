@@ -135,6 +135,17 @@ charging does not continue until the next tick. If the wallbox rejects the stop,
 it is retried on the next tick. The session is only marked as handled after the
 wallbox has accepted.
 
+## Docker
+
+```powershell
+Copy-Item config.example.toml config.toml
+docker compose up -d --build
+```
+
+Open <http://localhost:8080>. The database persists in the `easy-ocpp-data`
+volume; `config.toml` is mounted read-only. `docker compose down` preserves
+data; `docker compose down -v` deletes it.
+
 ## Data storage
 
 Everything lives in **one SQLite file** at `data/easy-ocpp.db` (changeable via `config.toml`). Migrations reside in `migrations/` and are applied automatically at startup.

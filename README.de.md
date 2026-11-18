@@ -136,6 +136,17 @@ damit nicht bis zum nächsten Takt weitergeladen wird. Lehnt die Wallbox den Sto
 ab, wird beim nächsten Takt erneut versucht. Abgehakt wird die Ladung erst,
 wenn die Wallbox angenommen hat.
 
+## Docker
+
+```powershell
+Copy-Item config.example.toml config.toml
+docker compose up -d --build
+```
+
+Die Oberfläche ist unter <http://localhost:8080> erreichbar. Die Datenbank liegt
+im persistenten Volume `easy-ocpp-data`; `config.toml` wird nur lesbar eingebunden.
+`docker compose down` erhält die Daten, `docker compose down -v` löscht sie.
+
 ## Datenhaltung
 
 Alles liegt in **einer SQLite-Datei** unter `data/easy-ocpp.db` (über `config.toml` änderbar). Migrationen liegen in `migrations/` und werden beim Start automatisch angewendet.
