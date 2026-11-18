@@ -23,7 +23,9 @@ not drawing power, the wallbox is fine and the car has paused or is full.
 
 **Run it in Docker.** The source now comes with a Dockerfile and a Compose
 file. The database lives in a persistent volume and your configuration is
-mounted read-only. The README has the two commands to get going.
+mounted read-only. The README has the two commands to get going. If your server
+already has a Caddy in front of several services, the `deploy` folder has a
+setup for that, including what wallboxes need to get through on port 80.
 
 **LDAP and Entra settings are gone from the configuration.** They never did
 anything, and the example configuration no longer lists them.

@@ -147,6 +147,20 @@ Interfaz: <http://localhost:8080>. La base persiste en el volumen
 `easy-ocpp-data`; `config.toml` se monta en solo lectura.
 `docker compose down` conserva los datos; `docker compose down -v` los elimina.
 
+### Detrás de un proxy inverso
+
+`deploy/` contiene una configuración para un servidor en el que un solo Caddy
+atiende varios servicios. `compose.yaml` conecta easy-ocpp a la red Docker del
+proxy sin publicar ningún puerto, y `easy-ocpp.caddy.example` es el archivo de
+sitio correspondiente.
+
+Dos cosas importan para los cargadores. La mayoría habla OCPP sin TLS, así que
+`ws://` por el puerto 80 tiene que llegar directamente a easy-ocpp: un cliente
+OCPP no sigue una redirección a HTTPS. El ejemplo deja pasar por el puerto 80
+solo `/ocpp/*` y `/ocpp15` y redirige todo lo demás. Además, recargar el proxy
+cierra de inmediato los WebSockets abiertos si no se le da un plazo. De eso se
+encarga `stream_close_delay`.
+
 ## Almacenamiento de datos
 
 Todo se guarda en **un solo archivo SQLite** en `data/easy-ocpp.db` (modificable mediante `config.toml`). Las migraciones se encuentran en `migrations/` y se aplican automáticamente al iniciar.
